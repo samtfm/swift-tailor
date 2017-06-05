@@ -57,7 +57,8 @@ Sam's primary responsibilities:
 
 ## Implementation Timeline
 
-**Day 1**: Setup Ruby backend and a React front end. Build front end user authorization. Deploy a basic 'hello world site '
+**Day 1**: Setup React front end. Deploy a basic 'hello world' to AWS.
+  - continue
 
 **Day 2**:
 
