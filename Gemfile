@@ -49,6 +49,7 @@ group :development do
   gem 'binding_of_caller'
   gem 'pry-rails'
   gem 'annotate'
+
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
