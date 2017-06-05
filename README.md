@@ -38,7 +38,6 @@ StonyTech is Tony Wang and Sam Faber-Manning.
 
 To be divided:
   - building react components
-  - writing backend for user authentication
   - Adequate styling
 
 Tony's primary responsibilities:
@@ -67,8 +66,17 @@ Sam's primary responsibilities:
   - Continue developing generating vector graphics (Sam)
   - Continue creating datasets for image detection (Tony)
 
-**Day 3**:
+**Day 3**: Have a fully functioning site.  Users should be able to upload an image, and have measurements and a t-shirt template returned to them.
+  - Continue developing generating vector graphics (Sam)
+  - Continue creating datasets for image detection (Tony)
 
-**Day 4**:
+**Day 4**: Improve accuracy of user measurements.  All detection algorithms and vector graphic implementation should be completed.
+  - Spend any additional time on styling the page.
 
-**Day 5**:
+**Day 5**: Styling and putting in finishing touches.
+  - Catchup day for anything that still needs to be completed.
+
+**Bonuses**:
+  - User authorization, Facebook/Google Login.
+  - Adding other clothing like jackets and hoodies as templates.
+  - Webcam integration for taking measurements.
