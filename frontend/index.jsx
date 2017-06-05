@@ -1,8 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app';
+import { HashRouter } from 'react-router-dom';
+
 const Root = () => (
-  <App />
+  <HashRouter>
+    <App />
+
+  </HashRouter>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
