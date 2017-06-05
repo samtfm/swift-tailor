@@ -1,13 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import App from './components/app';
 const Root = () => (
-  <div>Hey Internet, let's style some clothes</div>
+  <App />
 );
 
 document.addEventListener('DOMContentLoaded', () => {
- // bootstrap!
-
   const rootEl = document.getElementById('root');
   ReactDOM.render(<Root />, rootEl);
 });
