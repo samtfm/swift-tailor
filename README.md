@@ -74,6 +74,7 @@ Sam's primary responsibilities:
   - Spend any additional time on styling the page.
 
 **Day 5**: Styling and putting in finishing touches.
+  - write production README
   - Catchup day for anything that still needs to be completed.
 
 **Bonuses**:
