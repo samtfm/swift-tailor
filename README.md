@@ -57,10 +57,15 @@ Sam's primary responsibilities:
 
 ## Implementation Timeline
 
-**Day 1**: Setup React front end. Deploy a basic 'hello world' to AWS.
-  - continue
+**Day 1**: Setup React front end. Deploy a basic 'hello world' app to AWS.
+  - Continue developing generating vector graphics (Sam)
+  - Continue creating datasets for image detection (Tony)
 
-**Day 2**:
+**Day 2**: Create the layout of the website with some basic styling.
+  - Add image upload Features (Sam)
+  - Add the Tracking.js library for face detection.  Face detection is natively available. (Tony)
+  - Continue developing generating vector graphics (Sam)
+  - Continue creating datasets for image detection (Tony)
 
 **Day 3**:
 
