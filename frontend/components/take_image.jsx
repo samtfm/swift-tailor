@@ -24,12 +24,32 @@ export default class TakeImage extends React.Component {
       var calcCtx = calcCanvas.getContext('2d');
       calcCtx.drawImage(canvas, 0, 0);
 
-      //Attempt to find face;
+      // Attempt to find face;
+
+      // ii_sum         - integral of the source image
+      // ii_sqsum       - squared integral of the source image
+      // ii_tilted      - tilted integral of the source image
+      // ii_canny_sum   - integral of canny source image or undefined
+      // width           - width of the source image
+      // height          - height of the source image
+      // classifier      - haar cascade classifier
+      // scale_factor    - how much the image size is reduced at each image scale
+      // scale_min       - start scale
+      // rects           - rectangles representing detected object
       var img_u8, ii_sum, ii_sqsum, ii_tilted, ii_canny, w, h;
-      var classifier = faceClassifier;
       w = calcCanvas.width;
       h = calcCanvas.height;
+      console.log(w,h);
+      var classifier = faceClassifier;
       var imageData = calcCtx.getImageData(0, 0, w, h);
+
+      var demo_opt = function(){
+        this.blur_radius = 2;
+        this.low_threshold = 20;
+        this.high_threshold = 50;
+      };
+      let options = new demo_opt();
+
       img_u8 = new jsfeat.matrix_t(480, 360, jsfeat.U8_t | jsfeat.C1_t);
       ii_sum = new Int32Array((w+1)*(h+1));
       ii_sqsum = new Int32Array((w+1)*(h+1));
@@ -38,12 +58,19 @@ export default class TakeImage extends React.Component {
       jsfeat.imgproc.grayscale(imageData.data, w, h, img_u8);
       console.log(classifier);
       jsfeat.imgproc.compute_integral_image(img_u8, ii_sum, ii_sqsum, classifier.tilted ? ii_tilted : null);
-
-      // jsfeat.haar.edges_density = 0.2;
-      // var rects = jsfeat.haar.detect_multi_scale(ii_sum, ii_sqsum, ii_tilted, options.use_canny? ii_canny : null, img_u8.cols, img_u8.rows, classifier, options.scale_factor, options.min_scale);
-      // rects = jsfeat.haar.group_rectangles(rects, 1);
-      // // draw only most confident one
-      // draw_faces(calcCtx, rects, 480/img_u8.cols, 1);
+      jsfeat.haar.edges_density = 0.2;
+      var rects = jsfeat.haar.detect_multi_scale(
+        ii_sum, ii_sqsum, ii_tilted,
+        options.use_canny? ii_canny : null,
+        img_u8.cols,
+        img_u8.rows,
+        classifier,
+        options.scale_factor,
+        options.min_scale
+      );
+      rects = jsfeat.haar.group_rectangles(rects, 1);
+      // draw only most confident one
+      draw_faces(calcCtx, rects, 480/img_u8.cols, 1);
     });
 
     function draw_faces(ctx, rects, sc, max) {
