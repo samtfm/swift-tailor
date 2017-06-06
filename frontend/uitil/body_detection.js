@@ -1,8 +1,8 @@
-export const DrawOutline = imageData => {
+export const detectOutlinePoints = imageData => {
   const rows = imageData.rows;
   const cols= imageData.cols;
 
-
+  const points = [];
   for (let y = 0; y < imageData.cols; y++) {
     //slice from start of collumn to end of row
     const column = imageData.data.slice(rows*cols, rows*cols+rows);
@@ -23,7 +23,8 @@ export const DrawOutline = imageData => {
         leftEdge = x; // reasign until edge of frame
       }
     }
+    points.push([leftEdge, y]);
+    points.push([rightEdge, y]);
   }
-
-  //TODO: THIS FUNCTION SHOULD RETURN SOMETHING
+  return points;
 };
