@@ -53,7 +53,7 @@ class Shirt extends React.Component{
 
   render(){
     return(
-      <div ref={(div) => { this.drawing = div;}}></div>
+      <div ref={(component) => { this.drawing = component;}}></div>
     );
   }
 }
