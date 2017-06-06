@@ -158,7 +158,7 @@ class Canny extends React.Component{
         <h1>hello world</h1>
         <video id="webcam" autoPlay="true" style={videoStyle}></video>
         <div style={divStyle}>
-          <canvas id="canvas" style={canvasStyle}></canvas>
+          <canvas id="canvas" width="640" height="480"></canvas>
             <div id="log" className="alert alert-info"></div>
         </div>
       </div>
