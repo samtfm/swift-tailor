@@ -52,23 +52,20 @@ var ring_buffer = (function() {
             this.begin = (this.begin+1)%this.arr_size;
             this.arr[this.end] = elem;
         }
-    }
+    };
 
     ring_buffer.prototype.get = function(i) {
         return this.arr[(this.begin+i)%this.arr_size];
-    }
+    };
 
     ring_buffer.prototype.size = function() {
         return this.num_el;
-    }
+    };
 
     return ring_buffer;
 
 })();
 
-const profiler = () => {
-    "use strict";
-    //
     var count_frames = 0;
     var ringbuff = new ring_buffer(20);
     function profiler() {
@@ -102,7 +99,7 @@ const profiler = () => {
             this.fps = size / sum * 1000;
             this.frame_timer.start();
         }
-    }
+    };
 
     profiler.prototype.find_task = function(subj) {
         var n = this.timers.length | 0;
@@ -114,17 +111,17 @@ const profiler = () => {
             }
         }
         return null;
-    }
+    };
 
     profiler.prototype.start = function(subj) {
         var task = this.find_task(subj);
         task[1].start();
-    }
+    };
 
     profiler.prototype.stop = function(subj) {
         var task = this.find_task(subj);
         task[1].stop();
-    }
+    };
 
     profiler.prototype.log = function() {
         var n = this.timers.length | 0;
@@ -135,9 +132,6 @@ const profiler = () => {
             str += "<br/>" + pair[0] + ": " + pair[1].get_runtime() + "ms";
         }
         return str;
-    }
-
-    return profiler;
-};
+    };
 
 export default profiler;
