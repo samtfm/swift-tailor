@@ -18,7 +18,40 @@ class Shirt extends React.Component{
     }, 200);
   }
 
+  calcShirtLines(chest, length, armHole, shoulders, neck){
+    const lines = [];
+
+    lines.push([
+      [neck/2, -5],
+      [shoulders/2, 0]
+    ]);
+    lines.push([
+      [`M${shoulders/2}`, 0],
+      [`C${chest/2-10}`, armHole],
+      [ chest/2, armHole],
+      [chest/2, armHole]
+    ]);
+    // lines.push([
+    //   [shoulders/2, 0],
+    //   [(shoulders+chest)/4 -5, armHole*.7],
+    //   [chest/2, armHole]
+    // ]);
+    lines.push([
+      [chest / 2, armHole],
+      [(chest / 2 + 5), length],
+      [-(chest / 2 + 5), length],
+      [-chest / 2, armHole]
+    ]);
+    lines.push([
+      [0,0],
+      [0,length]
+    ]);
+    return lines;
+  }
+
   drawShirt(draw, width){
+    const group = draw.group();
+
     // set up draw constant for svg.js
 
     // create points based on measurement
@@ -27,6 +60,20 @@ class Shirt extends React.Component{
      [width*.8, 100],
      [100, 150]
     ];
+    const lines = this.calcShirtLines(width, 200, 40, width*.9, 80);
+    lines.forEach(line => {
+      const pointString = line.map(pair => (
+       `${pair[0].toString()}, ${pair[1].toString()}`
+      )).join(' ');
+      // draw line from points
+      if (pointString[0].toLowerCase() === 'm'){
+        group.add(draw.path(pointString).fill('none').stroke({ width: 1 }));
+      } else {
+        group.add(draw.polyline(pointString).fill('none').stroke({ width: 1 }));
+
+      }
+    });
+    group.transform({x: 100, y: 80});
 
     // boil points into a happy little string "100,0 80,50 110,100"
     const pointString = points.map(pair => (
@@ -45,7 +92,6 @@ class Shirt extends React.Component{
 
     // important! group objects into single svg component
     // this allows it to be returned and then replaced
-    const group = draw.group();
     group.add(circle);
     group.add(line1);
     return group;
