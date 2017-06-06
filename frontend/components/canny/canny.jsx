@@ -6,12 +6,17 @@ import profiler from './profiler';
 class Canny extends React.Component{
   constructor(props){
     super(props);
+    this.state = {
+      imageTaken: false
+    };
   }
 
   componentDidMount(){
-    var video = document.getElementById('webcam');
 
-    var canvas = document.getElementById('canvas');
+    //This is all for video capturing, something we don't need in this section.
+    var video = document.getElementById('webcam');
+    var canvas = document.getElementById('canvasWebCanny');
+
     try {
         var attempts = 0;
         var readyListener = function(event) {
@@ -26,7 +31,7 @@ class Canny extends React.Component{
                     attempts++;
                     setTimeout(findVideoSize, 200);
                 } else {
-                    onDimensionsReady(640, 480);
+                    onDimensionsReady(480, 360);
                 }
             }
         };
@@ -58,9 +63,8 @@ class Canny extends React.Component{
         $('#no_rtc').html('<h4>Something goes wrong...</h4>');
         $('#no_rtc').show();
     }
-
+    //stat and gui loads the canny property values and toggle menu on to top right corner respectively
     var stat = new profiler();
-
     var gui,options,ctx,canvasWidth,canvasHeight;
     var img_u8;
 
@@ -78,7 +82,7 @@ class Canny extends React.Component{
         ctx.fillStyle = "rgb(0,255,0)";
         ctx.strokeStyle = "rgb(0,255,0)";
 
-        img_u8 = new jsfeat.matrix_t(640, 480, jsfeat.U8C1_t);
+        img_u8 = new jsfeat.matrix_t(480, 360, jsfeat.U8C1_t);
 
         options = new demo_opt();
         gui = new dat.GUI();
@@ -96,11 +100,11 @@ class Canny extends React.Component{
         compatibility.requestAnimationFrame(tick);
         stat.new_frame();
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            ctx.drawImage(video, 0, 0, 640, 480);
-            var imageData = ctx.getImageData(0, 0, 640, 480);
+            ctx.drawImage(video, 0, 0, 480, 360);
+            var imageData = ctx.getImageData(0, 0, 480, 360);
 
             stat.start("grayscale");
-            jsfeat.imgproc.grayscale(imageData.data, 640, 480, img_u8);
+            jsfeat.imgproc.grayscale(imageData.data, 480, 360, img_u8);
             stat.stop("grayscale");
 
             var r = options.blur_radius|0;
@@ -139,28 +143,19 @@ class Canny extends React.Component{
 
     let videoStyle = {
       display: 'none',
-      width: '640px',
-      height: '480px'
-    };
-    let divStyle = {
-      width: '640px',
-      height: '480px',
-      margin: '10px auto'
-    };
-
-    let canvasStyle = {
-      width: '640px',
-      height: '480px'
+      width: '480px',
+      height: '360px'
     };
 
     return (
       <div>
-        <h1>hello world</h1>
+        <h1>SECTION FOR CALCULATIONS</h1>
         <video id="webcam" autoPlay="true" style={videoStyle}></video>
-        <div style={divStyle}>
-          <canvas id="canvas" width="640" height="480"></canvas>
-            <div id="log" className="alert alert-info"></div>
-        </div>
+        <section className="calc-section">
+          <canvas id="canvasWebCanny" width="480" height="360"></canvas>
+          <canvas id="calcCanvas" width="480" height="360"></canvas>
+        </section>
+        <div id="log" className="alert alert-info"></div>
       </div>
     );
   }
