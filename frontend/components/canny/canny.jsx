@@ -3,166 +3,170 @@ import jsfeat from 'jsfeat';
 import compatibility from './compatibility';
 import profiler from './profiler';
 
-const CannyEdges = () => {
-  let columns = 640, rows = 480, data_type = jsfeat.U8_t | jsfeat.C1_t;
-  let my_matrix = new jsfeat.matrix_t(columns, rows, data_type);
+class Canny extends React.Component{
+  constructor(props){
+    super(props);
+  }
 
-  let videoStyle = {
-    display: 'none',
-    width: '640px',
-    height: '480px'
-  };
-  let divStyle = {
-    width: '640px',
-    height: '480px',
-    margin: '10px auto'
-  };
+  componentDidMount(){
+    var video = document.getElementById('webcam');
 
-  let canvasStyle = {
-    width: '640px',
-    height: '480px'
-  };
+    var canvas = document.getElementById('canvas');
+    try {
+        var attempts = 0;
+        var readyListener = function(event) {
+            findVideoSize();
+        };
+        var findVideoSize = function() {
+            if(video.videoWidth > 0 && video.videoHeight > 0) {
+                video.removeEventListener('loadeddata', readyListener);
+                onDimensionsReady(video.videoWidth, video.videoHeight);
+            } else {
+                if(attempts < 10) {
+                    attempts++;
+                    setTimeout(findVideoSize, 200);
+                } else {
+                    onDimensionsReady(640, 480);
+                }
+            }
+        };
+        var onDimensionsReady = function(width, height) {
+            demo_app(width, height);
+            compatibility.requestAnimationFrame(tick);
+        };
 
+        video.addEventListener('loadeddata', readyListener);
 
-  $(window).load(function() {
-      "use strict";
+        compatibility.getUserMedia({video: true}, function(stream) {
+            try {
+                video.src = compatibility.URL.createObjectURL(stream);
+            } catch (error) {
+                video.src = stream;
+            }
+            setTimeout(function() {
+                    video.play();
+                }, 500);
+        }, function (error) {
+            $('#canvas').hide();
+            $('#log').hide();
+            $('#no_rtc').html('<h4>WebRTC not available.</h4>');
+            $('#no_rtc').show();
+        });
+    } catch (error) {
+        $('#canvas').hide();
+        $('#log').hide();
+        $('#no_rtc').html('<h4>Something goes wrong...</h4>');
+        $('#no_rtc').show();
+    }
 
-      // lets do some fun
-      var video = document.getElementById('webcam');
-      var canvas = document.getElementById('canvas');
-      try {
-          var attempts = 0;
-          var readyListener = function(event) {
-              findVideoSize();
-          };
-          var findVideoSize = function() {
-              if(video.videoWidth > 0 && video.videoHeight > 0) {
-                  video.removeEventListener('loadeddata', readyListener);
-                  onDimensionsReady(video.videoWidth, video.videoHeight);
-              } else {
-                  if(attempts < 10) {
-                      attempts++;
-                      setTimeout(findVideoSize, 200);
-                  } else {
-                      onDimensionsReady(640, 480);
-                  }
-              }
-          };
-          var onDimensionsReady = function(width, height) {
-              demo_app(width, height);
-              compatibility.requestAnimationFrame(tick);
-          };
+    var stat = new profiler();
 
-          video.addEventListener('loadeddata', readyListener);
+    var gui,options,ctx,canvasWidth,canvasHeight;
+    var img_u8;
 
-          compatibility.getUserMedia({video: true}, function(stream) {
-              try {
-                  video.src = compatibility.URL.createObjectURL(stream);
-              } catch (error) {
-                  video.src = stream;
-              }
-              setTimeout(function() {
-                      video.play();
-                  }, 500);
-          }, function (error) {
-              $('#canvas').hide();
-              $('#log').hide();
-              $('#no_rtc').html('<h4>WebRTC not available.</h4>');
-              $('#no_rtc').show();
-          });
-      } catch (error) {
-          $('#canvas').hide();
-          $('#log').hide();
-          $('#no_rtc').html('<h4>Something goes wrong...</h4>');
-          $('#no_rtc').show();
-      }
+    var demo_opt = function(){
+        this.blur_radius = 2;
+        this.low_threshold = 20;
+        this.high_threshold = 50;
+    };
 
-      var stat = new profiler();
+    function demo_app(videoWidth, videoHeight) {
+        canvasWidth  = canvas.width;
+        canvasHeight = canvas.height;
+        ctx = canvas.getContext('2d');
 
-      var gui,options,ctx,canvasWidth,canvasHeight;
-      var img_u8;
+        ctx.fillStyle = "rgb(0,255,0)";
+        ctx.strokeStyle = "rgb(0,255,0)";
 
-      var demo_opt = function(){
-          this.blur_radius = 2;
-          this.low_threshold = 20;
-          this.high_threshold = 50;
-      };
+        img_u8 = new jsfeat.matrix_t(640, 480, jsfeat.U8C1_t);
 
-      function demo_app(videoWidth, videoHeight) {
-          canvasWidth  = canvas.width;
-          canvasHeight = canvas.height;
-          ctx = canvas.getContext('2d');
+        options = new demo_opt();
+        gui = new dat.GUI();
 
-          ctx.fillStyle = "rgb(0,255,0)";
-          ctx.strokeStyle = "rgb(0,255,0)";
+        gui.add(options, 'blur_radius', 0, 4).step(1);
+        gui.add(options, 'low_threshold', 1, 127).step(1);
+        gui.add(options, 'high_threshold', 1, 127).step(1);
 
-          img_u8 = new jsfeat.matrix_t(640, 480, jsfeat.U8C1_t);
+        stat.add("grayscale");
+        stat.add("gauss blur");
+        stat.add("canny edge");
+    }
 
-          options = new demo_opt();
-          gui = new dat.GUI();
+    function tick() {
+        compatibility.requestAnimationFrame(tick);
+        stat.new_frame();
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            ctx.drawImage(video, 0, 0, 640, 480);
+            var imageData = ctx.getImageData(0, 0, 640, 480);
 
-          gui.add(options, 'blur_radius', 0, 4).step(1);
-          gui.add(options, 'low_threshold', 1, 127).step(1);
-          gui.add(options, 'high_threshold', 1, 127).step(1);
+            stat.start("grayscale");
+            jsfeat.imgproc.grayscale(imageData.data, 640, 480, img_u8);
+            stat.stop("grayscale");
 
-          stat.add("grayscale");
-          stat.add("gauss blur");
-          stat.add("canny edge");
-      }
+            var r = options.blur_radius|0;
+            var kernel_size = (r+1) << 1;
 
-      function tick() {
-          compatibility.requestAnimationFrame(tick);
-          stat.new_frame();
-          if (video.readyState === video.HAVE_ENOUGH_DATA) {
-              ctx.drawImage(video, 0, 0, 640, 480);
-              var imageData = ctx.getImageData(0, 0, 640, 480);
+            stat.start("gauss blur");
+            jsfeat.imgproc.gaussian_blur(img_u8, img_u8, kernel_size, 0);
+            stat.stop("gauss blur");
 
-              stat.start("grayscale");
-              jsfeat.imgproc.grayscale(imageData.data, 640, 480, img_u8);
-              stat.stop("grayscale");
+            stat.start("canny edge");
+            jsfeat.imgproc.canny(img_u8, img_u8, options.low_threshold|0, options.high_threshold|0);
+            stat.stop("canny edge");
 
-              var r = options.blur_radius|0;
-              var kernel_size = (r+1) << 1;
+            // render result back to canvas
+            var data_u32 = new Uint32Array(imageData.data.buffer);
+            var alpha = (0xff << 24);
+            var i = img_u8.cols*img_u8.rows, pix = 0;
+            while(--i >= 0) {
+                pix = img_u8.data[i];
+                data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
+            }
 
-              stat.start("gauss blur");
-              jsfeat.imgproc.gaussian_blur(img_u8, img_u8, kernel_size, 0);
-              stat.stop("gauss blur");
+            ctx.putImageData(imageData, 0, 0);
 
-              stat.start("canny edge");
-              jsfeat.imgproc.canny(img_u8, img_u8, options.low_threshold|0, options.high_threshold|0);
-              stat.stop("canny edge");
+            $('#log').html(stat.log());
+        }
+    }
 
-              // render result back to canvas
-              var data_u32 = new Uint32Array(imageData.data.buffer);
-              var alpha = (0xff << 24);
-              var i = img_u8.cols*img_u8.rows, pix = 0;
-              while(--i >= 0) {
-                  pix = img_u8.data[i];
-                  data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
-              }
+    $(window).unload(function() {
+        video.pause();
+        video.src=null;
+    });
+  }
 
-              ctx.putImageData(imageData, 0, 0);
+  render(){
+    let columns = 640, rows = 480, data_type = jsfeat.U8_t | jsfeat.C1_t;
+    let my_matrix = new jsfeat.matrix_t(columns, rows, data_type);
 
-              $('#log').html(stat.log());
-          }
-      }
+    let videoStyle = {
+      display: 'none',
+      width: '640px',
+      height: '480px'
+    };
+    let divStyle = {
+      width: '640px',
+      height: '480px',
+      margin: '10px auto'
+    };
 
-      $(window).unload(function() {
-          video.pause();
-          video.src=null;
-      });
-  });
+    let canvasStyle = {
+      width: '640px',
+      height: '480px'
+    };
 
-  return (
-    <div>
-      <h1>hello world</h1>
-      <video id="webcam" style={videoStyle}></video>
-      <div style={divStyle}>
-        <canvas id="canvas" style={canvasStyle}></canvas>
+    return (
+      <div>
+        <h1>hello world</h1>
+        <video id="webcam" autoPlay="true" style={videoStyle}></video>
+        <div style={divStyle}>
+          <canvas id="canvas" style={canvasStyle}></canvas>
+            <div id="log" className="alert alert-info"></div>
+        </div>
       </div>
-    </div>
+    );
+  }
 
-  );
-};
+}
 
-export default CannyEdges;
+export default Canny;

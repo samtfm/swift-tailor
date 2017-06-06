@@ -66,7 +66,7 @@ var ring_buffer = (function() {
 
 })();
 
-var profiler = (function() {
+const profiler = () => {
     "use strict";
     //
     var count_frames = 0;
@@ -138,4 +138,6 @@ var profiler = (function() {
     }
 
     return profiler;
-})();
+};
+
+export default profiler;
