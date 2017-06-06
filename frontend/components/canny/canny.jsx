@@ -36,7 +36,7 @@ class Canny extends React.Component{
         };
 
         video.addEventListener('loadeddata', readyListener);
-
+        console.log(compatibility);
         compatibility.getUserMedia({video: true}, function(stream) {
             try {
                 video.src = compatibility.URL.createObjectURL(stream);
@@ -53,6 +53,7 @@ class Canny extends React.Component{
             $('#no_rtc').show();
         });
     } catch (error) {
+      console.log(error);
         $('#canvas').hide();
         $('#log').hide();
         $('#no_rtc').html('<h4>Something goes wrong...</h4>');
@@ -81,11 +82,11 @@ class Canny extends React.Component{
         img_u8 = new jsfeat.matrix_t(640, 480, jsfeat.U8C1_t);
 
         options = new demo_opt();
-        gui = new dat.GUI();
-
-        gui.add(options, 'blur_radius', 0, 4).step(1);
-        gui.add(options, 'low_threshold', 1, 127).step(1);
-        gui.add(options, 'high_threshold', 1, 127).step(1);
+        // gui = new dat.GUI();
+        //
+        // gui.add(options, 'blur_radius', 0, 4).step(1);
+        // gui.add(options, 'low_threshold', 1, 127).step(1);
+        // gui.add(options, 'high_threshold', 1, 127).step(1);
 
         stat.add("grayscale");
         stat.add("gauss blur");

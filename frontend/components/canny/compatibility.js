@@ -69,3 +69,5 @@ var compatibility = (function() {
         isLittleEndian: isLittleEndian
     };
 })();
+
+export default compatibility;
