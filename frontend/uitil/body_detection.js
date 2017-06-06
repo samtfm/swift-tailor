@@ -8,7 +8,8 @@ export const detectOutlinePoints = imageData => {
     const column = imageData.data.slice(rows*cols, rows*cols+rows);
 
 
-    let leftEdge, rightEdge;
+    let leftEdge = 0;
+    let rightEdge = 0;
     //check right edge
     for(let x = column.length/2; x < column.length; x++) {
       const value = imageData.data[x];
