@@ -37,10 +37,10 @@ export const detectOutlinePoints = imageData => {
 export const detectFace = (ctx, options) => {
   // Attempt to find face;
 
-  // ii_sum         - integral of the source image
-  // ii_sqsum       - squared integral of the source image
-  // ii_tilted      - tilted integral of the source image
-  // ii_canny_sum   - integral of canny source image or undefined
+  // iiSum         - integral of the source image
+  // iiSqsm       - squared integral of the source image
+  // iiTilted      - tilted integral of the source image
+  // iiCanny_sum   - integral of canny source image or undefined
   // width           - width of the source image
   // height          - height of the source image
   // classifier      - haar cascade classifier
@@ -51,26 +51,26 @@ export const detectFace = (ctx, options) => {
   let h = ctx.canvas.height;
   let classifier = faceClassifier;
   let imageData = ctx.getImageData(0, 0, w, h);
-  let img_u8 = new jsfeat.matrix_t(w, h, jsfeat.U8_t | jsfeat.C1_t);
-  let ii_sum = new Int32Array((w+1)*(h+1));
-  let ii_sqsum = new Int32Array((w+1)*(h+1));
-  let ii_tilted = new Int32Array((w+1)*(h+1));
-  let ii_canny = new Int32Array((w+1)*(h+1));
+  let imgU8 = new jsfeat.matrix_t(w, h, jsfeat.U8_t | jsfeat.C1_t);
+  let iiSum = new Int32Array((w+1)*(h+1));
+  let iiSqsm = new Int32Array((w+1)*(h+1));
+  let iiTilted = new Int32Array((w+1)*(h+1));
+  let iiCanny = new Int32Array((w+1)*(h+1));
 
-  jsfeat.imgproc.grayscale(imageData.data, w, h, img_u8);
+  jsfeat.imgproc.grayscale(imageData.data, w, h, imgU8);
   // console.log(classifier);
   jsfeat.imgproc.compute_integral_image(
-    img_u8,
-    ii_sum,
-    ii_sqsum,
-    classifier.tilted ? ii_tilted : null
+    imgU8,
+    iiSum,
+    iiSqsm,
+    classifier.tilted ? iiTilted : null
   );
   jsfeat.haar.edges_density = 0.2;
   var rects = jsfeat.haar.detect_multi_scale(
-    ii_sum, ii_sqsum, ii_tilted,
-    options.use_canny? ii_canny : null,
-    img_u8.cols,
-    img_u8.rows,
+    iiSum, iiSqsm, iiTilted,
+    options.use_canny? iiCanny : null,
+    imgU8.cols,
+    imgU8.rows,
     classifier,
     options.scale_factor,
     options.min_scale
@@ -78,7 +78,7 @@ export const detectFace = (ctx, options) => {
 
   // draw only most confident one
   rects = jsfeat.haar.group_rectangles(rects, 1);
-  let scale = w / img_u8.cols;
+  let scale = w / imgU8.cols;
   let face = getFace(ctx, rects, scale, 1);
   return {face, scale};
   // drawFace(ctx, face, scale);
@@ -115,27 +115,27 @@ export const drawFace = (ctx, r, sc) => {
 export const applyCanny = (ctx, options) => {
   let w = ctx.canvas.width;
   let h = ctx.canvas.height;
-  let img_u8 = new jsfeat.matrix_t(w, h, jsfeat.U8_t | jsfeat.C1_t);
+  let imgU8 = new jsfeat.matrix_t(w, h, jsfeat.U8_t | jsfeat.C1_t);
 
   stat.new_frame();
   // ctx.drawImage(video, 0, 0, canvasW, canvasH);
   var imageData = ctx.getImageData(0, 0, w, h);
 
   stat.start("grayscale");
-  jsfeat.imgproc.grayscale(imageData.data, w, h, img_u8);
+  jsfeat.imgproc.grayscale(imageData.data, w, h, imgU8);
   stat.stop("grayscale");
 
   var r = options.blur_radius|0;
   var kernel_size = (r+1) << 1;
 
   stat.start("gauss blur");
-  jsfeat.imgproc.gaussian_blur(img_u8, img_u8, kernel_size, 0);
+  jsfeat.imgproc.gaussian_blur(imgU8, imgU8, kernel_size, 0);
   stat.stop("gauss blur");
 
   stat.start("canny edge");
   jsfeat.imgproc.canny(
-    img_u8,
-    img_u8,
+    imgU8,
+    imgU8,
     options.low_threshold|0,
     options.high_threshold|0
   );
@@ -144,12 +144,12 @@ export const applyCanny = (ctx, options) => {
   // render result back to canvas
   var data_u32 = new Uint32Array(imageData.data.buffer);
   var alpha = (0xff << 24);
-  var i = img_u8.cols*img_u8.rows, pix = 0;
+  var i = imgU8.cols*imgU8.rows, pix = 0;
   while(--i >= 0) {
-      pix = img_u8.data[i];
+      pix = imgU8.data[i];
       data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
   }
 
   ctx.putImageData(imageData, 0, 0);
-  console.log(img_u8);
+  console.log(imgU8);
 };
