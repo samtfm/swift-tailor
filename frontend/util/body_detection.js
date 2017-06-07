@@ -19,8 +19,6 @@ export const detectOutlinePoints = (imageData, face) => {
       endPos: {x: Math.floor(face.x+face.width), y: y + 250 },
       direction: 1
     });
-
-  const rightPoints = traceLineDown(imageData, { x: Math.floor(face.x+face.width), y }, +1);
   return leftPoints.concat(rightPoints);
 };
 
