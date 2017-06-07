@@ -58,7 +58,6 @@ export const detectFace = (ctx, options) => {
   let iiCanny = new Int32Array((w+1)*(h+1));
 
   jsfeat.imgproc.grayscale(imageData.data, w, h, imgU8);
-  // console.log(classifier);
   jsfeat.imgproc.compute_integral_image(
     imgU8,
     iiSum,

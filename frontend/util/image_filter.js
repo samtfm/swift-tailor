@@ -40,6 +40,5 @@ export const applyCanny = (ctx, options, stat) => {
   }
 
   ctx.putImageData(imageData, 0, 0);
-  console.log(imgU8);
   return imgU8;
 };

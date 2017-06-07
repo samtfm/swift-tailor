@@ -56,7 +56,6 @@ export default class TakeImage extends React.Component {
       }
       let points = detectOutlinePoints(cannyData);
       calcCtx.fillStyle = '#0F0';
-      console.log(points);
       points.forEach(point => {
         calcCtx.fillRect(point[0],point[1], 2, 2);
       });
