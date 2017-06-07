@@ -3,26 +3,28 @@ import { faceClassifier } from './face_classifier';
 import { handClassifier } from './hand_classifier';
 
 export const detectOutlinePoints = (imageData, face) => {
+  console.log(face);
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
   const y = Math.floor(face.y + face.width/2);
   const leftPoints = traceLineDown(
     imageData,
     {
-      startPos: { x: Math.floor(face.x), y: y + 200 },
-      endPos: {x: Math.floor(face.x+face.width), y: y + 250},
+      startPos: { x: Math.floor(face.x), y },
+      endPos: {x: Math.floor(face.x), y},
       direction: 1
     });
   const rightPoints = traceLineDown(
     imageData,
     {
-      startPos: { x: Math.floor(face.x+face.width), y: y + 200 },
-      endPos: {x: Math.floor(face.x+face.width), y: y + 250 },
+      startPos: { x: Math.floor(face.x+face.width), y },
+      endPos: {x: Math.floor(face.x+face.width), y },
       direction: 1
     });
   return leftPoints.concat(rightPoints);
 };
 
 const traceLineDown = (imageData, {startPos, endPos, direction}) => {
+  console.log(startPos);
   direction = direction || 1;
   const height = imageData.rows;
   const width = imageData.cols;

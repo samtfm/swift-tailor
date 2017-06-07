@@ -57,7 +57,7 @@ export default class TakeImage extends React.Component {
       } catch(err){
         console.log("couldn't find a face");
       }
-      let points = detectOutlinePoints(cannyData);
+      let points = detectOutlinePoints(cannyData, faceBox.face);
       calcCtx.fillStyle = '#0F0';
       points.forEach(point => {
         calcCtx.fillRect(point[0],point[1], 2, 2);
