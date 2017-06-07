@@ -82,9 +82,9 @@ class Canny extends React.Component{
         ctx.strokeStyle = "rgb(0,255,0)";
 
         img_u8 = new jsfeat.matrix_t(videoW, videoH, jsfeat.U8C1_t);
-        // console.log(img_u8);
-        // console.log(jsfeat.U8C1_t, "U8C1_t");
+        console.log(img_u8);
         //not sure what U8C1_t is but it is a single channel data_type
+        // console.log(jsfeat.U8C1_t, "U8C1_t");
         options = new demo_opt();
         gui = new dat.GUI();
 

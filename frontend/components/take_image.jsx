@@ -1,5 +1,7 @@
 import React from 'react';
-import { detectFace, applyCanny, drawFace } from '../util/body_detection';
+import { detectFace, drawFace } from '../util/body_detection';
+import { applyCanny } from '../util/image_filter';
+import profiler from '../util/profiler';
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
 
@@ -17,13 +19,20 @@ export default class TakeImage extends React.Component {
       high_threshold: 50,
     };
 
+    let stat = new profiler();
+        stat.add("grayscale");
+        stat.add("gauss blur");
+        stat.add("canny edge");
+
+
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Not adding `{ audio: true }` since we only want video now
-        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        });
+      // Not adding `{ audio: true }` since we only want video now
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then( stream => {
+          video.src = window.URL.createObjectURL(stream);
+          video.play();
+      });
     }
     document.getElementById("snap").addEventListener("click", function() {
     	context.drawImage(video, 0, 0, canvasW, canvasH);
@@ -36,7 +45,7 @@ export default class TakeImage extends React.Component {
       // applyCanny applies canny to the canvas, duh...
       // drawFace draws the faceBox on the canvas after canny has been applied;
       let faceBox = detectFace(calcCtx, options);
-      applyCanny(calcCtx, options);
+      applyCanny(calcCtx, options, stat);
       drawFace(calcCtx, faceBox.face, faceBox.scale);
     });
   }
