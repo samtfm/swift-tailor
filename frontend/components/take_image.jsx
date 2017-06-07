@@ -102,21 +102,17 @@ export default class TakeImage extends React.Component {
     this.createVideo();
   }
 
-  afterOpenModal() {
-  }
+  afterOpenModal() {}
 
   closeModal() {
     window.localStream.getTracks().forEach((track) => {
       track.stop();
     });
-
     this.setState({modalIsOpen: false});
   }
 
 
   render(){
-
-
     return(
       <section>
 
@@ -145,8 +141,8 @@ export default class TakeImage extends React.Component {
 
         </Modal>
 
-        <h2>SECTION TO TAKE OR UPLOAD A PICTURE</h2>
         <section className="take-image-section">
+          <h2>(Step 1)   Lets take some pitures</h2>
           <button
             className='nav-button'
             onClick={this.openModal}
