@@ -2,6 +2,8 @@ import React from 'react';
 import jsfeat from 'jsfeat';
 import profiler from './canny/profiler';
 import { faceClassifier } from './canny/face_classifier';
+import {detectOutlinePoints} from '../util/body_detection';
+
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
 
@@ -42,7 +44,7 @@ export default class TakeImage extends React.Component {
       var img_u8, ii_sum, ii_sqsum, ii_tilted, ii_canny, w, h;
       w = calcCanvas.width;
       h = calcCanvas.height;
-      console.log(w,h);
+      // console.log(w,h);
       var classifier = faceClassifier;
       var imageData = calcCtx.getImageData(0, 0, w, h);
 
@@ -59,7 +61,7 @@ export default class TakeImage extends React.Component {
       ii_tilted = new Int32Array((w+1)*(h+1));
       ii_canny = new Int32Array((w+1)*(h+1));
       jsfeat.imgproc.grayscale(imageData.data, w, h, img_u8);
-      console.log(classifier);
+      // console.log(classifier);
       jsfeat.imgproc.compute_integral_image(img_u8, ii_sum, ii_sqsum, classifier.tilted ? ii_tilted : null);
       jsfeat.haar.edges_density = 0.2;
       var rects = jsfeat.haar.detect_multi_scale(
@@ -107,6 +109,8 @@ export default class TakeImage extends React.Component {
       jsfeat.imgproc.canny(img_u8, img_u8, options.low_threshold|0, options.high_threshold|0);
       stat.stop("canny edge");
 
+
+
       // render result back to canvas
       var data_u32 = new Uint32Array(imageData.data.buffer);
       var alpha = (0xff << 24);
@@ -117,7 +121,13 @@ export default class TakeImage extends React.Component {
       }
 
       ctx.putImageData(imageData, 0, 0);
-      console.log(img_u8);
+
+      // draw outlines!
+      const points = detectOutlinePoints(img_u8);
+      points.forEach(point => {
+        ctx.fillStyle="#00FF00";
+        ctx.fillRect(point[0],point[1],2,2);
+      });
     }
 
     function getFace(ctx, rects, sc, max) {
