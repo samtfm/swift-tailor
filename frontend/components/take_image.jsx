@@ -1,7 +1,10 @@
 import React from 'react';
+
 import { detectFace, drawFace } from '../util/body_detection';
 import { applyCanny } from '../util/image_filter';
 import profiler from '../util/profiler';
+import { detectOutlinePoints } from '../util/body_detection';
+
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
 
@@ -45,8 +48,18 @@ export default class TakeImage extends React.Component {
       // applyCanny applies canny to the canvas, duh...
       // drawFace draws the faceBox on the canvas after canny has been applied;
       let faceBox = detectFace(calcCtx, options);
-      applyCanny(calcCtx, options, stat);
-      drawFace(calcCtx, faceBox.face, faceBox.scale);
+      let cannyData = applyCanny(calcCtx, options, stat);
+      try{
+        drawFace(calcCtx, faceBox.face, faceBox.scale);
+      } catch(err){
+        console.log("couldn't find a face");
+      }
+      let points = detectOutlinePoints(cannyData);
+      calcCtx.fillStyle = '#0F0';
+      points.forEach(point => {
+        calcCtx.fillRect(point[0],point[1], 2, 2);
+      });
+
     });
   }
 

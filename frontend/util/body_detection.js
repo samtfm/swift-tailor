@@ -2,29 +2,30 @@ import jsfeat from 'jsfeat';
 import { faceClassifier } from './face_classifier';
 
 export const detectOutlinePoints = imageData => {
-  const rows = imageData.rows;
-  const cols = imageData.cols;
-
+  const height = imageData.rows;
+  const width = imageData.cols;
+  const mid = Math.floor(width*.5);
   const points = [];
-  for (let y = 0; y < rows; y++) {
-    //slice from start of collumn to end of row
-    const column = imageData.data.slice(rows*cols, rows*cols+rows);
-    const mid = Math.floor(column.length/2);
+  for (let y = 0; y < height; y++) {
 
+    //slice from start of collumn to end of row
+    const rowStart = y*width; // calculate start of row
+    const column = imageData.data.slice(rowStart, rowStart+width);
     let leftEdge = 0;
     let rightEdge = 0;
+
     //check right edge
-    for(let x = mid; x < cols; x++) {
-      const value = imageData.data[x];
+    for(let x = mid; x < width; x++) { // iterate from relative mid to edge
+      const value = parseInt(imageData.data[rowStart+x]); // add offset from prev rows
       if (value > 0) {
-        rightEdge = x;
+        rightEdge = x; // reasign until edge of frame
       }
     }
     //check for left edge
     for(let x = mid; x > 0; x--) {
-      const value = imageData.data[x];
+      const value = imageData.data[rowStart+x];
       if (value > 0) {
-        leftEdge = x; // reasign until edge of frame
+        leftEdge = x;
       }
     }
     points.push([leftEdge, y]);
@@ -57,7 +58,6 @@ export const detectFace = (ctx, options) => {
   let iiCanny = new Int32Array((w+1)*(h+1));
 
   jsfeat.imgproc.grayscale(imageData.data, w, h, imgU8);
-  // console.log(classifier);
   jsfeat.imgproc.compute_integral_image(
     imgU8,
     iiSum,
