@@ -1,7 +1,7 @@
 import React from 'react';
 import jsfeat from 'jsfeat';
-import compatibility from './compatibility';
-import profiler from './profiler';
+import compatibility from '../../util/compatibility';
+import profiler from '../../util/profiler';
 
 class Canny extends React.Component{
   constructor(props){
@@ -84,7 +84,7 @@ class Canny extends React.Component{
         img_u8 = new jsfeat.matrix_t(videoW, videoH, jsfeat.U8C1_t);
         console.log(img_u8);
         //not sure what U8C1_t is but it is a single channel data_type
-        console.log(jsfeat.U8C1_t, "U8C1_t");
+        // console.log(jsfeat.U8C1_t, "U8C1_t");
         options = new demo_opt();
         gui = new dat.GUI();
 
