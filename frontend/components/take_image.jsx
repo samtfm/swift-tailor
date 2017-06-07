@@ -45,10 +45,10 @@ export default class TakeImage extends React.Component {
       // applyCanny applies canny to the canvas, duh...
       // drawFace draws the faceBox on the canvas after canny has been applied;
       let faceBox = detectFace(calcCtx, options);
-      let handBox = detectHand(calcCtx, options);
+      // let handBox = detectHand(calcCtx, options);
       applyCanny(calcCtx, options, stat);
       drawFace(calcCtx, faceBox.face, faceBox.scale);
-      drawHand(calcCtx, handBox.hand, handBox.scale);
+      // drawHand(calcCtx, handBox.hand, handBox.scale);
     });
   }
 
