@@ -2,38 +2,71 @@ import jsfeat from 'jsfeat';
 import { faceClassifier } from './face_classifier';
 import { handClassifier } from './hand_classifier';
 
-export const detectOutlinePoints = imageData => {
+export const detectOutlinePoints = (imageData, face) => {
+  face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
+  const y = Math.floor(face.y + face.width/2);
+  const leftPoints = traceLineDown(
+    imageData,
+    {
+      startPos: { x: Math.floor(face.x), y: y + 200 },
+      endPos: {x: Math.floor(face.x+face.width), y: y + 250},
+      direction: 1
+    });
+  const rightPoints = traceLineDown(
+    imageData,
+    {
+      startPos: { x: Math.floor(face.x+face.width), y: y + 200 },
+      endPos: {x: Math.floor(face.x+face.width), y: y + 250 },
+      direction: 1
+    });
+
+  const rightPoints = traceLineDown(imageData, { x: Math.floor(face.x+face.width), y }, +1);
+  return leftPoints.concat(rightPoints);
+};
+
+const traceLineDown = (imageData, {startPos, endPos, direction}) => {
+  direction = direction || 1;
   const height = imageData.rows;
   const width = imageData.cols;
-  const mid = Math.floor(width*.5);
   const points = [];
-  for (let y = 0; y < height; y++) {
+  let tolerance = 2;
+
+  let prevEdge = startPos.x;
+  for (let y = startPos.y; y < height; y++) {
 
     //slice from start of collumn to end of row
     const rowStart = y*width; // calculate start of row
     const column = imageData.data.slice(rowStart, rowStart+width);
-    let leftEdge = 0;
-    let rightEdge = 0;
-
+    let edge;
     //check right edge
-    for(let x = mid; x < width; x++) { // iterate from relative mid to edge
+    // console.log(prevEdge, tolerance, direction);
+    for (let offset = -tolerance; offset < tolerance; offset++){
+      let x = prevEdge + offset*direction;
       const value = parseInt(imageData.data[rowStart+x]); // add offset from prev rows
       if (value > 0) {
-        rightEdge = x; // reasign until edge of frame
+        edge = x; // reasign until edge of frame
       }
     }
-    //check for left edge
-    for(let x = mid; x > 0; x--) {
-      const value = imageData.data[rowStart+x];
-      if (value > 0) {
-        leftEdge = x;
+    if (edge){
+      points.push([edge, y]);
+      tolerance = 2;
+      prevEdge = edge + (edge-prevEdge);
+    } else {
+      if (tolerance < 50) {
+        // try iteration again with a higher tolerance
+        tolerance = Math.ceil(tolerance*1.5);
+        y--;
+      } else {
+        //move on to next row.
+        edge = startPos.x;
+        tolerance = 50;
       }
     }
-    points.push([leftEdge, y]);
-    points.push([rightEdge, y]);
   }
   return points;
 };
+
+
 
 export const detectFace = (ctx, options) => {
   // Attempt to find face;
@@ -102,8 +135,8 @@ function getFace(ctx, rects, sc, max) {
 
 export const drawFace = (ctx, r, sc) => {
   ctx.strokeStyle="white";
-  ctx.lineWidth="10";
-  ctx.strokeRect((r.x*sc)|0,(r.y*sc)|0,(r.width*sc)|0,(r.height*sc)|0);
+  ctx.lineWidth="2";
+  return ctx.strokeRect((r.x*sc)|0,(r.y*sc)|0,(r.width*sc)|0,(r.height*sc)|0);
 };
 
 // export const detectHand = (ctx, options) => {

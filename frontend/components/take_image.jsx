@@ -38,6 +38,8 @@ export default class TakeImage extends React.Component {
       });
     }
     document.getElementById("snap").addEventListener("click", function() {
+      setTimeout(() => {
+
     	context.drawImage(video, 0, 0, canvasW, canvasH);
       //Copies the picture canvas translates to the calculation canvas
       let calcCanvas = document.getElementById('calcCanvas');
@@ -54,14 +56,16 @@ export default class TakeImage extends React.Component {
       let cannyData = applyCanny(calcCtx, options, stat);
       try{
         drawFace(calcCtx, faceBox.face, faceBox.scale);
+        console.log(faceBox);
       } catch(err){
         console.log("couldn't find a face");
       }
-      let points = detectOutlinePoints(cannyData);
+      let points = detectOutlinePoints(cannyData, faceBox.face);
       calcCtx.fillStyle = '#0F0';
       points.forEach(point => {
         calcCtx.fillRect(point[0],point[1], 2, 2);
       });
+    }, 2000);
     });
   }
 
