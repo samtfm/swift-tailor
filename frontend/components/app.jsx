@@ -1,14 +1,14 @@
 import React from 'react';
-import Shirt from './shirt';
-import TakeImage from './take_image';
-import Canny from './canny/canny';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import Home from './home';
+import Fit from './fit';
 
 const App = () => (
   <div>
-    Hey Internet, let's style some clothes
-    <TakeImage />
-    <Canny />
-    <Shirt />
+    <Switch>
+      <Route path="/fit" component={ Fit } />
+      <Route path="/" component={ Home } />
+    </Switch>
   </div>
 );
 

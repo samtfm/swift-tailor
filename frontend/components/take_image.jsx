@@ -1,5 +1,5 @@
 import React from 'react';
-import { detectFace, drawFace } from '../util/body_detection';
+import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
 import { applyCanny } from '../util/image_filter';
 import profiler from '../util/profiler';
 // import { test } from './canny/test';
@@ -45,8 +45,10 @@ export default class TakeImage extends React.Component {
       // applyCanny applies canny to the canvas, duh...
       // drawFace draws the faceBox on the canvas after canny has been applied;
       let faceBox = detectFace(calcCtx, options);
+      let handBox = detectHand(calcCtx, options);
       applyCanny(calcCtx, options, stat);
       drawFace(calcCtx, faceBox.face, faceBox.scale);
+      drawHand(calcCtx, handBox.hand, handBox.scale);
     });
   }
 
