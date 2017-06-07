@@ -10,6 +10,7 @@
   padding: 10px;
   width: 50%;
   align-items: center;
+  outline: none;
 }
 .modal-close-button {
   float: right;
@@ -29,6 +30,7 @@
   right: 0;
   bottom: 0;
   background: transparentize(black, 0.3);
+  outline: none;
 }
 
 .menu {
