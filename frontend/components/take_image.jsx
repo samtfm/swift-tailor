@@ -1,4 +1,5 @@
 import React from 'react';
+import Modal from 'react-modal';
 import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
 
 import { applyCanny } from '../util/image_filter';
@@ -7,14 +8,8 @@ import { detectOutlinePoints } from '../util/body_detection';
 
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
-
-  componentDidMount(){
-    // Grab elements, create settings, etc.
-    let canvas = document.getElementById('canvas-pic');
-    let canvasW = canvas.width;
-    let canvasH = canvas.height;
-    let video = document.getElementById('video');
-    let context = canvas.getContext('2d');
+  constructor(props){
+    super(props);
 
     let options = {
       blur_radius: 2,
@@ -23,21 +18,59 @@ export default class TakeImage extends React.Component {
     };
 
     let stat = new profiler();
-        stat.add("grayscale");
-        stat.add("gauss blur");
-        stat.add("canny edge");
+    stat.add("grayscale");
+    stat.add("gauss blur");
+    stat.add("canny edge");
 
+    this.state={
+      options,
+      stat,
+      modalIsOpen: false,
+    };
+
+    this.openModal = this.openModal.bind(this);
+    this.afterOpenModal = this.afterOpenModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.createVideo = this.createVideo.bind(this);
+    this.snapPicture = this.snapPicture.bind(this);
+  }
+
+  componentWillMount(){
+    Modal.setAppElement('body');
+  }
+
+  createVideo(){
+    // Grab elements, create settings, etc.
+    let canvas = document.getElementById('canvas-pic');
+    let canvasW = canvas.width;
+    let canvasH = canvas.height;
+    let video;
+    let context = canvas.getContext('2d');
 
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       // Not adding `{ audio: true }` since we only want video now
       navigator.mediaDevices.getUserMedia({ video: true })
         .then( stream => {
+          window.localStream = stream;
+          video = document.getElementById('video');
           video.src = window.URL.createObjectURL(stream);
           video.play();
       });
     }
-    document.getElementById("snap").addEventListener("click", function() {
+    this.setState({
+      canvas,
+      canvasW,
+      canvasH,
+      context
+    });
+  }
+
+  snapPicture(delay){
+    return () => { setTimeout(() =>{
+      let { canvas, canvasW, canvasH, context, options, stat } = this.state;
+      let video = document.getElementById('video');
+
     	context.drawImage(video, 0, 0, canvasW, canvasH);
       //Copies the picture canvas translates to the calculation canvas
       let calcCanvas = document.getElementById('calcCanvas');
@@ -51,7 +84,7 @@ export default class TakeImage extends React.Component {
 
       // let handBox = detectHand(calcCtx, options);
       // drawHand(calcCtx, handBox.hand, handBox.scale);
-      let cannyData = applyCanny(calcCtx, options, stat);
+      let cannyData = applyCanny(calcCtx, options, this.state.stat);
       try{
         drawFace(calcCtx, faceBox.face, faceBox.scale);
       } catch(err){
@@ -62,18 +95,70 @@ export default class TakeImage extends React.Component {
       points.forEach(point => {
         calcCtx.fillRect(point[0],point[1], 2, 2);
       });
-    });
+    }, delay);};
+  }
+  openModal() {
+    this.setState({ modalIsOpen: true});
+    this.createVideo();
   }
 
+  afterOpenModal() {
+  }
+
+  closeModal() {
+    window.localStream.getTracks().forEach((track) => {
+      track.stop();
+    });
+
+    this.setState({modalIsOpen: false});
+  }
+
+
   render(){
+
+
     return(
       <section>
+
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={this.state.modalIsOpen}
+          onAfterOpen={this.afterOpenModal}
+          onRequestClose={this.closeModal}
+          contentLabel="CameraModal">
+
+          <h2>Lets take a picture</h2>
+          <video id="video" width="480" height="360" autoPlay></video>
+          <button
+            id="snap"
+            onClick={this.snapPicture(0)}>Snap Photo
+          </button>
+          <button
+            id="snap"
+            onClick={this.snapPicture(2000)}>Snap Delay Photo
+          </button>
+          <button
+            className="modal-close-button"
+            onClick={this.closeModal}>x
+          </button>
+
+        </Modal>
+
         <h2>SECTION TO TAKE OR UPLOAD A PICTURE</h2>
         <section className="take-image-section">
-          <video id="video" width="480" height="360" autoPlay></video>
+          <button
+            className='nav-button'
+            onClick={this.openModal}
+            >Take a Picture
+          </button>
+
+        </section>
+        <section className="calc-section">
+          <h1>SECTION FOR CALCULATIONS</h1>
+          <canvas id="calcCanvas" width="480" height="360"></canvas>
           <canvas id="canvas-pic" width="480" height="360"></canvas>
         </section>
-        <button id="snap">Snap Photo</button>
       </section>
     );
   }

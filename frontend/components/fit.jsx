@@ -11,7 +11,6 @@ export default class Fit extends React.Component {
     return(
       <section>
         <TakeImage />
-        <Canny />
         <Shirt />
       </section>
     );
