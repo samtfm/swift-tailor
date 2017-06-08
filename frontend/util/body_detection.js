@@ -21,11 +21,11 @@ export const detectOutlinePoints = (imageData, face) => {
       endPos: {x: Math.floor(face.x+face.width), y: y+face.width },
       direction: 1
     });
-
+  
   return leftPoints.concat(rightPoints);
 };
 
-const detectRegion = (imageData, box) => {
+const measureWidth = (imageData, box) => {
   // const height = imageData.rows;
   const y = Math.floor(box.y);
   const x = Math.floor(box.x);
@@ -45,9 +45,40 @@ const detectRegion = (imageData, box) => {
       endPos: {x: x + width, y: y + height},
       direction: 1
     });
+
+  let leftSum = 0;
+  let leftMax = null;
+  let leftMin = null;
+  leftPoints.forEach(point => {
+    leftSum += point.x;
+    if (leftMax === null || point.x > leftMax){
+      leftMax = point.x;
+    }
+    if (leftMin === null || point.x < leftMin){
+      leftMin = point.x;
+    }
+  });
+  const leftAvg = leftSum/leftPoints.length;
+
+  let rightSum = 0;
+  let rightMax = null;
+  let rightMin = null;
+  leftPoints.forEach(point => {
+    rightSum += point.x;
+    if (rightMax === null || point.x > rightMax){
+      rightMax = point.x;
+    }
+    if (rightMin === null || point.x < rightMin){
+      rightMin = point.x;
+    }
+  });
+  const rightAvg = rightSum/leftPoints.length;
+
   return {
     points: leftPoints.concat(rightPoints),
-    mininum: 6
+    average: rightAvg - leftAvg,
+    mininum: rightMin - leftMax,
+    maximum: rightMax - leftMin
   };
 };
 
