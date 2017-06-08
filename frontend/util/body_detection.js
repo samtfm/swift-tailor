@@ -21,7 +21,17 @@ export const detectOutlinePoints = (imageData, face) => {
       endPos: {x: Math.floor(face.x+face.width), y: y+face.width },
       direction: 1
     });
-  
+
+  const arms = measureWingspan(imageData, face);
+
+  const chest = measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + arms.wingspan*.27),
+    width: face.width*2,
+    height: arms.wingspan*.1
+  });
+  console.log(chest);
+  return chest.points.concat(arms.points);
   return leftPoints.concat(rightPoints);
 };
 
@@ -73,7 +83,7 @@ const measureWidth = (imageData, box) => {
     }
   });
   const rightAvg = rightSum/leftPoints.length;
-
+  console.log(leftPoints);
   return {
     points: leftPoints.concat(rightPoints),
     average: rightAvg - leftAvg,
