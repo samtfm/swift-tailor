@@ -3,28 +3,28 @@ import { faceClassifier } from './face_classifier';
 import { handClassifier } from './upperbody';
 
 export const detectOutlinePoints = (imageData, face) => {
-  console.log(face);
-  const height = imageData.rows;
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
-  const y = Math.floor(face.y + face.width/2);
-  const leftPoints = traceLineDown(
-    imageData,
-    {
-      startPos: { x: Math.floor(face.x), y: y},
-      endPos: {x: Math.floor(face.x), y: y+face.width },
-      direction: -1
-    });
-  const rightPoints = traceLineDown(
-    imageData,
-    {
-      startPos: { x: Math.floor(face.x+face.width), y },
-      endPos: {x: Math.floor(face.x+face.width), y: y+face.width },
-      direction: 1
-    });
-  return leftPoints.concat(rightPoints);
+
+  const arms = measureWingspan(imageData, face);
+
+  const neck = measureWidth(imageData, {
+    x: Math.floor(face.x + face.width*.1),
+    y: Math.floor(face.y + face.width*1.2),
+    width: Math.floor(face.width*.8),
+    height: Math.floor(face.width*.3)
+  });
+  const chest = measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + arms.wingspan*.26),
+    width: face.width*2,
+    height: arms.wingspan*.05
+  });
+  console.log(neck);
+  console.log(chest);
+  return chest.points.concat(arms.points).concat(neck.points);
 };
 
-const detectRegion = (imageData, box) => {
+const measureWidth = (imageData, box) => {
   // const height = imageData.rows;
   const y = Math.floor(box.y);
   const x = Math.floor(box.x);
@@ -44,14 +44,44 @@ const detectRegion = (imageData, box) => {
       endPos: {x: x + width, y: y + height},
       direction: 1
     });
+
+  let leftSum = 0;
+  let leftMax = null;
+  let leftMin = null;
+  leftPoints.forEach(point => {
+    leftSum += point.x;
+    if (leftMax === null || point.x > leftMax){
+      leftMax = point.x;
+    }
+    if (leftMin === null || point.x < leftMin){
+      leftMin = point.x;
+    }
+  });
+  const leftAvg = leftSum/leftPoints.length;
+
+  let rightSum = 0;
+  let rightMax = null;
+  let rightMin = null;
+  rightPoints.forEach(point => {
+    rightSum += point.x;
+    if (rightMax === null || point.x > rightMax){
+      rightMax = point.x;
+    }
+    if (rightMin === null || point.x < rightMin){
+      rightMin = point.x;
+    }
+  });
+  const rightAvg = rightSum/rightPoints.length;
+  console.log(leftMin, rightMin, leftMax, rightMax, leftAvg, rightAvg);
   return {
     points: leftPoints.concat(rightPoints),
-    mininum: 6
+    average: rightAvg - leftAvg,
+    mininum: rightMin - leftMax,
+    maximum: rightMax - leftMin
   };
 };
 
 const traceLineDown = (imageData, {startPos, endPos, direction}) => {
-  console.log(startPos);
   direction = direction || 1;
   const height = imageData.rows;
   const width = imageData.cols;
@@ -63,10 +93,8 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
 
     //slice from start of collumn to end of row
     const rowStart = y*width; // calculate start of row
-    const column = imageData.data.slice(rowStart, rowStart+width);
     let edge;
     //check right edge
-    // console.log(prevEdge, tolerance, direction);
     for (let offset = -tolerance; offset < tolerance; offset++){
       let x = prevEdge + offset*direction;
       const value = parseInt(imageData.data[rowStart+x]); // add offset from prev rows
@@ -75,7 +103,7 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
       }
     }
     if (edge){
-      points.push([edge, y]);
+      points.push({x: edge, y});
       tolerance = 5;
       prevEdge = edge + Math.floor((edge-prevEdge)/2);
     } else {
@@ -93,7 +121,52 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
   return points;
 };
 
+export const measureWingspan = (imageData, face) => {
+  const DROPOFF_THRESHOLD = 40;
+  const height = imageData.rows;
+  const width = imageData.cols;
+  const mid = Math.floor(face.x+face.width*.5);
+  const points = [];
+  let tolerance = 5;
+  let prevEdge = Math.floor(face.y+face.width*1.6);
+  for (let x = Math.floor(mid+face.width); x < width; x++ ){
 
+    let edge;
+    for (let offset = -tolerance; offset < tolerance; offset++){
+      const y = prevEdge + offset;
+      const value = parseInt(imageData.data[y*width+x]); // add offset from prev rows
+      if (value > 0) {
+        edge = y;
+        break; // return at first value
+      }
+    }
+    if (edge){
+      tolerance = 5;
+      points.push({ x, y: edge });
+      prevEdge = edge + Math.floor((edge-prevEdge)/2); //predict trend
+    } else {
+      if (tolerance < DROPOFF_THRESHOLD) {
+        // try iteration again with a higher tolerance
+        tolerance = Math.ceil(tolerance*1.5);
+        x--;
+      } else if (x - mid > face.width*2.5) {
+        // 40px drop is
+        return {
+          wingspan: (x - mid) * 2,
+          points: points
+        };
+      } else {
+        //move on to next collumn.
+        edge = Math.floor(face.y+face.width*1.6);
+        tolerance = DROPOFF_THRESHOLD;
+      }
+    }
+  }
+  return {
+    wingspan: null,
+    points: points
+  };
+};
 
 export const detectFace = (ctx, options) => {
   // Attempt to find face;
@@ -190,7 +263,6 @@ export const detectHand = (ctx, options) => {
   let iiCanny = new Int32Array((w+1)*(h+1));
 
   jsfeat.imgproc.grayscale(imageData.data, w, h, imgU8);
-  // console.log(classifier);
   jsfeat.imgproc.compute_integral_image(
     imgU8,
     iiSum,
