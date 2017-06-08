@@ -21,6 +21,8 @@ export const detectOutlinePoints = (imageData, face) => {
       endPos: {x: Math.floor(face.x+face.width), y: y+face.width },
       direction: 1
     });
+
+  return measureWingspan(imageData, face);
   return leftPoints.concat(rightPoints);
 };
 
@@ -63,7 +65,6 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
 
     //slice from start of collumn to end of row
     const rowStart = y*width; // calculate start of row
-    const column = imageData.data.slice(rowStart, rowStart+width);
     let edge;
     //check right edge
     // console.log(prevEdge, tolerance, direction);
@@ -93,7 +94,46 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
   return points;
 };
 
+const measureWingspan = (imageData, face) => {
+  const height = imageData.rows;
+  const width = imageData.cols;
+  const mid = Math.floor(face.x+face.width*.5);
+  const points = [];
+  let tolerance = 5;
+  let prevEdge = Math.floor(face.y+face.width);
+  for (let x = Math.floor(mid+face.width); x < width; x++ ){
 
+    let edge;
+    for (let offset = -tolerance; offset < tolerance; offset++){
+      const y = prevEdge + offset;
+      const value = parseInt(imageData.data[y*width+x]); // add offset from prev rows
+      if (value > 0) {
+        edge = y;
+        break; // return at first value
+      }
+    }
+    if (edge){
+      tolerance = 5;
+      points.push([x,edge]);
+      prevEdge = edge + Math.floor((edge-prevEdge)/2); //predict trend
+    } else {
+      if (tolerance < 40) {
+        // try iteration again with a higher tolerance
+        tolerance = Math.ceil(tolerance*1.5);
+        x--;
+      } else if (x - mid > face.width*2.5) {
+        // return (x - mid) * 2;
+        console.log((x - mid) * 2);
+        return points;
+      } else {
+        //move on to next collumn.
+        edge = Math.floor(face.y+face.width*1.5);
+        tolerance = 50;
+      }
+    }
+  }
+  return points;
+};
 
 export const detectFace = (ctx, options) => {
   // Attempt to find face;
