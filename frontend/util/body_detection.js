@@ -94,13 +94,13 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
   return points;
 };
 
-const measureWingspan = (imageData, face) => {
+export const measureWingspan = (imageData, face) => {
   const height = imageData.rows;
   const width = imageData.cols;
   const mid = Math.floor(face.x+face.width*.5);
   const points = [];
   let tolerance = 5;
-  let prevEdge = Math.floor(face.y+face.width);
+  let prevEdge = Math.floor(face.y+face.width*1.6);
   for (let x = Math.floor(mid+face.width); x < width; x++ ){
 
     let edge;
@@ -127,7 +127,7 @@ const measureWingspan = (imageData, face) => {
         return points;
       } else {
         //move on to next collumn.
-        edge = Math.floor(face.y+face.width*1.5);
+        edge = Math.floor(face.y+face.width*1.6);
         tolerance = 50;
       }
     }
