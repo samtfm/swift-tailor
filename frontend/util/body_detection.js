@@ -3,7 +3,6 @@ import { faceClassifier } from './face_classifier';
 import { handClassifier } from './upperbody';
 
 export const detectOutlinePoints = (imageData, face) => {
-  console.log(face);
   const height = imageData.rows;
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
   const y = Math.floor(face.y + face.width/2);
@@ -83,7 +82,6 @@ const measureWidth = (imageData, box) => {
     }
   });
   const rightAvg = rightSum/leftPoints.length;
-  console.log(leftPoints);
   return {
     points: leftPoints.concat(rightPoints),
     average: rightAvg - leftAvg,
@@ -93,7 +91,6 @@ const measureWidth = (imageData, box) => {
 };
 
 const traceLineDown = (imageData, {startPos, endPos, direction}) => {
-  console.log(startPos);
   direction = direction || 1;
   const height = imageData.rows;
   const width = imageData.cols;
@@ -107,7 +104,6 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
     const rowStart = y*width; // calculate start of row
     let edge;
     //check right edge
-    // console.log(prevEdge, tolerance, direction);
     for (let offset = -tolerance; offset < tolerance; offset++){
       let x = prevEdge + offset*direction;
       const value = parseInt(imageData.data[rowStart+x]); // add offset from prev rows
@@ -276,7 +272,6 @@ export const detectHand = (ctx, options) => {
   let iiCanny = new Int32Array((w+1)*(h+1));
 
   jsfeat.imgproc.grayscale(imageData.data, w, h, imgU8);
-  // console.log(classifier);
   jsfeat.imgproc.compute_integral_image(
     imgU8,
     iiSum,
