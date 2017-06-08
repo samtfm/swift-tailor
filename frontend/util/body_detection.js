@@ -11,7 +11,7 @@ export const detectOutlinePoints = (imageData, face) => {
     x: Math.floor(face.x + face.width*.1),
     y: Math.floor(face.y + face.width*1.05),
     width: Math.floor(face.width*.8),
-    height: Math.floor(face.width*.1)
+    height: Math.floor(face.width*.2)
   });
   const chest = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
