@@ -22,7 +22,6 @@ export const detectOutlinePoints = (imageData, face) => {
       direction: 1
     });
 
-  return measureWingspan(imageData, face);
   return leftPoints.concat(rightPoints);
 };
 
@@ -95,6 +94,7 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
 };
 
 export const measureWingspan = (imageData, face) => {
+  const DROPOFF_THRESHOLD = 40;
   const height = imageData.rows;
   const width = imageData.cols;
   const mid = Math.floor(face.x+face.width*.5);
@@ -117,22 +117,27 @@ export const measureWingspan = (imageData, face) => {
       points.push([x,edge]);
       prevEdge = edge + Math.floor((edge-prevEdge)/2); //predict trend
     } else {
-      if (tolerance < 40) {
+      if (tolerance < DROPOFF_THRESHOLD) {
         // try iteration again with a higher tolerance
         tolerance = Math.ceil(tolerance*1.5);
         x--;
       } else if (x - mid > face.width*2.5) {
-        // return (x - mid) * 2;
-        console.log((x - mid) * 2);
-        return points;
+        // 40px drop is
+        return {
+          wingspan: (x - mid) * 2,
+          points: points
+        };
       } else {
         //move on to next collumn.
         edge = Math.floor(face.y+face.width*1.6);
-        tolerance = 50;
+        tolerance = DROPOFF_THRESHOLD;
       }
     }
   }
-  return points;
+  return {
+    wingspan: null,
+    points: points
+  };
 };
 
 export const detectFace = (ctx, options) => {
