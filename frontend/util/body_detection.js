@@ -116,7 +116,7 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
       }
     }
     if (edge){
-      points.push([edge, y]);
+      points.push({x: edge, y});
       tolerance = 5;
       prevEdge = edge + Math.floor((edge-prevEdge)/2);
     } else {
@@ -155,7 +155,7 @@ export const measureWingspan = (imageData, face) => {
     }
     if (edge){
       tolerance = 5;
-      points.push([x,edge]);
+      points.push({ x, y: edge });
       prevEdge = edge + Math.floor((edge-prevEdge)/2); //predict trend
     } else {
       if (tolerance < DROPOFF_THRESHOLD) {
