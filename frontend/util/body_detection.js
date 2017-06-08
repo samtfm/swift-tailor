@@ -9,7 +9,7 @@ export const detectOutlinePoints = (imageData, face) => {
 
   const neck = measureWidth(imageData, {
     x: Math.floor(face.x + face.width*.1),
-    y: Math.floor(face.y + face.width*1.15),
+    y: Math.floor(face.y + face.width*1.05),
     width: Math.floor(face.width*.8),
     height: Math.floor(face.width*.1)
   });
@@ -149,8 +149,9 @@ export const measureWingspan = (imageData, face) => {
         // x--;
       } else if (x - mid > face.width*2.5) {
         // 40px drop is
+        const last = points[points.length-1] || {};
         return {
-          wingspan: (points[points.length-1].x - mid) * 2,
+          wingspan: last.x ? (last.x - mid) * 2 : null,
           points: points
         };
       } else {
