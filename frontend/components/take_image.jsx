@@ -39,6 +39,16 @@ export default class TakeImage extends React.Component {
     Modal.setAppElement('body');
   }
 
+  componentDidMount(){
+    this.createVideo();
+    setInterval(()=>{
+      this.snapPicture(0)();
+    },500);
+  }
+  componentWillUnmount(){
+    this.closeModal();
+  }
+
   createVideo(){
     // Grab elements, create settings, etc.
     let canvas = document.getElementById('canvas-pic');
@@ -94,7 +104,9 @@ export default class TakeImage extends React.Component {
       }
       let measurements = detectOutlinePoints(cannyData, faceBox.face);
       calcCtx.fillStyle = '#0F0';
-      this.setState({measurements: measurements });
+      if (measurements.arms.wingspan) {
+        this.setState({measurements: measurements });
+      }
       for (let part in measurements) {
         if (measurements[part].points) {
           measurements[part].points.forEach(point => {
@@ -107,6 +119,9 @@ export default class TakeImage extends React.Component {
   openModal() {
     this.setState({ modalIsOpen: true});
     this.createVideo();
+    setInterval(()=>{
+      this.snapPicture(0)();
+    },100);
   }
 
   afterOpenModal() {}
@@ -122,6 +137,7 @@ export default class TakeImage extends React.Component {
   render(){
     return(
       <section>
+        <video id="video" width="480" height="360" autoPlay></video>
 
         <Modal
           className='modal'
