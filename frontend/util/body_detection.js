@@ -89,7 +89,7 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
   let tolerance = 5;
 
   let prevEdge = startPos.x;
-  for (let y = startPos.ygit; y < endPos.y; y++) {
+  for (let y = startPos.y; y < endPos.y; y++) {
 
     //slice from start of collumn to end of row
     const rowStart = y*width; // calculate start of row
