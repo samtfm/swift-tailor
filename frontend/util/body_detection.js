@@ -19,7 +19,7 @@ export const detectOutlinePoints = (imageData, face) => {
     width: face.width*2,
     height: arms.wingspan*.05
   });
-  return { arms, neck, chest,  };
+  return { arms, neck, chest };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
