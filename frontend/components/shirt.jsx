@@ -4,23 +4,25 @@ import SVG from 'svg.js';
 class Shirt extends React.Component{
 
   componentDidMount(){
-    const draw = SVG(this.drawing).size(300,300);
+    const draw = SVG(this.drawing).size(500,500);
     this.last = this.drawShirt(draw);
   }
 
   componentDidUpdate(){
-    const draw = SVG(this.drawing).size(300,300);
+    const draw = SVG(this.drawing).size(500,500);
 
     this.last = this.last ?
       this.last.replace(this.drawShirt(draw)) :
       this.drawShirt(draw);
   }
-  calcShirtLines(chest, length, armHole, shoulders, neck){
+  calcShirtLines(chest, length, armHole, shoulders, neck, waist){
     const lines = [];
+    //shoulder line
     lines.push([
       [neck/2, -5],
       [shoulders/2, 0]
     ]);
+    //sleeve curve
     lines.push([
       [`M${shoulders/2}`, 0],
       [`C${chest/2-10}`, armHole],
@@ -34,8 +36,8 @@ class Shirt extends React.Component{
     // ]);
     lines.push([
       [chest / 2, armHole],
-      [(chest / 2 + 5), length],
-      [-(chest / 2 + 5), length],
+      [(waist/2), length],
+      [-(waist/2), length],
       [-chest / 2, armHole]
     ]);
     lines.push([
@@ -50,17 +52,18 @@ class Shirt extends React.Component{
 
     // set up draw constant for svg.js
     if (!this.props.measurements) return group;
-    let {arms, neck, chest } = this.props.measurements;
+    let {arms, neck, chest, waist } = this.props.measurements;
     const pixelHeight = arms.wingspan * 0.98;
-    const height = 200;
+    const height = 600;
     const factor = height/pixelHeight;
-    const chestWidth = chest.average*factor;
+    const chestWidth = chest.average * factor;
+    const waistWidth = waist.maximum * factor;
     const shirtLength = arms.wingspan * 0.4 * factor;
     const shoulderWidth = chest.average * 0.9 * factor;
     const neckWidth = neck.mininum * factor;
-    const armHole = shirtLength*.3;
+    const armHole = shirtLength*.25;
     if (!(arms && neck && chest)) return group;
-    const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth);
+    const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth, waistWidth);
     lines.forEach(line => {
       const pointString = line.map(pair => (
        `${pair[0].toString()}, ${pair[1].toString()}`
@@ -73,7 +76,7 @@ class Shirt extends React.Component{
 
       }
     });
-    group.transform({x: 100, y: 80});
+    group.transform({x: 250, y: 50});
     return group;
   }
 

@@ -15,11 +15,17 @@ export const detectOutlinePoints = (imageData, face) => {
   });
   const chest = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + arms.wingspan*.26),
+    y: Math.floor(face.y + arms.wingspan*.28),
     width: face.width*2,
-    height: arms.wingspan*.05
+    height: arms.wingspan*.02
   });
-  return { arms, neck, chest };
+  const waist = measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + arms.wingspan*.42),
+    width: face.width*2,
+    height: arms.wingspan*.02
+  });
+  return { arms, neck, chest, waist };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
@@ -127,7 +133,7 @@ export const measureWingspan = (imageData, face) => {
   const points = [];
   let tolerance = 5;
   let prevEdge = Math.floor(face.y+face.width*1.6);
-  for (let x = Math.floor(mid+face.width); x < width; x++ ){
+  for (let x = Math.floor(mid+face.width*3); x < width; x++ ){
 
     let edge;
     for (let offset = -tolerance; offset < tolerance; offset++){
