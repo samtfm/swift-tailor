@@ -23,14 +23,21 @@ export const detectOutlinePoints = (imageData, face) => {
 
   const arms = measureWingspan(imageData, face);
 
+  const neck = measureWidth(imageData, {
+    x: Math.floor(face.x + face.width*.1),
+    y: Math.floor(face.y + face.width*1.2),
+    width: Math.floor(face.width*.8),
+    height: Math.floor(face.width*.3)
+  });
   const chest = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + arms.wingspan*.27),
+    y: Math.floor(face.y + arms.wingspan*.26),
     width: face.width*2,
-    height: arms.wingspan*.1
+    height: arms.wingspan*.05
   });
+  console.log(neck);
   console.log(chest);
-  return chest.points.concat(arms.points);
+  return chest.points.concat(arms.points).concat(neck.points);
   return leftPoints.concat(rightPoints);
 };
 
@@ -72,7 +79,7 @@ const measureWidth = (imageData, box) => {
   let rightSum = 0;
   let rightMax = null;
   let rightMin = null;
-  leftPoints.forEach(point => {
+  rightPoints.forEach(point => {
     rightSum += point.x;
     if (rightMax === null || point.x > rightMax){
       rightMax = point.x;
@@ -81,7 +88,8 @@ const measureWidth = (imageData, box) => {
       rightMin = point.x;
     }
   });
-  const rightAvg = rightSum/leftPoints.length;
+  const rightAvg = rightSum/rightPoints.length;
+  console.log(leftMin, rightMin, leftMax, rightMax, leftAvg, rightAvg);
   return {
     points: leftPoints.concat(rightPoints),
     average: rightAvg - leftAvg,
