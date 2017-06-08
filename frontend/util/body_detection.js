@@ -133,7 +133,7 @@ export const measureWingspan = (imageData, face) => {
   const points = [];
   let tolerance = 5;
   let prevEdge = Math.floor(face.y+face.width*1.6);
-  for (let x = Math.floor(mid+face.width*3); x < width; x++ ){
+  for (let x = Math.floor(mid+face.width*2); x < width; x++ ){
 
     let edge;
     for (let offset = -tolerance; offset < tolerance; offset++){
