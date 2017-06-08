@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import Home from './home';
 import Fit from './fit';
+import Header from './header';
 
 class App extends React.Component{
 
@@ -15,6 +16,7 @@ class App extends React.Component{
   render(){
     return(
     <div>
+      <Header />
       <Switch>
         <Route path="/fit" component={ Fit } />
         <Route path="/" component={ Home } />
