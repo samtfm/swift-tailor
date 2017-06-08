@@ -4,23 +4,50 @@ import { handClassifier } from './hand_classifier';
 
 export const detectOutlinePoints = (imageData, face) => {
   console.log(face);
+  const height = imageData.rows;
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
   const y = Math.floor(face.y + face.width/2);
   const leftPoints = traceLineDown(
     imageData,
     {
-      startPos: { x: Math.floor(face.x), y },
-      endPos: {x: Math.floor(face.x), y},
-      direction: 1
+      startPos: { x: Math.floor(face.x), y: y},
+      endPos: {x: Math.floor(face.x), y: y+face.width },
+      direction: -1
     });
   const rightPoints = traceLineDown(
     imageData,
     {
       startPos: { x: Math.floor(face.x+face.width), y },
-      endPos: {x: Math.floor(face.x+face.width), y },
+      endPos: {x: Math.floor(face.x+face.width), y: y+face.width },
       direction: 1
     });
   return leftPoints.concat(rightPoints);
+};
+
+const detectRegion = (imageData, box) => {
+  // const height = imageData.rows;
+  const y = Math.floor(box.y);
+  const x = Math.floor(box.x);
+  const width = Math.floor(box.width);
+  const height = Math.floor(box.height);
+  const leftPoints = traceLineDown(
+    imageData,
+    {
+      startPos: { x: x, y: y},
+      endPos: {x: x, y: y + height },
+      direction: -1
+    });
+  const rightPoints = traceLineDown(
+    imageData,
+    {
+      startPos: { x: x + width, y },
+      endPos: {x: x + width, y: y + height},
+      direction: 1
+    });
+  return {
+    points: leftPoints.concat(rightPoints),
+    mininum: 6
+  };
 };
 
 const traceLineDown = (imageData, {startPos, endPos, direction}) => {
@@ -29,10 +56,10 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
   const height = imageData.rows;
   const width = imageData.cols;
   const points = [];
-  let tolerance = 2;
+  let tolerance = 5;
 
   let prevEdge = startPos.x;
-  for (let y = startPos.y; y < height; y++) {
+  for (let y = startPos.y; y < endPos.y; y++) {
 
     //slice from start of collumn to end of row
     const rowStart = y*width; // calculate start of row
@@ -49,8 +76,8 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
     }
     if (edge){
       points.push([edge, y]);
-      tolerance = 2;
-      prevEdge = edge + (edge-prevEdge);
+      tolerance = 5;
+      prevEdge = edge + Math.floor((edge-prevEdge)/2);
     } else {
       if (tolerance < 50) {
         // try iteration again with a higher tolerance
