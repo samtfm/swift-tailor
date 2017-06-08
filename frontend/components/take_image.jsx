@@ -98,15 +98,11 @@ export default class TakeImage extends React.Component {
       let cannyData = applyCanny(calcCtx, options, this.state.stat);
       try{
         drawFace(calcCtx, faceBox.face, faceBox.scale);
-        console.log(faceBox);
       } catch(err){
         console.log("couldn't find a face");
       }
       let measurements = detectOutlinePoints(cannyData, faceBox.face);
       calcCtx.fillStyle = '#0F0';
-      if (measurements.arms.wingspan) {
-        this.setState({measurements: measurements });
-      }
       for (let part in measurements) {
         if (measurements[part].points) {
           measurements[part].points.forEach(point => {

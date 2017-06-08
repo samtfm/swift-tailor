@@ -19,8 +19,6 @@ export const detectOutlinePoints = (imageData, face) => {
     width: face.width*2,
     height: arms.wingspan*.05
   });
-  console.log(neck);
-  console.log(chest);
   return { arms, neck, chest,  };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
@@ -73,7 +71,6 @@ const measureWidth = (imageData, box) => {
     }
   });
   const rightAvg = rightSum/rightPoints.length;
-  console.log(leftMin, rightMin, leftMax, rightMax, leftAvg, rightAvg);
   return {
     points: leftPoints.concat(rightPoints),
     average: rightAvg - leftAvg,
@@ -149,7 +146,7 @@ export const measureWingspan = (imageData, face) => {
       if (tolerance < DROPOFF_THRESHOLD) {
         // try iteration again with a higher tolerance
         tolerance = Math.ceil(tolerance*1.5);
-        x+= Math.floor(tolerance*.5);
+        // x--;
       } else if (x - mid > face.width*2.5) {
         // 40px drop is
         return {
