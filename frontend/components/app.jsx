@@ -1,15 +1,27 @@
 import React from 'react';
-import Shirt from './shirt';
-import TakeImage from './take_image';
-import Canny from './canny/canny';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import Home from './home';
+import Fit from './fit';
 
-const App = () => (
-  <div>
-    Hey Internet, let's style some clothes
-    <TakeImage />
-    <Canny />
-    <Shirt />
-  </div>
-);
+class App extends React.Component{
+
+  componentWillReceiveProps(nextProps){
+    // debugger;
+    // if(this.props.location.pathname !== nextProps.location.pathname){
+      window.scrollTo(0,0);
+      // }
+  }
+
+  render(){
+    return(
+    <div>
+      <Switch>
+        <Route path="/fit" component={ Fit } />
+        <Route path="/" component={ Home } />
+      </Switch>
+    </div>
+    );
+  }
+}
 
 export default App;

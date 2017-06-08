@@ -13,3 +13,9 @@
  *= require_tree .
  *= require_self
  */
+
+ @import "reset.scss";
+
+ @import "home.scss";
+ @import "modal.scss";
+ @import "take_image.scss";

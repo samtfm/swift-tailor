@@ -1,78 +1,163 @@
 import React from 'react';
-import jsfeat from 'jsfeat';
-import { faceClassifier } from './canny/face_classifier';
+import Modal from 'react-modal';
+import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
+
+import { applyCanny } from '../util/image_filter';
+import profiler from '../util/profiler';
+import { detectOutlinePoints } from '../util/body_detection';
+
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
+  constructor(props){
+    super(props);
 
-  componentDidMount(){
+    let options = {
+      blur_radius: 2,
+      low_threshold: 20,
+      high_threshold: 50,
+    };
+
+    let stat = new profiler();
+    stat.add("grayscale");
+    stat.add("gauss blur");
+    stat.add("canny edge");
+
+    this.state={
+      options,
+      stat,
+      modalIsOpen: false,
+    };
+
+    this.openModal = this.openModal.bind(this);
+    this.afterOpenModal = this.afterOpenModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.createVideo = this.createVideo.bind(this);
+    this.snapPicture = this.snapPicture.bind(this);
+  }
+
+  componentWillMount(){
+    Modal.setAppElement('body');
+  }
+
+  createVideo(){
     // Grab elements, create settings, etc.
     let canvas = document.getElementById('canvas-pic');
-    let video = document.getElementById('video');
+    let canvasW = canvas.width;
+    let canvasH = canvas.height;
+    let video;
     let context = canvas.getContext('2d');
+
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Not adding `{ audio: true }` since we only want video now
-        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        });
+      // Not adding `{ audio: true }` since we only want video now
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then( stream => {
+          window.localStream = stream;
+          video = document.getElementById('video');
+          video.src = window.URL.createObjectURL(stream);
+          video.play();
+      });
     }
-    document.getElementById("snap").addEventListener("click", function() {
-    	context.drawImage(video, 0, 0, 480, 360);
+
+    this.setState({
+      canvas,
+      canvasW,
+      canvasH,
+      context
+    });
+  }
+
+  snapPicture(delay){
+    return () => { setTimeout(() =>{
+      let { canvas, canvasW, canvasH, context, options, stat } = this.state;
+      let video = document.getElementById('video');
+
+    	context.drawImage(video, 0, 0, canvasW, canvasH);
       //Copies the picture canvas translates to the calculation canvas
-      var calcCanvas = document.getElementById('calcCanvas');
-      var calcCtx = calcCanvas.getContext('2d');
+      let calcCanvas = document.getElementById('calcCanvas');
+      let calcCtx = calcCanvas.getContext('2d');
       calcCtx.drawImage(canvas, 0, 0);
 
-      //Attempt to find face;
-      var img_u8, ii_sum, ii_sqsum, ii_tilted, ii_canny, w, h;
-      var classifier = faceClassifier;
-      w = calcCanvas.width;
-      h = calcCanvas.height;
-      var imageData = calcCtx.getImageData(0, 0, w, h);
-      img_u8 = new jsfeat.matrix_t(480, 360, jsfeat.U8_t | jsfeat.C1_t);
-      ii_sum = new Int32Array((w+1)*(h+1));
-      ii_sqsum = new Int32Array((w+1)*(h+1));
-      ii_tilted = new Int32Array((w+1)*(h+1));
-      ii_canny = new Int32Array((w+1)*(h+1));
-      jsfeat.imgproc.grayscale(imageData.data, w, h, img_u8);
-      console.log(classifier);
-      jsfeat.imgproc.compute_integral_image(img_u8, ii_sum, ii_sqsum, classifier.tilted ? ii_tilted : null);
+      // detectFace detects a face then returns the box region and scale;
+      // applyCanny applies canny to the canvas, duh...
+      // drawFace draws the faceBox on the canvas after canny has been applied;
+      let faceBox = detectFace(calcCtx, options);
 
-      // jsfeat.haar.edges_density = 0.2;
-      // var rects = jsfeat.haar.detect_multi_scale(ii_sum, ii_sqsum, ii_tilted, options.use_canny? ii_canny : null, img_u8.cols, img_u8.rows, classifier, options.scale_factor, options.min_scale);
-      // rects = jsfeat.haar.group_rectangles(rects, 1);
-      // // draw only most confident one
-      // draw_faces(calcCtx, rects, 480/img_u8.cols, 1);
+      // let handBox = detectHand(calcCtx, options);
+      // drawHand(calcCtx, handBox.hand, handBox.scale);
+      let cannyData = applyCanny(calcCtx, options, this.state.stat);
+      try{
+        drawFace(calcCtx, faceBox.face, faceBox.scale);
+        console.log(faceBox);
+      } catch(err){
+        console.log("couldn't find a face");
+      }
+      let points = detectOutlinePoints(cannyData, faceBox.face);
+      calcCtx.fillStyle = '#0F0';
+      points.forEach(point => {
+        calcCtx.fillRect(point.x,point.y, 2, 2);
+      });
+
+    }, delay);};
+  }
+  openModal() {
+    this.setState({ modalIsOpen: true});
+    this.createVideo();
+  }
+
+  afterOpenModal() {}
+
+  closeModal() {
+    window.localStream.getTracks().forEach((track) => {
+      track.stop();
     });
-
-    function draw_faces(ctx, rects, sc, max) {
-      var on = rects.length;
-      if(on && max) {
-        jsfeat.math.qsort(rects, 0, on-1, function(a,b){return (b.confidence<a.confidence);})
-      }
-      var n = max || on;
-      n = Math.min(n, on);
-      var r;
-      for(var i = 0; i < n; ++i) {
-          r = rects[i];
-          ctx.strokeRect((r.x*sc)|0,(r.y*sc)|0,(r.width*sc)|0,(r.height*sc)|0);
-      }
-    }
+    this.setState({modalIsOpen: false});
   }
 
 
   render(){
-
-
     return(
       <section>
-        <h2>SECTION TO TAKE OR UPLOAD A PICTURE</h2>
-        <section className="take-image-section">
+
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={this.state.modalIsOpen}
+          onAfterOpen={this.afterOpenModal}
+          onRequestClose={this.closeModal}
+          contentLabel="CameraModal">
+
+          <h2>Lets take a picture</h2>
           <video id="video" width="480" height="360" autoPlay></video>
+          <button
+            id="snap"
+            onClick={this.snapPicture(0)}>Snap Photo
+          </button>
+          <button
+            id="snap"
+            onClick={this.snapPicture(2000)}>Snap Delay Photo
+          </button>
+          <button
+            className="modal-close-button"
+            onClick={this.closeModal}>x
+          </button>
+
+        </Modal>
+
+        <section className="take-image-section">
+          <h2>(Step 1)   Lets take some pitures</h2>
+          <button
+            className='nav-button'
+            onClick={this.openModal}
+            >Take a Picture
+          </button>
+
+        </section>
+        <section className="calc-section">
+          <h1>SECTION FOR CALCULATIONS</h1>
+          <canvas id="calcCanvas" width="480" height="360"></canvas>
           <canvas id="canvas-pic" width="480" height="360"></canvas>
         </section>
-        <button id="snap">Snap Photo</button>
       </section>
     );
   }
