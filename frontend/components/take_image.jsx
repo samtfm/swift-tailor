@@ -5,7 +5,7 @@ import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detectio
 import { applyCanny } from '../util/image_filter';
 import profiler from '../util/profiler';
 import { detectOutlinePoints } from '../util/body_detection';
-
+import Shirt from './shirt';
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
   constructor(props){
@@ -161,6 +161,9 @@ export default class TakeImage extends React.Component {
           <h1>SECTION FOR CALCULATIONS</h1>
           <canvas id="calcCanvas" width="480" height="360"></canvas>
           <canvas id="canvas-pic" width="480" height="360"></canvas>
+        </section>
+        <section>
+          <Shirt measurements={this.state.measurements} />
         </section>
       </section>
     );

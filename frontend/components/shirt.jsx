@@ -4,17 +4,8 @@ import SVG from 'svg.js';
 class Shirt extends React.Component{
 
   componentDidMount(){
-    let i = 100;
-    this.last = dra
     const draw = SVG(this.drawing).size(300,300);
-    let last = this.drawShirt(draw, i);
-    setInterval(() => {
-      i += 10;
-      if (i< 200){
-
-      }
-
-    }, 200);
+    this.last = this.drawShirt(draw);
   }
   calcShirtLines(chest, length, armHole, shoulders, neck){
     const lines = [];
