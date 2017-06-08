@@ -7,6 +7,14 @@ class Shirt extends React.Component{
     const draw = SVG(this.drawing).size(300,300);
     this.last = this.drawShirt(draw);
   }
+
+  componentDidUpdate(){
+    const draw = SVG(this.drawing).size(300,300);
+
+    this.last = this.last ?
+      this.last.replace(this.drawShirt(draw)) :
+      this.drawShirt(draw);
+  }
   calcShirtLines(chest, length, armHole, shoulders, neck){
     const lines = [];
     lines.push([
@@ -44,7 +52,7 @@ class Shirt extends React.Component{
     if (!this.props.measurements) return group;
     let {arms, neck, chest } = this.props.measurements;
     if (!(arms && neck && chest)) return group;
-    const lines = this.calcShirtLines(chest.average, arms.wingspan*.4, 40, chest*.9, neck.average);
+    const lines = this.calcShirtLines(chest.average, arms.wingspan*.4, 40, chest.average*.9, neck.average);
     lines.forEach(line => {
       const pointString = line.map(pair => (
        `${pair[0].toString()}, ${pair[1].toString()}`
@@ -62,11 +70,6 @@ class Shirt extends React.Component{
   }
 
   render(){
-    const draw = SVG(this.drawing).size(300,300);
-
-    this.last = this.last ?
-      this.last.replace(this.drawShirt(draw)) :
-      this.drawShirt(draw);
 
     return(
       <div ref={(component) => { this.drawing = component;}}></div>
