@@ -9,9 +9,9 @@ export const detectOutlinePoints = (imageData, face) => {
 
   const neck = measureWidth(imageData, {
     x: Math.floor(face.x + face.width*.1),
-    y: Math.floor(face.y + face.width*1.1),
+    y: Math.floor(face.y + face.width*1.15),
     width: Math.floor(face.width*.8),
-    height: Math.floor(face.width*.2)
+    height: Math.floor(face.width*.1)
   });
   const chest = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
@@ -21,7 +21,8 @@ export const detectOutlinePoints = (imageData, face) => {
   });
   console.log(neck);
   console.log(chest);
-  return chest.points.concat(arms.points).concat(neck.points);
+  return { arms, neck, chest,  };
+  // return chest.points.concat(arms.points).concat(neck.points);
 };
 
 const measureWidth = (imageData, box) => {

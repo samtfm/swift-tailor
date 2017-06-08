@@ -20,7 +20,6 @@ class Shirt extends React.Component{
 
   calcShirtLines(chest, length, armHole, shoulders, neck){
     const lines = [];
-
     lines.push([
       [neck/2, -5],
       [shoulders/2, 0]
@@ -53,14 +52,8 @@ class Shirt extends React.Component{
     const group = draw.group();
 
     // set up draw constant for svg.js
-
-    // create points based on measurement
-    const points = [
-     [width, 50],
-     [width*.8, 100],
-     [100, 150]
-    ];
-    const lines = this.calcShirtLines(width, 200, 40, width*.9, 80);
+    const {arms, neck, chest } = this.props.measurements;
+    const lines = this.calcShirtLines(chest.average, arms.wingspan*.4, 40, chest*.9, neck.average);
     lines.forEach(line => {
       const pointString = line.map(pair => (
        `${pair[0].toString()}, ${pair[1].toString()}`

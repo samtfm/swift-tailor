@@ -10,7 +10,7 @@ import { detectOutlinePoints } from '../util/body_detection';
 export default class TakeImage extends React.Component {
   constructor(props){
     super(props);
-
+    this.state = { measurements: null };
     let options = {
       blur_radius: 2,
       low_threshold: 20,
@@ -92,12 +92,16 @@ export default class TakeImage extends React.Component {
       } catch(err){
         console.log("couldn't find a face");
       }
-      let points = detectOutlinePoints(cannyData, faceBox.face);
+      let measurements = detectOutlinePoints(cannyData, faceBox.face);
       calcCtx.fillStyle = '#0F0';
-      points.forEach(point => {
-        calcCtx.fillRect(point.x,point.y, 2, 2);
-      });
-
+      this.setState({measurements: measurements });
+      for (let part in measurements) {
+        if (measurements[part].points) {
+          measurements[part].points.forEach(point => {
+            calcCtx.fillRect(point.x,point.y, 2, 2);
+          });
+        }
+      }
     }, delay);};
   }
   openModal() {
