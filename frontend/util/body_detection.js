@@ -3,23 +3,7 @@ import { faceClassifier } from './face_classifier';
 import { handClassifier } from './upperbody';
 
 export const detectOutlinePoints = (imageData, face) => {
-  const height = imageData.rows;
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
-  const y = Math.floor(face.y + face.width/2);
-  const leftPoints = traceLineDown(
-    imageData,
-    {
-      startPos: { x: Math.floor(face.x), y: y},
-      endPos: {x: Math.floor(face.x), y: y+face.width },
-      direction: -1
-    });
-  const rightPoints = traceLineDown(
-    imageData,
-    {
-      startPos: { x: Math.floor(face.x+face.width), y },
-      endPos: {x: Math.floor(face.x+face.width), y: y+face.width },
-      direction: 1
-    });
 
   const arms = measureWingspan(imageData, face);
 
@@ -38,7 +22,6 @@ export const detectOutlinePoints = (imageData, face) => {
   console.log(neck);
   console.log(chest);
   return chest.points.concat(arms.points).concat(neck.points);
-  return leftPoints.concat(rightPoints);
 };
 
 const measureWidth = (imageData, box) => {
