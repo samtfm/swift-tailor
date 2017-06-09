@@ -5,7 +5,7 @@ class Shirt extends React.Component{
 
   constructor(props){
     super(props);
-    this.state = {inchMeasurements: {}};
+    this.state = {inchMeasurements: {}, pixelMeasurements: {}};
   }
   componentDidMount(){
     // const draw = SVG(this.drawing).size(500,500);
@@ -13,6 +13,7 @@ class Shirt extends React.Component{
     this.draw = SVG(this.drawing).size(500,500);
   }
   componentWillReceiveProps(newProps){
+    if (!newProps.measurements.arms) return;
     let {arms, neck, chest, waist } = newProps.measurements;
     const heightInches = 71;
     const shirtScale = 100;
@@ -25,12 +26,23 @@ class Shirt extends React.Component{
     const shoulderWidth = chest.average * 0.9 * factor;
     const neckWidth = neck.mininum * factor;
     const armHole = shirtLength*.25;
-    this.setState({ inchMeasurements: {
-      height: heightInches,
-      neck: neckWidth/shirtScale,
-      chest: chestWidth/shirtScale,
-      waist: waistWidth/shirtScale
-    } });
+    this.setState({
+      pixelMeasurements: {
+        height: pixelHeight,
+        chestWidth,
+        waistWidth,
+        shirtLength,
+        shoulderWidth,
+        neckWidth,
+        armHole
+      },
+      inchMeasurements: {
+        height: heightInches,
+        neck: neckWidth/shirtScale,
+        chest: chestWidth/shirtScale,
+        waist: waistWidth/shirtScale
+      }
+   });
   }
   calcShirtLines(chest, length, armHole, shoulders, neck, waist){
     const lines = [];
@@ -117,30 +129,17 @@ class Shirt extends React.Component{
 
   drawShirt(){
     const group = this.draw.group();
-
-    // set up draw constant for svg.js
-    if (!this.props.measurements) return group;
-    let {arms, neck, chest, waist } = this.props.measurements;
-    const heightInches = 71;
-    const shirtScale = 100;
-    const rawHeight = arms.wingspan * 0.98;
-    const pixelHeight = heightInches/12*shirtScale;
-    const factor = pixelHeight/rawHeight;
-    const chestWidth = chest.average * factor;
-    const waistWidth = waist.maximum * factor;
-    const shirtLength = arms.wingspan * 0.4 * factor;
-    const shoulderWidth = chest.average * 0.9 * factor;
-    const neckWidth = neck.mininum * factor;
-    const armHole = shirtLength*.25;
-
-
-
-    if (!(arms && neck && chest)) return group;
+    const { pixelHeight,
+      chestWidth,
+      waistWidth,
+      shirtLength,
+      shoulderWidth,
+      neckWidth,
+      armHole
+    } = this.state.pixelMeasurements;
+    if (!(chestWidth && neckWidth && shirtLength)) return group;
     const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth, waistWidth);
     lines.forEach(line => {
-      // const pointString = line.map(pair => (
-      //  `${pair[0].toString()}, ${pair[1].toString()}`
-      // )).join(' ');
       const pointString = line.map(pair => (
         typeof pair === "string" ? pair :
           `${pair[0].toString()}, ${pair[1].toString()}`
