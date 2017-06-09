@@ -1,6 +1,6 @@
 import jsfeat from 'jsfeat';
 import { faceClassifier } from './face_classifier';
-import { handClassifier } from './upperbody';
+// import { handClassifier } from './upperbody';
 
 export const detectOutlinePoints = (imageData, face) => {
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };

@@ -15,7 +15,7 @@
  */
 
  @import "reset.scss";
-
+ @import "header";
  @import "home.scss";
  @import "modal.scss";
  @import "take_image.scss";
