@@ -49,12 +49,6 @@ export default class TakeImage extends React.Component {
     Modal.setAppElement('body');
   }
 
-  componentDidMount(){
-    this.createVideo();
-    setInterval(()=>{
-      this.snapPicture(0)();
-    },200);
-  }
   componentWillUnmount(){
     window.localStream.getTracks().forEach((track) => {
       track.stop();
@@ -148,6 +142,19 @@ export default class TakeImage extends React.Component {
     });
   }
 
+  startMeasuring(){
+    this.createVideo();
+    setInterval(()=>{
+      this.snapPicture(0)();
+    },200);
+    let message = document.getElementById("instructions");
+    message.innerHTML = "";
+    this.setState({
+      showButtons: false,
+      showVideoControls: true
+    });
+  }
+
 
   render(){
     // load initial message, modal declaraction
@@ -192,14 +199,7 @@ export default class TakeImage extends React.Component {
     beginButton = (
       <button
         className={this.state.showButtons ? "modal-button" : "hidden"}
-        onClick={()=>{
-          this.createVideo();
-          message.innerHTML = "";
-          this.setState({
-            showButtons: false,
-            showVideoControls: true
-          });
-        }}>
+        onClick={this.startMeasuring.bind(this)}>
         Begin
       </button>
     );
