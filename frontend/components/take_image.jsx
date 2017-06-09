@@ -5,12 +5,12 @@ import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detectio
 import { applyCanny } from '../util/image_filter';
 import profiler from '../util/profiler';
 import { detectOutlinePoints } from '../util/body_detection';
-
+import Shirt from './shirt';
 // import { test } from './canny/test';
 export default class TakeImage extends React.Component {
   constructor(props){
     super(props);
-
+    this.state = { measurements: null };
     let options = {
       blur_radius: 2,
       low_threshold: 20,
@@ -37,6 +37,18 @@ export default class TakeImage extends React.Component {
 
   componentWillMount(){
     Modal.setAppElement('body');
+  }
+
+  componentDidMount(){
+    this.createVideo();
+    setInterval(()=>{
+      this.snapPicture(0)();
+    },40);
+  }
+  componentWillUnmount(){
+    window.localStream.getTracks().forEach((track) => {
+      track.stop();
+    });
   }
 
   createVideo(){
@@ -88,16 +100,21 @@ export default class TakeImage extends React.Component {
       let cannyData = applyCanny(calcCtx, options, this.state.stat);
       try{
         drawFace(calcCtx, faceBox.face, faceBox.scale);
-        console.log(faceBox);
       } catch(err){
         console.log("couldn't find a face");
       }
-      let points = detectOutlinePoints(cannyData, faceBox.face);
+      let measurements = detectOutlinePoints(cannyData, faceBox.face);
       calcCtx.fillStyle = '#0F0';
-      points.forEach(point => {
-        calcCtx.fillRect(point.x,point.y, 2, 2);
-      });
-
+      if (measurements.arms.wingspan) {
+        this.setState({measurements: measurements });
+      }
+      for (let part in measurements) {
+        if (measurements[part].points) {
+          measurements[part].points.forEach(point => {
+            calcCtx.fillRect(point.x,point.y, 2, 2);
+          });
+        }
+      }
     }, delay);};
   }
   openModal() {
@@ -118,6 +135,7 @@ export default class TakeImage extends React.Component {
   render(){
     return(
       <section>
+        <video id="video" width="480" height="360" autoPlay></video>
 
         <Modal
           className='modal'
@@ -157,6 +175,9 @@ export default class TakeImage extends React.Component {
           <h1>SECTION FOR CALCULATIONS</h1>
           <canvas id="calcCanvas" width="480" height="360"></canvas>
           <canvas id="canvas-pic" width="480" height="360"></canvas>
+        </section>
+        <section>
+          <Shirt measurements={this.state.measurements} />
         </section>
       </section>
     );
