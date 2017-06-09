@@ -6,7 +6,14 @@ export default class Home extends React.Component {
     return(
       <section className='home-container'>
         <section className='intro'>
-          <h1>Welcome to Tailor Swift, a swift experience to tailor your own clothes.</h1>
+          <h1>Welcome to Tailor Swift,</h1>
+          <div>
+            <span>a </span>
+            <span className='large-font'> swift </span>
+            <span> experience to </span>
+            <span className='large-font'> tailor </span>
+            <span> your own clothes.</span>
+          </div>
         </section>
         <section className='intro-blurb'>
           <p>Tailor Swift was inspired by a sense of individuality,

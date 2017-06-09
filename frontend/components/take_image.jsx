@@ -1,9 +1,12 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
 
-import { applyCanny } from '../util/image_filter';
 import profiler from '../util/profiler';
+import CalcIndicator from '../widget/calc_indicators';
+import { applyCanny } from '../util/image_filter';
+import { startInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
 import Shirt from './shirt';
 // import { test } from './canny/test';
@@ -26,6 +29,9 @@ export default class TakeImage extends React.Component {
       options,
       stat,
       modalIsOpen: false,
+      instructionsStarted: false,
+      showButtons: false,
+      showVideoControls: false
     };
 
     this.openModal = this.openModal.bind(this);
@@ -118,21 +124,129 @@ export default class TakeImage extends React.Component {
     }, delay);};
   }
   openModal() {
-    this.setState({ modalIsOpen: true});
-    this.createVideo();
+    this.setState({
+      modalIsOpen: true,
+      instructionsStarted: true
+    });
   }
 
   afterOpenModal() {}
 
   closeModal() {
-    window.localStream.getTracks().forEach((track) => {
-      track.stop();
+    if(window.localStream > 0){
+      window.localStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+    this.setState({
+      modalIsOpen: false,
+      showVideoControls: false
     });
-    this.setState({modalIsOpen: false});
   }
 
 
   render(){
+    // load initial message, modal declaraction
+    // is delayed so setState can catchup
+    let modal, message, modalButtonSection, videoControls,
+        repeatButton, beginButton, skipButton;
+    let instructions = startInstructions;
+    let instructionsInterval;
+    let instructionsStopTimeout;
+
+    message = document.getElementById("instructions");
+
+    skipButton = (
+      <button
+        className={this.state.instructionsStarted ? "modal-button" : "hidden"}
+        onClick={() => {
+          this.setState({
+            instructionsStarted: false,
+            showButtons: true
+          });
+          clearInterval(instructionsInterval);
+          window.clearTimeout(instructionsStopTimeout);
+          message.innerHTML = "";
+        }}>
+        Skip
+      </button>
+    );
+
+    repeatButton = (
+      <button
+        className={this.state.showButtons ?  "modal-button" : "hidden"}
+        onClick={() => {
+          this.setState({
+            instructionsStarted: true,
+            showButtons: false
+          });
+        }}>
+        Repeat Instructions
+      </button>
+    );
+
+    beginButton = (
+      <button
+        className={this.state.showButtons ? "modal-button" : "hidden"}
+        onClick={()=>{
+          this.createVideo();
+          message.innerHTML = "";
+          this.setState({
+            showButtons: false,
+            showVideoControls: true
+          });
+        }}>
+        Begin
+      </button>
+    );
+
+    videoControls = (
+      <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
+        <button
+          id="snap"
+          onClick={this.snapPicture(0)}>Snap Photo
+        </button>
+        <button
+          id="snap"
+          onClick={this.snapPicture(2000)}>Snap Delay Photo
+        </button>
+        <CalcIndicator
+          side={"front"}
+          measurements = {['1', '2', '3']}
+        />
+      </section>
+    );
+
+
+
+    if(this.state.instructionsStarted){
+
+      setTimeout(() => {
+        message = document.getElementById("instructions");
+        message.innerHTML = instructions[0][0];
+        let i = 1;
+        instructionsInterval = setInterval(()=>{
+          if(i >= instructions.length) {
+            clearInterval(instructionsInterval);
+          } else{
+            message.innerHTML = instructions[i][0];
+            i++;
+          }
+        }, 500);
+      }, 500);
+      //start instructions end at 17000
+
+      let lastMessageTime = instructions.length * 500;
+      let instructionStopTimeout = setTimeout(() => {
+        this.setState({
+          instructionsStarted: false,
+          showButtons: true
+        });
+      }, lastMessageTime + 500);
+    }
+
+    // this.createVideo();
+
     return(
       <section>
         <video id="video" width="480" height="360" autoPlay></video>
@@ -145,25 +259,26 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
-          <h2>Lets take a picture</h2>
-          <video id="video" width="480" height="360" autoPlay></video>
-          <button
-            id="snap"
-            onClick={this.snapPicture(0)}>Snap Photo
-          </button>
-          <button
-            id="snap"
-            onClick={this.snapPicture(2000)}>Snap Delay Photo
-          </button>
           <button
             className="modal-close-button"
             onClick={this.closeModal}>x
           </button>
 
+          <h1 id="instructions" className="instructions"></h1>
+
+          <video id="video" width="480" height="360" autoPlay></video>
+
+          { videoControls }
+          <section className="modal-button-section">
+            { skipButton }
+            { repeatButton }
+            { beginButton }
+          </section>
         </Modal>
 
         <section className="take-image-section">
-          <h2>(Step 1)   Lets take some pitures</h2>
+          <h2>(Step 1)   Lets take some pitures.</h2>
+          <h2>(Your pictures are never shared or saved)</h2>
           <button
             className='nav-button'
             onClick={this.openModal}

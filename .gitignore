@@ -20,3 +20,8 @@ node_modules/
 bundle.js
 bundle.js.map
 stony.pem
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
