@@ -72,21 +72,26 @@ export default class TakeImage extends React.Component {
   loadInstructions(){
     // load initial message, modal declaraction
     // is delayed so setState can catchup
-    let modal, message, repeatButton, beginButton;
+    let modal, message, modalButtonSection, repeatButton, beginButton, skipButton;
     let instructions = startInstructions;
     setTimeout(() => {
       modal = document.getElementsByClassName("modal")[0];
+      modalButtonSection = document.getElementsByClassName("modal-button-section")[0];
       message = document.createElement("h1");
       repeatButton = document.createElement("button");
       beginButton = document.createElement("button");
+      skipButton = document.createElement("button");
       repeatButton.innerHTML = "Repeat instructions";
-      repeatButton.className = "hidden";
+      skipButton.innerHTML = "Skip";
       beginButton.innerHTML = "Begin";
-      beginButton.className = "hidden";
+      repeatButton.className = "modal-button hidden";
+      beginButton.className = "modal-button hidden";
+      skipButton.className = "modal-button";
       message.className = "instructions";
       modal.appendChild(message);
-      modal.appendChild(repeatButton);
-      modal.appendChild(beginButton);
+      modalButtonSection.appendChild(repeatButton);
+      modalButtonSection.appendChild(beginButton);
+      modalButtonSection.appendChild(skipButton);
     }, 500);
 
     instructions.forEach( instruct => {
@@ -97,6 +102,7 @@ export default class TakeImage extends React.Component {
     //start instructions end at 17000
 
     setTimeout(() => {
+      skipButton.classList.add("hidden");
       repeatButton.classList.remove("hidden");
       beginButton.classList.remove("hidden");
     }, 19000);
@@ -167,6 +173,10 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
+          <button
+            className="modal-close-button"
+            onClick={this.closeModal}>x
+          </button>
           <video id="video" width="480" height="360" autoPlay></video>
           <section className="video-controls">
             <button
@@ -181,16 +191,13 @@ export default class TakeImage extends React.Component {
               side={"front"}
               measurements = {['1', '2', '3']}
             />
-            <button
-              className="modal-close-button"
-              onClick={this.closeModal}>x
-            </button>
           </section>
-
+          <section className="modal-button-section"></section>
         </Modal>
 
         <section className="take-image-section">
-          <h2>(Step 1)   Lets take some pitures</h2>
+          <h2>(Step 1)   Lets take some pitures.</h2>
+          <h2>(Your pictures are never shared or saved)</h2>
           <button
             className='nav-button'
             onClick={this.openModal}

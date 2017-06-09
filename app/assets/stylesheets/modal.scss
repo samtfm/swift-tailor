@@ -15,37 +15,40 @@ $primary-color: red;
   height: 80%;
   align-items: center;
   outline: none;
-
-  button{
-    margin: 30px;
-    font-size: 20px;
-    font-family: 'Pacifico', cursive;
-    border: 2px dashed white;
-    padding: 15px;
-    color: white;
-    background-color: $primary-color;
-    border-radius: 10px;
-    transition: 0.3s;
-    padding: 15px;
-    cursor: pointer;
-    // box-shadow: 0 0 0 4px #ff0030, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
-
-    font-weight: normal;
-
-    &:hover{
-      border: 3px solid white;
-    }
-  }
+}
+.modal-button-section{
+  position: relative;
+  bottom: 0%;
+}
+.modal-button {
+  margin: 30px;
+  font-size: 20px;
+  font-family: 'Pacifico', cursive;
+  border: 2px dashed white;
+  padding: 15px;
+  color: white;
+  background-color: $primary-color;
+  border-radius: 10px;
+  transition: 0.3s;
+  padding: 15px;
+  cursor: pointer;
+  outline: none;
+  // box-shadow: 0 0 0 4px #ff0030, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+  // &:hover{
+  //   border: 3px solid white;
+  // }
 }
 .modal-close-button {
   float: right;
   font-size: 20px;
   padding: 0px 10px 10px 0px;
   background: none;
-  color: gray;
+  color: white;
   border: none;
   outline: none;
   cursor: pointer;
+  right: 7%;
+  position: fixed;
 }
 
 .overlay {
