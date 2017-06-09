@@ -31,7 +31,11 @@ export default class TakeImage extends React.Component {
       modalIsOpen: false,
       instructionsStarted: false,
       showButtons: false,
-      showVideoControls: false
+      showVideoControls: false,
+      wingspan: 0,
+      neckWidth: 0,
+      chestWidth: 0,
+      waistWidth: 0
     };
 
     this.openModal = this.openModal.bind(this);
@@ -249,7 +253,6 @@ export default class TakeImage extends React.Component {
 
     return(
       <section>
-        <video id="video" width="480" height="360" autoPlay></video>
 
         <Modal
           className='modal'
