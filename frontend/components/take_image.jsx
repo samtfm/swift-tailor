@@ -177,7 +177,7 @@ export default class TakeImage extends React.Component {
           });
           clearInterval(instructionsInterval);
           window.clearTimeout(instructionsStopTimeout);
-          message.innerHTML = "";
+          message.innerHTML = "Ready!";
         }}>
         Skip
       </button>
@@ -241,16 +241,19 @@ export default class TakeImage extends React.Component {
       //start instructions end at 17000
 
       let lastMessageTime = instructions.length * 500;
-      let instructionStopTimeout = setTimeout(() => {
+      instructionsStopTimeout = setTimeout(() => {
         this.setState({
           instructionsStarted: false,
           showButtons: true
         });
       }, lastMessageTime + 500);
     }
-
-    // this.createVideo();
-
+    let width = 0, height = 0;
+    while (height < window.innerHeight){
+      height += 120;
+    }
+    height -= 120;
+    width = height * 4/3;
     return(
       <section>
 
@@ -269,7 +272,7 @@ export default class TakeImage extends React.Component {
 
           <h1 id="instructions" className="instructions"></h1>
 
-          <video id="video" width="480" height="360" autoPlay></video>
+          <video id="video" width={width} height={height} autoPlay></video>
 
           { videoControls }
           <section className="modal-button-section">
@@ -279,9 +282,19 @@ export default class TakeImage extends React.Component {
           </section>
         </Modal>
 
+        <section className="enter-height-section">
+          <h2>(Step 1)   Enter your height</h2>
+          <section>
+            <input></input><label>Ft </label>
+            <input></input><label>inches</label>
+          </section>
+          <section>
+          </section>
+
+        </section>
+
         <section className="take-image-section">
-          <h2>(Step 1)   Lets take some pitures.</h2>
-          <h2>(Your pictures are never shared or saved)</h2>
+          <h2>(Step 2)   Lets take some pitures.</h2>
           <button
             className='nav-button'
             onClick={this.openModal}
