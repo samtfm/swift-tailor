@@ -1,16 +1,41 @@
+$primary-color: red;
+
 .modal {
   margin: 40px auto;
   min-height: 300px;
   min-width: 500px;
-  max-width: 600px;
-  background-color: black;
+  // max-width: 600px;
+  background-color: red;
+  border: 10px solid black;
   opacity: 1;
   display: flex;
   flex-direction: column;
   padding: 10px;
-  width: 50%;
+  width: 85%;
+  height: 80%;
   align-items: center;
   outline: none;
+
+  button{
+    margin: 30px;
+    font-size: 20px;
+    font-family: 'Pacifico', cursive;
+    border: 2px dashed white;
+    padding: 15px;
+    color: white;
+    background-color: $primary-color;
+    border-radius: 10px;
+    transition: 0.3s;
+    padding: 15px;
+    cursor: pointer;
+    // box-shadow: 0 0 0 4px #ff0030, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+
+    font-weight: normal;
+
+    &:hover{
+      border: 3px solid white;
+    }
+  }
 }
 .modal-close-button {
   float: right;
@@ -61,4 +86,20 @@
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.instructions{
+  font-family: 'Pacifico', cursive;
+  color: white;
+  font-size: 8vw;
+  width: 80%;
+  position: fixed;
+  top: 22%;
+  text-align: center;
+  transition: 0.5s;
+  line-height: 113px;
+}
+
+.video-controls {
+  display: none;
 }

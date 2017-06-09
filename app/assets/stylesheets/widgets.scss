@@ -1,0 +1,15 @@
+.indicator-container{
+  display: inline-block;
+  background: coral;
+  padding: 10px;
+  h3{
+    padding: 10px;
+  }
+}
+
+.indicator-box{
+  background-color: green;
+  float: left;
+  padding: 5px 25px 5px 25px;
+  border: 1px solid black;
+}

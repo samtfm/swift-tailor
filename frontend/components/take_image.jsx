@@ -2,8 +2,10 @@ import React from 'react';
 import Modal from 'react-modal';
 import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
 
-import { applyCanny } from '../util/image_filter';
 import profiler from '../util/profiler';
+import CalcIndicator from '../widget/calc_indicators';
+import { applyCanny } from '../util/image_filter';
+import { startInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
 
 // import { test } from './canny/test';
@@ -33,6 +35,7 @@ export default class TakeImage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
+    this.loadInstructions = this.loadInstructions.bind(this);
   }
 
   componentWillMount(){
@@ -64,6 +67,44 @@ export default class TakeImage extends React.Component {
       canvasH,
       context
     });
+  }
+
+  loadInstructions(){
+    // load initial message, modal declaraction
+    // is delayed so setState can catchup
+    let modal, message, repeatButton, beginButton;
+    let instructions = startInstructions;
+    setTimeout(() => {
+      modal = document.getElementsByClassName("modal")[0];
+      message = document.createElement("h1");
+      repeatButton = document.createElement("button");
+      beginButton = document.createElement("button");
+      repeatButton.innerHTML = "Repeat instructions";
+      repeatButton.className = "hidden";
+      beginButton.innerHTML = "Begin";
+      beginButton.className = "hidden";
+      message.className = "instructions";
+      modal.appendChild(message);
+      modal.appendChild(repeatButton);
+      modal.appendChild(beginButton);
+    }, 500);
+
+    instructions.forEach( instruct => {
+      setTimeout(() => {
+        message.innerHTML = instruct[0];
+      }, instruct[1]);
+    });
+    //start instructions end at 17000
+
+    setTimeout(() => {
+      repeatButton.classList.remove("hidden");
+      beginButton.classList.remove("hidden");
+    }, 19000);
+
+
+
+
+    // this.createVideo();
   }
 
   snapPicture(delay){
@@ -99,15 +140,17 @@ export default class TakeImage extends React.Component {
   }
   openModal() {
     this.setState({ modalIsOpen: true});
-    this.createVideo();
+    this.loadInstructions();
   }
 
   afterOpenModal() {}
 
   closeModal() {
-    window.localStream.getTracks().forEach((track) => {
-      track.stop();
-    });
+    if(window.localStream > 0){
+      window.localStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
     this.setState({modalIsOpen: false});
   }
 
@@ -124,20 +167,25 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
-          <h2>Lets take a picture</h2>
           <video id="video" width="480" height="360" autoPlay></video>
-          <button
-            id="snap"
-            onClick={this.snapPicture(0)}>Snap Photo
-          </button>
-          <button
-            id="snap"
-            onClick={this.snapPicture(2000)}>Snap Delay Photo
-          </button>
-          <button
-            className="modal-close-button"
-            onClick={this.closeModal}>x
-          </button>
+          <section className="video-controls">
+            <button
+              id="snap"
+              onClick={this.snapPicture(0)}>Snap Photo
+            </button>
+            <button
+              id="snap"
+              onClick={this.snapPicture(2000)}>Snap Delay Photo
+            </button>
+            <CalcIndicator
+              side={"front"}
+              measurements = {['1', '2', '3']}
+            />
+            <button
+              className="modal-close-button"
+              onClick={this.closeModal}>x
+            </button>
+          </section>
 
         </Modal>
 
