@@ -4,54 +4,88 @@ import SVG from 'svg.js';
 class Shirt extends React.Component{
 
   componentDidMount(){
-    let i = 100;
-
-    const draw = SVG(this.drawing).size(300,300);
-    let last = this.drawShirt(draw, i);
-    setInterval(() => {
-      i += 10;
-      if (i< 200){
-        last = last.replace(this.drawShirt(draw, i));
-
-      }
-
-    }, 200);
+    const draw = SVG(this.drawing).size(500,500);
+    this.last = this.drawShirt(draw);
   }
 
-  drawShirt(draw, width){
-    // set up draw constant for svg.js
+  componentDidUpdate(){
+    const draw = SVG(this.drawing).size(500,500);
 
-    // create points based on measurement
-    const points = [
-     [width, 50],
-     [width*.8, 100],
-     [100, 150]
-    ];
+    this.last = this.last ?
+      this.last.replace(this.drawShirt(draw)) :
+      this.drawShirt(draw);
+  }
+  calcShirtLines(chest, length, armHole, shoulders, neck, waist){
+    const lines = [];
+    //shoulder line
+    lines.push([
+      [neck/2, -5],
+      [shoulders/2, 0]
+    ]);
+    //sleeve curve
+    lines.push([
+      [`M${shoulders/2}`, 0],
+      [`C${chest/2-10}`, armHole],
+      [chest/2, armHole],
+      [chest/2, armHole]
+    ]);
+    // lines.push([
+    //   [shoulders/2, 0],
+    //   [(shoulders+chest)/4 -5, armHole*.7],
+    //   [chest/2, armHole]
+    // ]);
 
-    // boil points into a happy little string "100,0 80,50 110,100"
-    const pointString = points.map(pair => (
-     `${pair[0].toString()}, ${pair[1].toString()}`
-    )).join(' ');
+    //main box of shirt
+    lines.push([
+      [chest / 2, armHole],
+      [(waist/2), length],
+      [-(waist/2), length],
+      [-chest / 2, armHole]
+    ]);
+    //center line
+    lines.push([
+      [0,0],
+      [0,length]
+    ]);
+    return lines;
+  }
 
-    // draw line from points
-    const line1 = draw.polyline(pointString).fill('none').stroke({ width: 1 });
-
-    // draw silly circle at the head of theline
-    const circle = draw.circle('30');
-    //find first vector point from line1
-    const firstPoint = line1.node.points[0];
-    // position circle at that point ( cx is circlex i think?)
-    circle.attr({cx: firstPoint.x, cy: firstPoint.y });
-
-    // important! group objects into single svg component
-    // this allows it to be returned and then replaced
+  drawShirt(draw){
     const group = draw.group();
-    group.add(circle);
-    group.add(line1);
+
+    // set up draw constant for svg.js
+    if (!this.props.measurements) return group;
+    let {arms, neck, chest, waist } = this.props.measurements;
+    const pixelHeight = arms.wingspan * 0.98;
+    const height = 600;
+    const factor = height/pixelHeight;
+    const chestWidth = chest.average * factor;
+    const waistWidth = waist.maximum * factor;
+    const shirtLength = arms.wingspan * 0.4 * factor;
+    const shoulderWidth = chest.average * 0.9 * factor;
+    const neckWidth = neck.mininum * factor;
+    const armHole = shirtLength*.25;
+
+    if (!(arms && neck && chest)) return group;
+    const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth, waistWidth);
+    lines.forEach(line => {
+      const pointString = line.map(pair => (
+       `${pair[0].toString()}, ${pair[1].toString()}`
+      )).join(' ');
+      // draw line from points
+      if (pointString[0].toLowerCase() === 'm'){
+        group.add(draw.path(pointString).fill('none').stroke({ width: 1 }));
+      } else {
+        group.add(draw.polyline(pointString).fill('none').stroke({ width: 1 }));
+
+      }
+    });
+    group.transform({x: 250, y: 50});
     return group;
   }
 
   render(){
+
     return(
       <div ref={(component) => { this.drawing = component;}}></div>
     );
