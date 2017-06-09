@@ -94,7 +94,9 @@ $primary-color: red;
 .instructions{
   font-family: 'Pacifico', cursive;
   color: white;
-  font-size: 8vw;
+  // font-size: 8vw;
+  font-size: 10vh;
+  max-height: 200px;
   width: 80%;
   position: fixed;
   top: 22%;
