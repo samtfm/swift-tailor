@@ -8,17 +8,15 @@ class Shirt extends React.Component{
     this.state = {inchMeasurements: {}, pixelMeasurements: {}};
   }
   componentDidMount(){
-    // const draw = SVG(this.drawing).size(500,500);
-    // this.last = this.drawShirt(draw);
     this.draw = SVG(this.drawing).size(500,500);
   }
   componentWillReceiveProps(newProps){
-    if (!newProps.measurements.arms) return;
+    if (!newProps.measurements || !newProps.measurements.arms) return;
     let {arms, neck, chest, waist } = newProps.measurements;
     const heightInches = 71;
-    const shirtScale = 100;
+    const shirtScale = 100/12;
     const rawHeight = arms.wingspan * 0.98;
-    const pixelHeight = heightInches/12*shirtScale;
+    const pixelHeight = heightInches*shirtScale;
     const factor = pixelHeight/rawHeight;
     const chestWidth = chest.average * factor;
     const waistWidth = waist.maximum * factor;
@@ -158,15 +156,15 @@ class Shirt extends React.Component{
 
   render(){
     if (this.drawing){
+      console.log(this.last);
       this.last = this.last ?
-      this.last.replace(this.drawShirt()) :
-      this.drawShirt();
-
+        this.last.replace(this.drawShirt()) :
+        this.drawShirt();
     }
 
     const {height, neck, chest, waist} = this.state.inchMeasurements;
     return(
-      <div>
+      <div className='shirt'>
         <div ref={(component) => { this.drawing = component;}}></div>
         <input type = 'text' value='6'></input>
         <ul>
