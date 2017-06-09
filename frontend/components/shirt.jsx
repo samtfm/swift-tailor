@@ -166,7 +166,7 @@ class Shirt extends React.Component{
     return(
       <div className='shirt'>
         <div ref={(component) => { this.drawing = component;}}></div>
-        <input type = 'text' value='6'></input>
+        <input type = 'text' value='72'></input>
         <ul>
           <li>height: {height}</li>
           <li>neck: {neck}</li>
