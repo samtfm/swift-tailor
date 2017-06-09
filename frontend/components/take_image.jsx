@@ -177,7 +177,7 @@ export default class TakeImage extends React.Component {
           });
           clearInterval(instructionsInterval);
           window.clearTimeout(instructionsStopTimeout);
-          message.innerHTML = "";
+          message.innerHTML = "Ready!";
         }}>
         Skip
       </button>
