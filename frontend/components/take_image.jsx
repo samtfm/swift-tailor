@@ -49,7 +49,7 @@ export default class TakeImage extends React.Component {
     this.createVideo();
     setInterval(()=>{
       this.snapPicture(0)();
-    },40);
+    },200);
   }
   componentWillUnmount(){
     window.localStream.getTracks().forEach((track) => {
