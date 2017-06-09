@@ -29,7 +29,9 @@ export default class TakeImage extends React.Component {
       options,
       stat,
       modalIsOpen: false,
-      instructionsStarted: false
+      instructionsStarted: false,
+      showButtons: false,
+      showVideoControls: false
     };
 
     this.openModal = this.openModal.bind(this);
@@ -37,7 +39,6 @@ export default class TakeImage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
-    this.loadInstructions = this.loadInstructions.bind(this);
   }
 
   componentWillMount(){
@@ -69,10 +70,6 @@ export default class TakeImage extends React.Component {
       canvasH,
       context
     });
-  }
-
-  loadInstructions(){
-
   }
 
   snapPicture(delay){
@@ -111,7 +108,6 @@ export default class TakeImage extends React.Component {
       modalIsOpen: true,
       instructionsStarted: true
     });
-    this.loadInstructions();
   }
 
   afterOpenModal() {}
@@ -122,14 +118,18 @@ export default class TakeImage extends React.Component {
         track.stop();
       });
     }
-    this.setState({modalIsOpen: false});
+    this.setState({
+      modalIsOpen: false,
+      showVideoControls: false
+    });
   }
 
 
   render(){
     // load initial message, modal declaraction
     // is delayed so setState can catchup
-    let modal, message, modalButtonSection, repeatButton, beginButton, skipButton;
+    let modal, message, modalButtonSection, videoControls,
+        repeatButton, beginButton, skipButton;
     let instructions = startInstructions;
     let instructionsInterval;
     let instructionsStopTimeout;
@@ -140,7 +140,10 @@ export default class TakeImage extends React.Component {
       <button
         className={this.state.instructionsStarted ? "modal-button" : "hidden"}
         onClick={() => {
-          this.setState({instructionsStarted: false});
+          this.setState({
+            instructionsStarted: false,
+            showButtons: true
+          });
           clearInterval(instructionsInterval);
           window.clearTimeout(instructionsStopTimeout);
           message.innerHTML = "";
@@ -151,9 +154,12 @@ export default class TakeImage extends React.Component {
 
     repeatButton = (
       <button
-        className={this.state.instructionsStarted ? "hidden" : "modal-button"}
+        className={this.state.showButtons ?  "modal-button" : "hidden"}
         onClick={() => {
-          this.setState({instructionsStarted: true});
+          this.setState({
+            instructionsStarted: true,
+            showButtons: false
+          });
         }}>
         Repeat Instructions
       </button>
@@ -161,9 +167,34 @@ export default class TakeImage extends React.Component {
 
     beginButton = (
       <button
-        className={this.state.instructionsStarted ? "hidden" : "modal-button"}>
+        className={this.state.showButtons ? "modal-button" : "hidden"}
+        onClick={()=>{
+          this.createVideo();
+          message.innerHTML = "";
+          this.setState({
+            showButtons: false,
+            showVideoControls: true
+          });
+        }}>
         Begin
       </button>
+    );
+
+    videoControls = (
+      <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
+        <button
+          id="snap"
+          onClick={this.snapPicture(0)}>Snap Photo
+        </button>
+        <button
+          id="snap"
+          onClick={this.snapPicture(2000)}>Snap Delay Photo
+        </button>
+        <CalcIndicator
+          side={"front"}
+          measurements = {['1', '2', '3']}
+        />
+      </section>
     );
 
 
@@ -188,7 +219,8 @@ export default class TakeImage extends React.Component {
       let lastMessageTime = instructions.length * 500;
       let instructionStopTimeout = setTimeout(() => {
         this.setState({
-          instructionsStarted: false
+          instructionsStarted: false,
+          showButtons: true
         });
       }, lastMessageTime + 500);
     }
@@ -214,20 +246,8 @@ export default class TakeImage extends React.Component {
           <h1 id="instructions" className="instructions"></h1>
 
           <video id="video" width="480" height="360" autoPlay></video>
-          <section className="video-controls">
-            <button
-              id="snap"
-              onClick={this.snapPicture(0)}>Snap Photo
-            </button>
-            <button
-              id="snap"
-              onClick={this.snapPicture(2000)}>Snap Delay Photo
-            </button>
-            <CalcIndicator
-              side={"front"}
-              measurements = {['1', '2', '3']}
-            />
-          </section>
+
+          { videoControls }
           <section className="modal-button-section">
             { skipButton }
             { repeatButton }
