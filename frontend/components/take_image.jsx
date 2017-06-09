@@ -46,7 +46,9 @@ export default class TakeImage extends React.Component {
     },40);
   }
   componentWillUnmount(){
-    this.closeModal();
+    window.localStream.getTracks().forEach((track) => {
+      track.stop();
+    });
   }
 
   createVideo(){
@@ -118,9 +120,6 @@ export default class TakeImage extends React.Component {
   openModal() {
     this.setState({ modalIsOpen: true});
     this.createVideo();
-    setInterval(()=>{
-      this.snapPicture(0)();
-    },1000);
   }
 
   afterOpenModal() {}
