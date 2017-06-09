@@ -34,12 +34,15 @@ class Shirt extends React.Component{
     //   [(shoulders+chest)/4 -5, armHole*.7],
     //   [chest/2, armHole]
     // ]);
+
+    //main box of shirt
     lines.push([
       [chest / 2, armHole],
       [(waist/2), length],
       [-(waist/2), length],
       [-chest / 2, armHole]
     ]);
+    //center line
     lines.push([
       [0,0],
       [0,length]
@@ -62,6 +65,7 @@ class Shirt extends React.Component{
     const shoulderWidth = chest.average * 0.9 * factor;
     const neckWidth = neck.mininum * factor;
     const armHole = shirtLength*.25;
+
     if (!(arms && neck && chest)) return group;
     const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth, waistWidth);
     lines.forEach(line => {
