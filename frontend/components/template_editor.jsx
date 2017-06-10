@@ -1,4 +1,5 @@
 import React from 'react';
+import Shirt from './shirt';
 
 class TemplateEditor extends React.Component{
 

@@ -2,7 +2,7 @@ import React from 'react';
 import Shirt from './shirt';
 import TakeImage from './take_image';
 import Canny from './canny/canny';
-
+import TemplateEditor from './template_editor';
 export default class Fit extends React.Component {
 
   render(){
@@ -11,6 +11,7 @@ export default class Fit extends React.Component {
     return(
       <section>
         <TakeImage />
+        <TemplateEditor />
       </section>
     );
   }
