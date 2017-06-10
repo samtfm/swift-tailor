@@ -8,8 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch"
+    "postinstall": "webpack"
   },
   "repository": {
     "type": "git",
@@ -39,5 +38,9 @@
     "svg.js": "^2.6.2",
     "url-loader": "^0.5.8",
     "webpack": "^2.6.1"
+  },
+  "engines": {
+    "node": "4.1.1",
+    "npm": "2.1.x"
   }
 }
