@@ -5,3 +5,9 @@ export let startInstructions = [
   ["Place your laptop far enough so you can see your upper body", 12000],
   ["When you're ready, press the button below", 17000],
 ];
+
+export let videoInstructions = [
+  ["Move back far enough to show your upper body with your arms out"],
+  ["Stand still and drop arms to your sides"],
+  ["Rotate to your side and look forward"]
+];

@@ -97,13 +97,18 @@ $primary-color: red;
   color: white;
   // font-size: 8vw;
   font-size: 10vh;
-  max-height: 200px;
   width: 80%;
   position: fixed;
   top: 22%;
   text-align: center;
   transition: 0.5s;
   line-height: 113px;
+}
+
+.shadow {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 30px;
+  box-shadow: 0px 0px 22px 20px rgba(0, 0, 0, 0.8);
 }
 
 .video-controls {
