@@ -1,0 +1,25 @@
+.template-editor{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row-reverse;
+  .preview{
+    border: 1px dashed red;
+    display: inline-block;
+  }
+  padding: 0;
+  margin: 0;
+  ul {
+    width: 150px;
+    label {
+      width: 100%;
+      margin: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    input {
+      width: 50px;
+    }
+    display: flex;
+    flex-direction: column;
+  }
+}

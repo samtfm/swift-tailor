@@ -57,7 +57,7 @@ class TemplateEditor extends React.Component{
   render(){
     const { height, neck, chest, waist } = this.state.inputs;
     return (
-      <div>
+      <div className='template-editor'>
         <ul>
           <label>
             Height:
@@ -76,8 +76,10 @@ class TemplateEditor extends React.Component{
             <input type = 'text' name='waist' value={waist} onChange={this.updateValue}></input>
           </label>
         </ul>
-        <Shirt
-          inchMeasurements={this.state.inchMeasurements} />
+        <section className='preview'>
+          <Shirt
+            inchMeasurements={this.state.inchMeasurements} />
+        </section>
       </div>
     );
   }
