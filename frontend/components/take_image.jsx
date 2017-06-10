@@ -32,10 +32,11 @@ export default class TakeImage extends React.Component {
       instructionsStarted: false,
       showButtons: false,
       showVideoControls: false,
-      wingspan: 1,
+      wingspan: [],
       neckWidth: 0,
       chestWidth: 0,
       waistWidth: 0
+
     };
 
     this.openModal = this.openModal.bind(this);
@@ -44,6 +45,7 @@ export default class TakeImage extends React.Component {
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
     this.loadDirections = this.loadDirections.bind(this);
+    this.refineMeasurements = this.refineMeasurements.bind(this);
   }
 
   componentWillMount(){
@@ -89,40 +91,54 @@ export default class TakeImage extends React.Component {
   }
 
   snapPicture(){
-      let { canvas, canvasW, canvasH, context, options, stat } = this.state;
-      let video = document.getElementById('video');
+    let { canvas, canvasW, canvasH, context, options, stat } = this.state;
+    let video = document.getElementById('video');
 
-    	context.drawImage(video, 0, 0, canvasW, canvasH);
-      //Copies the picture canvas translates to the calculation canvas
-      let calcCanvas = document.getElementById('calcCanvas');
-      let calcCtx = calcCanvas.getContext('2d');
-      calcCtx.drawImage(canvas, 0, 0);
+  	context.drawImage(video, 0, 0, canvasW, canvasH);
+    //Copies the picture canvas translates to the calculation canvas
+    let calcCanvas = document.getElementById('calcCanvas');
+    let calcCtx = calcCanvas.getContext('2d');
+    calcCtx.drawImage(canvas, 0, 0);
 
-      // detectFace detects a face then returns the box region and scale;
-      // applyCanny applies canny to the canvas, duh...
-      // drawFace draws the faceBox on the canvas after canny has been applied;
-      let faceBox = detectFace(calcCtx, options);
+    // detectFace detects a face then returns the box region and scale;
+    // applyCanny applies canny to the canvas, duh...
+    // drawFace draws the faceBox on the canvas after canny has been applied;
+    let faceBox = detectFace(calcCtx, options);
 
-      // let handBox = detectHand(calcCtx, options);
-      // drawHand(calcCtx, handBox.hand, handBox.scale);
-      let cannyData = applyCanny(calcCtx, options, this.state.stat);
-      try{
-        drawFace(calcCtx, faceBox.face, faceBox.scale);
-      } catch(err){
-        console.log("couldn't find a face");
+    // let handBox = detectHand(calcCtx, options);
+    // drawHand(calcCtx, handBox.hand, handBox.scale);
+    let cannyData = applyCanny(calcCtx, options, this.state.stat);
+    try{
+      drawFace(calcCtx, faceBox.face, faceBox.scale);
+    } catch(err){
+      console.log("couldn't find a face");
+    }
+    let measurements = detectOutlinePoints(cannyData, faceBox.face);
+    calcCtx.fillStyle = '#0F0';
+    if (measurements.arms.wingspan) {
+      this.refineMeasurements(measurements);
+      // this.setState({measurements: measurements });
+    }
+    for (let part in measurements) {
+      if (measurements[part].points) {
+        measurements[part].points.forEach(point => {
+          calcCtx.fillRect(point.x,point.y, 2, 2);
+        });
       }
-      let measurements = detectOutlinePoints(cannyData, faceBox.face);
-      calcCtx.fillStyle = '#0F0';
-      if (measurements.arms.wingspan) {
-        this.setState({measurements: measurements });
-      }
-      for (let part in measurements) {
-        if (measurements[part].points) {
-          measurements[part].points.forEach(point => {
-            calcCtx.fillRect(point.x,point.y, 2, 2);
-          });
-      }
+    }
   }
+
+  refineMeasurements(measurements){
+    for (let part in measurements) {
+      if (part==="arms") {
+        console.log("arms", measurements[part].wingspan);
+        this.state.wingspan.push(measurements[part].wingspan);
+        if(this.state.wingspan.length === 100){
+          console.log(this.state.wingspan);
+          debugger;
+        }
+      }
+    }
   }
 
   openModal() {
@@ -152,7 +168,7 @@ export default class TakeImage extends React.Component {
     this.createVideo();
     setInterval(()=>{
       this.snapPicture();
-    },500);
+    },50);
 
     let message = document.getElementById("instructions");
     message.innerHTML = "";
@@ -293,6 +309,7 @@ export default class TakeImage extends React.Component {
         });
       }, lastMessageTime + 500);
     }
+
     let width = 0, height = 0;
     while (height < window.innerHeight){
       height += 120;
