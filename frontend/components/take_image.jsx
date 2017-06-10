@@ -9,7 +9,7 @@ import { applyCanny } from '../util/image_filter';
 import { startInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
 import Shirt from './shirt';
-// import { test } from './canny/test';
+
 export default class TakeImage extends React.Component {
   constructor(props){
     super(props);
@@ -43,6 +43,7 @@ export default class TakeImage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
+    this.loadDirections = this.loadDirections.bind(this);
   }
 
   componentWillMount(){
@@ -135,8 +136,7 @@ export default class TakeImage extends React.Component {
   afterOpenModal() {}
 
   closeModal() {
-    console.log("STREAM",window.localStream);
-    if(window.localStream > 0){
+    if(window.localStream){
       window.localStream.getTracks().forEach((track) => {
         track.stop();
       });
@@ -148,6 +148,7 @@ export default class TakeImage extends React.Component {
   }
 
   startMeasuring(){
+    this.loadDirections();
     this.createVideo();
     setInterval(()=>{
       this.snapPicture(0)();
@@ -158,6 +159,13 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: true
     });
+  }
+
+  loadDirections(){
+    let message = document.getElementById('instructions');
+    setInterval(() => {
+      message.innerHTML = "LETS DO thIS";
+    }, 2000);
   }
 
 
@@ -303,7 +311,7 @@ export default class TakeImage extends React.Component {
             onClick={this.openModal}
             >Take a Picture
           </button>
-
+          <i className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
         </section>
         <section className="calc-section">
           <h1>SECTION FOR CALCULATIONS</h1>
