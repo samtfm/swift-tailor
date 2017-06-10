@@ -9,13 +9,21 @@ class TemplateEditor extends React.Component{
       inputs: { height: 70, neck: 3, chest: 14, waist: 16 },
       inchMeasurements: {}
     };
+
     this.updateValue = this.updateValue.bind(this);
+  }
+  componentDidMount(){
+    this.updateInchMeasuruements(this.state.inputs);
+
   }
 
   updateValue(e){
-    const newState = { inputs: {} };
-    newState.inputs[e.target.name] = e.target.value;
-    this.setState(newState);
+    const newInputs = this.state.inputs;
+    console.log(newInputs);
+    let val = parseFloat(e.target.value) || 0;
+    newInputs[e.target.name] = val;
+    this.setState(newInputs);
+    this.updateInchMeasuruements(this.state.inputs);
   }
 
   componentWillReceiveProps(newProps){
@@ -25,29 +33,31 @@ class TemplateEditor extends React.Component{
     const rawHeight = arms.wingspan * 0.98;
     const scaleFactor = heightInches/rawHeight;
 
-    const chestWidth = chest.average * scaleFactor;
-    const waistWidth = waist.maximum * scaleFactor;
-    const shirtLength = arms.wingspan * 0.4 * scaleFactor;
-    const shoulderWidth = chest.average * 0.9 * scaleFactor;
-    const neckWidth = neck.mininum * scaleFactor;
-    const armHole = shirtLength*.25;
-
-    this.setState({
-      inchMeasurements: {
-        height: heightInches,
-        neck: neckWidth,
-        chest: chestWidth,
-        waist: waistWidth,
-        length: shirtLength,
-        shoulder: shoulderWidth,
-        armHole: armHole
-      }
-   });
+    this.updateInchMeasuruements({
+      height: heightInches,
+      neck: neck.mininum * scaleFactor,
+      chest: chest.average * scaleFactor,
+      waist: waist.maximum * scaleFactor,
+    });
   }
+
+ updateInchMeasuruements({height, neck, chest, waist}){
+   this.setState({
+     inchMeasurements: {
+       neckWidth: neck,
+       chestWidth: chest,
+       waistWidth: waist,
+       shirtLength: height * 0.4,
+       shoulderWidth: chest * 0.9,
+       armHole: height * 0.1
+     }
+   });
+ }
 
 
   render(){
-    const { height, neck, chest, waist } = this.state;
+    const { height, neck, chest, waist } = this.state.inputs;
+    console.log(this.state.inchMeasurements);
     return (
       <div>
         <ul>
@@ -69,7 +79,6 @@ class TemplateEditor extends React.Component{
           </label>
         </ul>
         <Shirt
-          pixelMeasurements={this.state.pixelMeasurements /*this.state.measurements*/}
           inchMeasurements={this.state.inchMeasurements} />
       </div>
     );

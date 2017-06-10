@@ -12,6 +12,7 @@ class Shirt extends React.Component{
   }
   componentWillReceiveProps(newProps){
     if (newProps.inchMeasurements){
+      console.log(newProps);
       const pixelMeasurements = {};
       const shirtScale = 100/12;
       for (var key in newProps.inchMeasurements) {
@@ -114,6 +115,7 @@ class Shirt extends React.Component{
       armHole
     } = this.state.pixelMeasurements;
     if (!(chestWidth && neckWidth && shirtLength)) return group;
+    console.log(this.state.pixelMeasurements);
     const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth, waistWidth);
     lines.forEach(line => {
       const pointString = line.map(pair => (
@@ -139,17 +141,10 @@ class Shirt extends React.Component{
         this.drawShirt();
     }
 
-    const {height, neck, chest, waist} = this.state.inchMeasurements;
+    const {height, neck, chest, waist} = this.state.pixelMeasurements;
     return(
       <div className='shirt'>
         <div ref={(component) => { this.drawing = component;}}></div>
-        <input type = 'text' value='72'></input>
-        <ul>
-          <li>height: {height}</li>
-          <li>neck: {neck}</li>
-          <li>chest: {chest}</li>
-          <li>waist: {waist}</li>
-        </ul>
       </div>
     );
   }
