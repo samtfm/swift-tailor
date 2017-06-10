@@ -6,7 +6,7 @@ import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detectio
 import profiler from '../util/profiler';
 import CalcIndicator from '../widget/calc_indicators';
 import { applyCanny } from '../util/image_filter';
-import { startInstructions } from '../util/instructions';
+import { startInstructions, videoInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
 import Shirt from './shirt';
 
@@ -162,10 +162,44 @@ export default class TakeImage extends React.Component {
   }
 
   loadDirections(){
+    console.log("DIRECTIONS LOADED");
     let message = document.getElementById('instructions');
-    setInterval(() => {
-      message.innerHTML = "LETS DO thIS";
-    }, 2000);
+    let instructions = videoInstructions;
+
+    message.classList.add("shadow");
+    let i = 0;
+    message.innerHTML = instructions[i];
+
+    let messageLoop = (param) => {
+      message.innerHTML = instructions[i];
+      setTimeout(() => {
+        if(param){
+          message.innerHTML = "Great!";
+          return i++;
+        } else {
+          message.innerHTML = "Processing...";
+        }
+      }, 2500);
+    };
+
+    let measurementInstructionInterval = setInterval(() => {
+      if(i >= instructions.length){
+        message.innerHTML = "All Done Good Job Buddy!";
+        clearInterval(measurementInstructionInterval);
+      } else {
+        switch(i) {
+          //check the front
+          case 0:
+            messageLoop(window.armsUp, i);
+            break;
+          case 1:
+            messageLoop(window.armsDown, i);
+            break;
+          case 2:
+            messageLoop(window.side, i);
+        }
+      }
+    }, 5000);
   }
 
 
@@ -281,7 +315,8 @@ export default class TakeImage extends React.Component {
             onClick={this.closeModal}>x
           </button>
 
-          <h1 id="instructions" className="instructions"></h1>
+          <h1 id="instructions" className="instructions">
+          </h1>
 
           <video id="video" width={width} height={height} autoPlay></video>
 
@@ -295,6 +330,7 @@ export default class TakeImage extends React.Component {
 
         <section className="enter-height-section">
           <h2>(Step 1)   Enter your height</h2>
+          <i className="fa fa-cog fa-spin fa-3x fa-fw"></i>
           <section>
             <input></input><label>Ft </label>
             <input></input><label>inches</label>
