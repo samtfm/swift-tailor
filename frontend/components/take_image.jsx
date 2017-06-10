@@ -352,9 +352,6 @@ export default class TakeImage extends React.Component {
           <canvas id="calcCanvas" width="480" height="360"></canvas>
           <canvas id="canvas-pic" width="480" height="360"></canvas>
         </section>
-        <section>
-          <Shirt measurements={this.state.measurements} />
-        </section>
       </section>
     );
   }

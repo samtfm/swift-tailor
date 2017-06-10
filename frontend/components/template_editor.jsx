@@ -61,19 +61,19 @@ class TemplateEditor extends React.Component{
         <ul>
           <label>
             Height:
-            <input type = 'text' name='height' value={height} onChange={this.updateValue}></input>
+            <input type = 'number' name='height' value={height} onChange={this.updateValue}></input>
           </label>
           <label>
             Neck:
-            <input type = 'text' name='neck' value={neck} onChange={this.updateValue}></input>
+            <input type = 'number' name='neck' value={neck} onChange={this.updateValue}></input>
           </label>
           <label>
             Chest:
-            <input type = 'text' name='chest' value={chest} onChange={this.updateValue}></input>
+            <input type = 'number' name='chest' value={chest} onChange={this.updateValue}></input>
           </label>
           <label>
             Waist:
-            <input type = 'text' name='waist' value={waist} onChange={this.updateValue}></input>
+            <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
           </label>
         </ul>
         <section className='preview'>
