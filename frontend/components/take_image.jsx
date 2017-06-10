@@ -165,7 +165,6 @@ export default class TakeImage extends React.Component {
     console.log("DIRECTIONS LOADED");
     let message = document.getElementById('instructions');
     let instructions = videoInstructions;
-
     message.classList.add("shadow");
     let i = 0;
     message.innerHTML = instructions[i];
@@ -178,6 +177,7 @@ export default class TakeImage extends React.Component {
           return i++;
         } else {
           message.innerHTML = "Processing...";
+
         }
       }, 2500);
     };
@@ -315,8 +315,7 @@ export default class TakeImage extends React.Component {
             onClick={this.closeModal}>x
           </button>
 
-          <h1 id="instructions" className="instructions">
-          </h1>
+          <h1 id="instructions" className="instructions"></h1>
 
           <video id="video" width={width} height={height} autoPlay></video>
 
@@ -330,7 +329,6 @@ export default class TakeImage extends React.Component {
 
         <section className="enter-height-section">
           <h2>(Step 1)   Enter your height</h2>
-          <i className="fa fa-cog fa-spin fa-3x fa-fw"></i>
           <section>
             <input></input><label>Ft </label>
             <input></input><label>inches</label>
@@ -345,9 +343,9 @@ export default class TakeImage extends React.Component {
           <button
             className='nav-button'
             onClick={this.openModal}
-            >Take a Picture
+            >Take a Picture &nbsp;
+            <i id="cameraIcon" className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
           </button>
-          <i className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
         </section>
         <section className="calc-section">
           <h1>SECTION FOR CALCULATIONS</h1>
