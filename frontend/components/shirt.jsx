@@ -156,7 +156,6 @@ class Shirt extends React.Component{
 
   render(){
     if (this.drawing){
-      console.log(this.last);
       this.last = this.last ?
         this.last.replace(this.drawShirt()) :
         this.drawShirt();

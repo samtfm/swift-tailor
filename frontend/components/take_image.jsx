@@ -49,12 +49,6 @@ export default class TakeImage extends React.Component {
     Modal.setAppElement('body');
   }
 
-  componentDidMount(){
-    this.createVideo();
-    setInterval(()=>{
-      this.snapPicture(0)();
-    },200);
-  }
   componentWillUnmount(){
     window.localStream.getTracks().forEach((track) => {
       track.stop();
@@ -90,7 +84,6 @@ export default class TakeImage extends React.Component {
   }
 
   snapPicture(delay){
-    return () => { setTimeout(() =>{
       let { canvas, canvasW, canvasH, context, options, stat } = this.state;
       let video = document.getElementById('video');
 
@@ -123,10 +116,10 @@ export default class TakeImage extends React.Component {
           measurements[part].points.forEach(point => {
             calcCtx.fillRect(point.x,point.y, 2, 2);
           });
-        }
       }
-    }, delay);};
   }
+  }
+
   openModal() {
     this.setState({
       modalIsOpen: true,
@@ -145,6 +138,21 @@ export default class TakeImage extends React.Component {
     this.setState({
       modalIsOpen: false,
       showVideoControls: false
+    });
+    if (this.measuringInterval) this.clearInterval(this.measuringInterval);
+  }
+
+  startMeasuring(){
+    this.createVideo();
+    this.measuringInterval = setInterval(()=>{
+      this.snapPicture();
+    },200);
+
+    let message = document.getElementById("instructions");
+    message.innerHTML = "";
+    this.setState({
+      showButtons: false,
+      showVideoControls: true
     });
   }
 
@@ -192,14 +200,7 @@ export default class TakeImage extends React.Component {
     beginButton = (
       <button
         className={this.state.showButtons ? "modal-button" : "hidden"}
-        onClick={()=>{
-          this.createVideo();
-          message.innerHTML = "";
-          this.setState({
-            showButtons: false,
-            showVideoControls: true
-          });
-        }}>
+        onClick={this.startMeasuring.bind(this)}>
         Begin
       </button>
     );
@@ -208,11 +209,11 @@ export default class TakeImage extends React.Component {
       <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
         <button
           id="snap"
-          onClick={this.snapPicture(0)}>Snap Photo
+          onClick={this.snapPicture}>Snap Photo
         </button>
         <button
           id="snap"
-          onClick={this.snapPicture(2000)}>Snap Delay Photo
+          onClick={this.snapPicture}>Snap Delay Photo
         </button>
         <CalcIndicator
           side={"front"}
