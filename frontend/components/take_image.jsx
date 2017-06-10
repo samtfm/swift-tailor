@@ -156,6 +156,19 @@ export default class TakeImage extends React.Component {
     });
   }
 
+  startMeasuring(){
+    this.createVideo();
+    setInterval(()=>{
+      this.snapPicture(0)();
+    },200);
+    let message = document.getElementById("instructions");
+    message.innerHTML = "";
+    this.setState({
+      showButtons: false,
+      showVideoControls: true
+    });
+  }
+
 
   render(){
     // load initial message, modal declaraction
