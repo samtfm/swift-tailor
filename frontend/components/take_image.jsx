@@ -64,7 +64,7 @@ export default class TakeImage extends React.Component {
     let context = canvas.getContext('2d');
 
     let videoInterval = setInterval(() => {
-      
+
     }, 1000);
 
     // Get access to the camera!
@@ -135,6 +135,7 @@ export default class TakeImage extends React.Component {
   afterOpenModal() {}
 
   closeModal() {
+    console.log("STREAM",window.localStream);
     if(window.localStream > 0){
       window.localStream.getTracks().forEach((track) => {
         track.stop();
