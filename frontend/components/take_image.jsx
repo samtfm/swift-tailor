@@ -88,7 +88,7 @@ export default class TakeImage extends React.Component {
     });
   }
 
-  snapPicture(delay){
+  snapPicture(){
       let { canvas, canvasW, canvasH, context, options, stat } = this.state;
       let video = document.getElementById('video');
 
@@ -148,25 +148,12 @@ export default class TakeImage extends React.Component {
   }
 
   startMeasuring(){
-    this.createVideo();
-    this.measuringInterval = setInterval(()=>{
-      this.snapPicture();
-    },200);
-
-    let message = document.getElementById("instructions");
-    message.innerHTML = "";
-    this.setState({
-      showButtons: false,
-      showVideoControls: true
-    });
-  }
-
-  startMeasuring(){
     this.loadDirections();
     this.createVideo();
     setInterval(()=>{
-      this.snapPicture(0)();
-    },200);
+      this.snapPicture();
+    },500);
+
     let message = document.getElementById("instructions");
     message.innerHTML = "";
     this.setState({
