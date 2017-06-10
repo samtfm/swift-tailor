@@ -20,6 +20,7 @@ node_modules/
 bundle.js
 bundle.js.map
 stony.pem
+ssl/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
