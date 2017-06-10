@@ -19,7 +19,6 @@ class TemplateEditor extends React.Component{
 
   updateValue(e){
     const newInputs = this.state.inputs;
-    console.log(newInputs);
     let val = parseFloat(e.target.value) || 0;
     newInputs[e.target.name] = val;
     this.setState(newInputs);
@@ -57,7 +56,6 @@ class TemplateEditor extends React.Component{
 
   render(){
     const { height, neck, chest, waist } = this.state.inputs;
-    console.log(this.state.inchMeasurements);
     return (
       <div>
         <ul>
