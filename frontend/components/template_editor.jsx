@@ -9,7 +9,9 @@ class TemplateEditor extends React.Component{
   }
 
   updateValue(e){
-    console.log(e.target);
+    const newState = {};
+    newState[e.target.name] = e.target.value;
+    this.setState(newState);
   }
 
   render(){
@@ -17,11 +19,22 @@ class TemplateEditor extends React.Component{
     return (
       <div>
         <ul>
-          <input type = 'text' value='72' onChange={this.updateValue.bind(this)}></input>
-          <li>height: {height}</li>
-          <li>neck: {neck}</li>
-          <li>chest: {chest}</li>
-          <li>waist: {waist}</li>
+          <label>
+            Height:
+            <input type = 'text' name='height' value={height} onChange={this.updateValue.bind(this)}></input>
+          </label>
+          <label>
+            Neck:
+            <input type = 'text' name='neck' value={neck} onChange={this.updateValue.bind(this)}></input>
+          </label>
+          <label>
+            Chest:
+            <input type = 'text' name='chest' value={chest} onChange={this.updateValue.bind(this)}></input>
+          </label>
+          <label>
+            Waist:
+            <input type = 'text' name='waist' value={waist} onChange={this.updateValue.bind(this)}></input>
+          </label>
         </ul>
         <Shirt measurements={{}/*this.state.measurements*/} />
       </div>
