@@ -24,19 +24,23 @@ class TemplateEditor extends React.Component{
     const heightInches = 71;
     const rawHeight = arms.wingspan * 0.98;
     const scaleFactor = heightInches/rawHeight;
+
     const chestWidth = chest.average * scaleFactor;
     const waistWidth = waist.maximum * scaleFactor;
     const shirtLength = arms.wingspan * 0.4 * scaleFactor;
     const shoulderWidth = chest.average * 0.9 * scaleFactor;
     const neckWidth = neck.mininum * scaleFactor;
-
     const armHole = shirtLength*.25;
+
     this.setState({
       inchMeasurements: {
         height: heightInches,
         neck: neckWidth,
         chest: chestWidth,
-        waist: waistWidth
+        waist: waistWidth,
+        length: shirtLength,
+        shoulder: shoulderWidth,
+        armHole: armHole
       }
    });
   }
