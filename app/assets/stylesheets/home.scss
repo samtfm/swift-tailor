@@ -1,8 +1,11 @@
 $primary-color: red;
+body{
+  font-family: 'Nunito', sans-serif;
+}
 .hidden{
   display: none;
   transition: opacity 1s ease-out;
-  opacity: 0; 
+  opacity: 0;
 }
 .intro{
   width: 100%;
@@ -54,11 +57,11 @@ $primary-color: red;
   align-items: center;
   justify-content: center;
   background-color: $primary-color;
-  font-family: 'Swanky and Moo Moo', cursive;
+  // font-family: 'Swanky and Moo Moo', cursive;
 
 
   h2{
-    font-size: 40px;
+    font-size: 30px;
     text-align: center;
     width: 90%;
     color: white;
@@ -66,7 +69,7 @@ $primary-color: red;
   }
 
   ol{
-    font-size: 35px;
+    font-size: 25px;
     width: 41%;
     color: white;
     padding-bottom: 30px;

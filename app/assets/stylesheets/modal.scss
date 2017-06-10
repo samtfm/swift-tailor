@@ -93,7 +93,6 @@ $primary-color: red;
 }
 
 .instructions{
-  font-family: 'Pacifico', cursive;
   color: white;
   // font-size: 8vw;
   font-size: 10vh;
@@ -106,9 +105,11 @@ $primary-color: red;
 }
 
 .shadow {
-  background-color: rgba(0, 0, 0, 0.8);
+  // background-color: rgba(0, 0, 0, 0.8);
   border-radius: 30px;
-  box-shadow: 0px 0px 22px 20px rgba(0, 0, 0, 0.8);
+  // box-shadow: 0px 0px 22px 20px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 20px #000;
+
 }
 
 .video-controls {

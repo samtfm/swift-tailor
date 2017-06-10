@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return(
-    <header>
+    <header className='logo'>
       <Link to="/">Tailor Swift</Link>
     </header>
   );
