@@ -32,7 +32,7 @@ export default class TakeImage extends React.Component {
       instructionsStarted: false,
       showButtons: false,
       showVideoControls: false,
-      wingspan: 0,
+      wingspan: 1,
       neckWidth: 0,
       chestWidth: 0,
       waistWidth: 0
@@ -62,6 +62,10 @@ export default class TakeImage extends React.Component {
     let canvasH = canvas.height;
     let video;
     let context = canvas.getContext('2d');
+
+    let videoInterval = setInterval(() => {
+
+    }, 1000);
 
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -206,17 +210,15 @@ export default class TakeImage extends React.Component {
 
     videoControls = (
       <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
-        <button
-          id="snap"
-          onClick={this.snapPicture(0)}>Snap Photo
-        </button>
-        <button
-          id="snap"
-          onClick={this.snapPicture(2000)}>Snap Delay Photo
-        </button>
+
         <CalcIndicator
           side={"front"}
-          measurements = {['1', '2', '3']}
+          measurements = {[
+            this.state.wingspan,
+            this.state.neckWidth,
+            this.state.chestWidth,
+            this.state.waistWidth
+          ]}
         />
       </section>
     );
@@ -314,3 +316,12 @@ export default class TakeImage extends React.Component {
     );
   }
 }
+
+// <button
+//   id="snap"
+//   onClick={this.snapPicture(0)}>Snap Photo
+// </button>
+// <button
+//   id="snap"
+//   onClick={this.snapPicture(2000)}>Snap Delay Photo
+// </button>
