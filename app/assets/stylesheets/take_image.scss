@@ -52,22 +52,10 @@ $primary-color: red;
     position: relative;
   }
   button {
-    margin: 30px;
-    font-size: 70px;
-    font-family: 'Pacifico', cursive;
-    padding: 15px;
-    color: white;
-    outline: none;
-    transition: 0.5s;
-    border: none;
-    background-color: $primary-color;
-    cursor: pointer;
-    border-radius: 200px;
-    padding: 30px;
-
+    font-size: 40px;
     &:hover{
-      background-color: white;
-      color: $primary-color;
+      // background-color: white;
+      // color: $primary-color;
     }
   }
 }
