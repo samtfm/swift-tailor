@@ -12,10 +12,10 @@
  *
  *= require_tree .
  *= require_self
+ *= require _font-awesome
  */
-
- @import "reset.scss";
- @import "header";
- @import "home.scss";
- @import "modal.scss";
- @import "take_image.scss";
+@import "reset";
+@import "header";
+@import "home";
+@import "modal";
+@import "take_image";

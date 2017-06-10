@@ -9,7 +9,7 @@ import { applyCanny } from '../util/image_filter';
 import { startInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
 import Shirt from './shirt';
-// import { test } from './canny/test';
+
 export default class TakeImage extends React.Component {
   constructor(props){
     super(props);
@@ -32,7 +32,7 @@ export default class TakeImage extends React.Component {
       instructionsStarted: false,
       showButtons: false,
       showVideoControls: false,
-      wingspan: 0,
+      wingspan: 1,
       neckWidth: 0,
       chestWidth: 0,
       waistWidth: 0
@@ -43,6 +43,7 @@ export default class TakeImage extends React.Component {
     this.closeModal = this.closeModal.bind(this);
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
+    this.loadDirections = this.loadDirections.bind(this);
   }
 
   componentWillMount(){
@@ -62,6 +63,10 @@ export default class TakeImage extends React.Component {
     let canvasH = canvas.height;
     let video;
     let context = canvas.getContext('2d');
+
+    let videoInterval = setInterval(() => {
+
+    }, 1000);
 
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -130,7 +135,7 @@ export default class TakeImage extends React.Component {
   afterOpenModal() {}
 
   closeModal() {
-    if(window.localStream > 0){
+    if(window.localStream){
       window.localStream.getTracks().forEach((track) => {
         track.stop();
       });
@@ -157,6 +162,7 @@ export default class TakeImage extends React.Component {
   }
 
   startMeasuring(){
+    this.loadDirections();
     this.createVideo();
     setInterval(()=>{
       this.snapPicture(0)();
@@ -167,6 +173,13 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: true
     });
+  }
+
+  loadDirections(){
+    let message = document.getElementById('instructions');
+    setInterval(() => {
+      message.innerHTML = "LETS DO thIS";
+    }, 2000);
   }
 
 
@@ -191,7 +204,7 @@ export default class TakeImage extends React.Component {
           });
           clearInterval(instructionsInterval);
           window.clearTimeout(instructionsStopTimeout);
-          message.innerHTML = "";
+          message.innerHTML = "Ready!";
         }}>
         Skip
       </button>
@@ -220,17 +233,14 @@ export default class TakeImage extends React.Component {
 
     videoControls = (
       <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
-        <button
-          id="snap"
-          onClick={this.snapPicture}>Snap Photo
-        </button>
-        <button
-          id="snap"
-          onClick={this.snapPicture}>Snap Delay Photo
-        </button>
         <CalcIndicator
           side={"front"}
-          measurements = {['1', '2', '3']}
+          measurements = {[
+            this.state.wingspan,
+            this.state.neckWidth,
+            this.state.chestWidth,
+            this.state.waistWidth
+          ]}
         />
       </section>
     );
@@ -255,16 +265,19 @@ export default class TakeImage extends React.Component {
       //start instructions end at 17000
 
       let lastMessageTime = instructions.length * 500;
-      let instructionStopTimeout = setTimeout(() => {
+      instructionsStopTimeout = setTimeout(() => {
         this.setState({
           instructionsStarted: false,
           showButtons: true
         });
       }, lastMessageTime + 500);
     }
-
-    // this.createVideo();
-
+    let width = 0, height = 0;
+    while (height < window.innerHeight){
+      height += 120;
+    }
+    height -= 120;
+    width = height * 4/3;
     return(
       <section>
 
@@ -283,7 +296,7 @@ export default class TakeImage extends React.Component {
 
           <h1 id="instructions" className="instructions"></h1>
 
-          <video id="video" width="480" height="360" autoPlay></video>
+          <video id="video" width={width} height={height} autoPlay></video>
 
           { videoControls }
           <section className="modal-button-section">
@@ -293,15 +306,25 @@ export default class TakeImage extends React.Component {
           </section>
         </Modal>
 
+        <section className="enter-height-section">
+          <h2>(Step 1)   Enter your height</h2>
+          <section>
+            <input></input><label>Ft </label>
+            <input></input><label>inches</label>
+          </section>
+          <section>
+          </section>
+
+        </section>
+
         <section className="take-image-section">
-          <h2>(Step 1)   Lets take some pitures.</h2>
-          <h2>(Your pictures are never shared or saved)</h2>
+          <h2>(Step 2)   Lets take some pitures.</h2>
           <button
             className='nav-button'
             onClick={this.openModal}
             >Take a Picture
           </button>
-
+          <i className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
         </section>
         <section className="calc-section">
           <h1>SECTION FOR CALCULATIONS</h1>
@@ -315,3 +338,12 @@ export default class TakeImage extends React.Component {
     );
   }
 }
+
+// <button
+//   id="snap"
+//   onClick={this.snapPicture(0)}>Snap Photo
+// </button>
+// <button
+//   id="snap"
+//   onClick={this.snapPicture(2000)}>Snap Delay Photo
+// </button>

@@ -1,5 +1,37 @@
 $primary-color: red;
 
+.enter-height-section{
+  padding: 10px;
+  width: 100%;
+  height: 250px;
+  background-color: $primary-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-bottom: 3px dashed white;
+
+  label, h2{
+    font-family: 'Swanky and Moo Moo', cursive;
+    font-size: 35px;
+    color: white;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  input {
+    margin: 10px;
+    font-size: 25px;
+    font-family: 'Pacifico', cursive;
+    outline: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px;
+    width: 75px;
+    text-align: center;
+    border: none;
+  }
+}
 .take-image-section{
   padding: 10px;
   width: 100%;
@@ -17,7 +49,7 @@ $primary-color: red;
   }
   h2{
     font-family: 'Swanky and Moo Moo', cursive;
-    font-size: 25px;
+    font-size: 35px;
     color: white;
     position: relative;
   }
