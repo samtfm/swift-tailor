@@ -89,7 +89,6 @@ export default class TakeImage extends React.Component {
   }
 
   snapPicture(delay){
-    return () => { setTimeout(() =>{
       let { canvas, canvasW, canvasH, context, options, stat } = this.state;
       let video = document.getElementById('video');
 
@@ -122,10 +121,10 @@ export default class TakeImage extends React.Component {
           measurements[part].points.forEach(point => {
             calcCtx.fillRect(point.x,point.y, 2, 2);
           });
-        }
       }
-    }, delay);};
   }
+  }
+
   openModal() {
     this.setState({
       modalIsOpen: true,
@@ -144,6 +143,21 @@ export default class TakeImage extends React.Component {
     this.setState({
       modalIsOpen: false,
       showVideoControls: false
+    });
+    if (this.measuringInterval) this.clearInterval(this.measuringInterval);
+  }
+
+  startMeasuring(){
+    this.createVideo();
+    this.measuringInterval = setInterval(()=>{
+      this.snapPicture();
+    },200);
+
+    let message = document.getElementById("instructions");
+    message.innerHTML = "";
+    this.setState({
+      showButtons: false,
+      showVideoControls: true
     });
   }
 
@@ -219,7 +233,6 @@ export default class TakeImage extends React.Component {
 
     videoControls = (
       <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
-
         <CalcIndicator
           side={"front"}
           measurements = {[

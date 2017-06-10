@@ -10,8 +10,7 @@ export default class CalcIndicator extends React.Component {
     if(measurements.length <= 1){
       measurements = [measurements];
     }
-    console.log(measurements.length);
-
+    
     return(
       <section className='indicator-container'>
         <h3>{side}</h3>

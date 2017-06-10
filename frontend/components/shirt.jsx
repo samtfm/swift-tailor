@@ -11,36 +11,14 @@ class Shirt extends React.Component{
     this.draw = SVG(this.drawing).size(500,500);
   }
   componentWillReceiveProps(newProps){
-    if (!newProps.measurements || !newProps.measurements.arms) return;
-    let {arms, neck, chest, waist } = newProps.measurements;
-    const heightInches = 71;
-    const shirtScale = 100/12;
-    const rawHeight = arms.wingspan * 0.98;
-    const pixelHeight = heightInches*shirtScale;
-    const factor = pixelHeight/rawHeight;
-    const chestWidth = chest.average * factor;
-    const waistWidth = waist.maximum * factor;
-    const shirtLength = arms.wingspan * 0.4 * factor;
-    const shoulderWidth = chest.average * 0.9 * factor;
-    const neckWidth = neck.mininum * factor;
-    const armHole = shirtLength*.25;
-    this.setState({
-      pixelMeasurements: {
-        height: pixelHeight,
-        chestWidth,
-        waistWidth,
-        shirtLength,
-        shoulderWidth,
-        neckWidth,
-        armHole
-      },
-      inchMeasurements: {
-        height: heightInches,
-        neck: neckWidth/shirtScale,
-        chest: chestWidth/shirtScale,
-        waist: waistWidth/shirtScale
+    if (newProps.inchMeasurements){
+      const pixelMeasurements = {};
+      const shirtScale = 100/12;
+      for (var key in newProps.inchMeasurements) {
+        pixelMeasurements[key] = newProps.inchMeasurements[key] * shirtScale;
       }
-   });
+      this.setState({ pixelMeasurements });
+    }
   }
   calcShirtLines(chest, length, armHole, shoulders, neck, waist){
     const lines = [];
@@ -156,23 +134,15 @@ class Shirt extends React.Component{
 
   render(){
     if (this.drawing){
-      console.log(this.last);
       this.last = this.last ?
         this.last.replace(this.drawShirt()) :
         this.drawShirt();
     }
 
-    const {height, neck, chest, waist} = this.state.inchMeasurements;
+    const {height, neck, chest, waist} = this.state.pixelMeasurements;
     return(
       <div className='shirt'>
         <div ref={(component) => { this.drawing = component;}}></div>
-        <input type = 'text' value='72'></input>
-        <ul>
-          <li>height: {height}</li>
-          <li>neck: {neck}</li>
-          <li>chest: {chest}</li>
-          <li>waist: {waist}</li>
-        </ul>
       </div>
     );
   }
