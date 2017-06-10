@@ -64,7 +64,7 @@ export default class TakeImage extends React.Component {
     let context = canvas.getContext('2d');
 
     let videoInterval = setInterval(() => {
-
+      
     }, 1000);
 
     // Get access to the camera!
