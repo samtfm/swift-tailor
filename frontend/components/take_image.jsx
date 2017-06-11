@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import { detectSide } from '../util/side_detection';
-import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
+import { detectFace, drawFace } from '../util/body_detection';
 
 import profiler from '../util/profiler';
 import CalcIndicator from '../widget/calc_indicators';
 import { stdDev, average, inStdDev } from '../util/math';
 import { applyCanny } from '../util/image_filter';
 import { startInstructions, videoInstructions } from '../util/instructions';
-import { detectOutlinePoints } from '../util/body_detection';
+import { detectOutlinePoints, detectSide } from '../util/body_detection';
 import Shirt from './shirt';
 
 export default class TakeImage extends React.Component {
@@ -143,7 +142,7 @@ export default class TakeImage extends React.Component {
     }
     // let sideMeasurements = detectOutlinePoints(cannyData, faceBox.face);
     calcCtx.fillStyle = '#0F0';
-   if (this.state.measurements.arm || measurements.arms.wingspan) {
+    if (this.state.measurements.arm || measurements.arms.wingspan) {
       this.refineMeasurements(measurements);
     }
     for (let part in measurements) {
@@ -290,6 +289,7 @@ export default class TakeImage extends React.Component {
     console.log("DIRECTIONS LOADED");
     let instructions = videoInstructions;
     this.message.classList.add("shadow");
+    this.message.classList.add("spinner");
     let i = 0;
 
     let messageLoop = (param) => {
@@ -298,11 +298,8 @@ export default class TakeImage extends React.Component {
         if(param){
           this.message.innerHTML = "Great!";
           return i++;
-        } else {
-          this.message.innerHTML = "Processing...";
-
         }
-      }, 2500);
+      }, 500);
     };
 
     this.message.innerHTML = instructions[i];
@@ -323,7 +320,7 @@ export default class TakeImage extends React.Component {
             messageLoop(window.side, i);
         }
       }
-    }, 5000);
+    }, 1000);
   }
 
 
