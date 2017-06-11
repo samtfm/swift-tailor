@@ -3,12 +3,14 @@ import { faceClassifier } from './face_classifier';
 // import { handClassifier } from './upperbody';
 
 export const measureShoulders = (imageData, face, height) => {
-  return measureWidth(imageData, {
+  const shoulders = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + height*.28),
     width: face.width*2,
     height: height*.02
   });
+  const isValid = shoulders.width;
+  return { shoulders, isValid };
 };
 
 export const detectOutlinePoints = (imageData, face) => {
@@ -34,7 +36,8 @@ export const detectOutlinePoints = (imageData, face) => {
     width: face.width*2,
     height: arms.wingspan*.02
   });
-  return { arms, neck, chest, waist };
+  const isValid = Boolean(arms.wingspan);
+  return { arms, neck, chest, waist, isValid };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
