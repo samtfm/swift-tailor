@@ -61,16 +61,7 @@ export default class TakeImage extends React.Component {
   }
 
   createVideo(){
-    // Grab elements, create settings, etc.
-    let canvas = document.getElementById('canvas-pic');
-    let canvasW = canvas.width;
-    let canvasH = canvas.height;
     let video;
-    let context = canvas.getContext('2d');
-
-    let videoInterval = setInterval(() => {
-
-    }, 1000);
 
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -83,24 +74,16 @@ export default class TakeImage extends React.Component {
           video.play();
       });
     }
-
-    this.setState({
-      canvas,
-      canvasW,
-      canvasH,
-      context
-    });
   }
 
   snapPicture(){
-    let { canvas, canvasW, canvasH, context, options, stat } = this.state;
+    let { options, stat } = this.state;
     let video = document.getElementById('video');
-
-  	context.drawImage(video, 0, 0, canvasW, canvasH);
     //Copies the picture canvas translates to the calculation canvas
     let calcCanvas = document.getElementById('calcCanvas');
     let calcCtx = calcCanvas.getContext('2d');
-    calcCtx.drawImage(canvas, 0, 0);
+
+    calcCtx.drawImage(video, 0, 0);
 
     // detectFace detects a face then returns the box region and scale;
     // applyCanny applies canny to the canvas, duh...
@@ -117,21 +100,20 @@ export default class TakeImage extends React.Component {
     }
     let measurements = detectOutlinePoints(cannyData, faceBox.face);
     calcCtx.fillStyle = '#0F0';
-
-    if (measurements.arms.wingspan) {
-      this.refineMeasurements(measurements);
-      // this.setState({measurements: measurements });
-    }
-    for (let part in measurements) {
-      if (measurements[part].points) {
-        measurements[part].points.forEach(point => {
-          calcCtx.fillRect(point.x,point.y, 2, 2);
-        });
+   if (measurements.arms.wingspan) {
+        this.refineMeasurements(measurements);
+        // this.setState({measurements: measurements });
+      }
+      for (let part in measurements) {
+        if (measurements[part].points) {
+          measurements[part].points.forEach(point => {
+            calcCtx.fillRect(point.x,point.y, 2, 2);
+          });
+        }
       }
     }
-  }
 
-  refineMeasurements(measurements){
+    refineMeasurements(measurements){
 
     let {wingspan, neckWidth, chestWidth, waistWidth } = this.state;
 
@@ -181,15 +163,15 @@ export default class TakeImage extends React.Component {
       modalIsOpen: false,
       showVideoControls: false
     });
-    if (this.measuringInterval) this.clearInterval(this.measuringInterval);
+    if (this.measuringInterval) clearInterval(this.measuringInterval);
   }
 
   startMeasuring(){
     this.loadDirections();
     this.createVideo();
-    this.measuringInterval = setInterval(() => {
+    this.measuringInterval = setInterval(()=>{
       this.snapPicture();
-    },50);
+    },200);
 
     let message = document.getElementById("instructions");
     message.innerHTML = "";
@@ -350,7 +332,7 @@ export default class TakeImage extends React.Component {
 
           <button
             className="modal-close-button"
-            onClick={this.closeModal}>x
+            onClick={this.closeModal}>X
           </button>
 
           <h1 id="instructions" className="instructions"></h1>
@@ -388,10 +370,6 @@ export default class TakeImage extends React.Component {
         <section className="calc-section">
           <h1>SECTION FOR CALCULATIONS</h1>
           <canvas id="calcCanvas" width="480" height="360"></canvas>
-          <canvas id="canvas-pic" width="480" height="360"></canvas>
-        </section>
-        <section>
-          <Shirt measurements={this.state.measurements} />
         </section>
       </section>
     );

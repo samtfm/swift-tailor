@@ -5,7 +5,7 @@ $primary-color: red;
   min-height: 300px;
   min-width: 500px;
   // max-width: 600px;
-  background-color: red;
+  background-color: $primary-color;
   border: 10px solid black;
   opacity: 1;
   display: flex;
@@ -20,33 +20,11 @@ $primary-color: red;
   position: relative;
   bottom: 0%;
 }
-.modal-button {
-  margin: 30px;
-  font-size: 20px;
-  font-family: 'Pacifico', cursive;
-  border: 2px dashed white;
-  padding: 15px;
-  color: white;
-  background-color: $primary-color;
-  border-radius: 10px;
-  transition: 0.3s;
-  padding: 15px;
-  cursor: pointer;
-  outline: none;
-  // box-shadow: 0 0 0 4px #ff0030, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
-  // &:hover{
-  //   border: 3px solid white;
-  // }
-}
+
 .modal-close-button {
-  float: right;
-  font-size: 20px;
-  padding: 0px 10px 10px 0px;
-  background: none;
-  color: white;
-  border: none;
-  outline: none;
-  cursor: pointer;
+  height: 60px;
+  width: 60px;
+  padding: 0;
   right: 7%;
   position: fixed;
   z-index: 10;
@@ -93,7 +71,6 @@ $primary-color: red;
 }
 
 .instructions{
-  font-family: 'Pacifico', cursive;
   color: white;
   // font-size: 8vw;
   font-size: 10vh;
@@ -106,9 +83,11 @@ $primary-color: red;
 }
 
 .shadow {
-  background-color: rgba(0, 0, 0, 0.8);
+  // background-color: rgba(0, 0, 0, 0.8);
   border-radius: 30px;
-  box-shadow: 0px 0px 22px 20px rgba(0, 0, 0, 0.8);
+  // box-shadow: 0px 0px 22px 20px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 20px #000;
+
 }
 
 .video-controls {

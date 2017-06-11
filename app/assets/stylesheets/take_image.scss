@@ -12,7 +12,6 @@ $primary-color: red;
   border-bottom: 3px dashed white;
 
   label, h2{
-    font-family: 'Swanky and Moo Moo', cursive;
     font-size: 35px;
     color: white;
     position: relative;
@@ -48,30 +47,20 @@ $primary-color: red;
     width: 70%;
   }
   h2{
-    font-family: 'Swanky and Moo Moo', cursive;
     font-size: 35px;
     color: white;
     position: relative;
   }
   button {
-    margin: 30px;
-    font-size: 70px;
-    font-family: 'Pacifico', cursive;
-    padding: 15px;
-    color: white;
-    outline: none;
-    transition: 0.5s;
-    border: none;
-    background-color: $primary-color;
-    cursor: pointer;
-    border-radius: 200px;
-    padding: 30px;
-
+    font-size: 40px;
     &:hover{
-      background-color: white;
-      color: $primary-color;
+      // background-color: white;
+      // color: $primary-color;
     }
   }
+}
+#video {
+  border-radius: 10px;
 }
 
 .canvas-pic{
