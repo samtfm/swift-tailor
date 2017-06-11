@@ -59,7 +59,11 @@ $primary-color: red;
     }
   }
 }
+
 #video {
+  position: absolute;
+  left: 0;
+  right: 0;
   // border-radius: 10px;
 }
 
@@ -68,6 +72,8 @@ $primary-color: red;
 }
 #calcCanvas {
   position: absolute;
+  left: 0;
+  right: 0;
 }
 
 .canvas-pic{

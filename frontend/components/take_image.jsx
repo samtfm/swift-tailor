@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import { detectFace, drawFace } from '../util/body_detection';
-
+import TemplateEditor from './template_editor';
 import profiler from '../util/profiler';
 import CalcIndicator from '../widget/calc_indicators';
 import { stdDev, average, inStdDev } from '../util/math';
@@ -62,25 +62,35 @@ export default class TakeImage extends React.Component {
     Modal.setAppElement('body');
   }
   updateFeet(e){
-    let inches = parseInt(this.state.heightInches);
-    let feet = parseInt(e.currentTarget.value);
-    this.setState({
-      heightFeet: typeof feet === "number" ? feet : "",
-      totalHeight: typeof feet === "number" ? (feet * 12) + inches : inches
-    });
+    let feet = e.currentTarget.value;
+
+    if (isNaN(feet) || feet === "") {
+      this.setState({
+        heightFeet: "",
+      });
+    } else {
+      feet = parseInt(feet);
+      let inches = parseInt(this.state.heightInches);
+      this.setState({
+        heightFeet: feet,
+        totalHeight: (feet * 12) + inches
+      });
+    }
   }
   updateInches(e){
     let feet = parseInt(this.state.heightFeet) || 0;
-    let inches = parseInt(e.currentTarget.value);
-    inches = typeof inches === "number" ? inches : 0;
-    let newFeet = Math.floor(inches/12);
-
-    this.setState({
-      heightInches: inches,
-      heightFeet: feet + newFeet,
-      totalHeight: (feet * 12) + inches
-    });
-
+    let inches = e.currentTarget.value;
+    if (isNaN(inches) || inches === "") {
+      this.setState({
+        heightInches: "",
+      });
+    } else {
+      inches = parseInt(inches);
+      this.setState({
+        heightInches: inches,
+        totalHeight: (feet * 12) + inches
+      });
+    }
   }
 
   createVideo(){
@@ -127,16 +137,18 @@ export default class TakeImage extends React.Component {
       // window.armsDown = true;
 
     } else if (window.armsUp && window.armsDown && !window.side){
-      measurements = detectSide(cannyData, faceBox.face, this.state.measurements.arm);
+      measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
     } else {
       console.log("CLOSING SNAP");
-      console.log(this.state.measurements);
       clearInterval(this.measuringInterval);
       return;
     }
     // let sideMeasurements = detectOutlinePoints(cannyData, faceBox.face);
-    if (this.state.measurements.arm || measurements.arms.wingspan) {
-      this.refineMeasurements(measurements);
+    calcCtx.fillStyle = '#0F0';
+    if (this.state.measurements.wingspan || measurements.arms.wingspan) {
+      setTimeout(() => {
+        this.refineMeasurements(measurements);
+      }, 5000);
     }
     try{
       drawFace(calcCtx, faceBox.face, faceBox.scale);
@@ -163,7 +175,7 @@ export default class TakeImage extends React.Component {
     } = this.state;
 
     if(!window.armsUp){
-      if(wingspan.length < 10){
+      if(Math.min(wingspan.length, neckWidth.length, chestWidth.length, waistWidth.length) < 40) {
         wingspan.push(Math.floor(measurements.arms.wingspan)  || 0);
         neckWidth.push(Math.floor(measurements.neck.average) || 0);
         chestWidth.push(Math.floor(measurements.chest.average) || 0);
@@ -181,7 +193,7 @@ export default class TakeImage extends React.Component {
         waistWidth = inStdDev(waistWidth);
         this.setState({
           measurements: {
-            arm: Math.floor(average(wingspan)),
+            wingspan: Math.floor(average(wingspan)),
             neck: Math.floor(average(neckWidth)),
             chest: Math.floor(average(chestWidth)),
             waist: Math.floor(average(waistWidth))
@@ -193,11 +205,11 @@ export default class TakeImage extends React.Component {
     } else if (window.armsUp && !window.armsDown){
       console.log("IN THE ARMS DOWN AREA");
     } else if (window.armsUp && window.armsDown && !window.side) {
-      console.log("IN THE SIDE AREA");
-      console.log(window.side);
-      if(stomachWidth.length < 10){
-        bustWidth.push(Math.floor(measurements.bust.average) || 0);
-        stomachWidth.push(Math.floor(measurements.stomach.average) || 0);
+      // console.log("IN THE SIDE AREA");
+
+      if(Math.min(bustWidth.length, stomachWidth.length) < 40){
+        if(measurements.bust.average) bustWidth.push(Math.floor(measurements.bust.average) || 0);
+        if(measurements.stomach.average) stomachWidth.push(Math.floor(measurements.stomach.average) || 0);
         this.setState({
           bustWidth,
           stomachWidth
@@ -205,13 +217,11 @@ export default class TakeImage extends React.Component {
       } else {
         bustWidth = inStdDev(bustWidth);
         stomachWidth = inStdDev(stomachWidth);
-        console.log(measurements);
         measurements = Object.assign(
           this.state.measurements,
           { bust: Math.floor(average(bustWidth)) },
           { stomach: Math.floor(average(stomachWidth)) }
         );
-        console.log(measurements);
         this.setState({ measurements });
 
         window.side = true;
@@ -287,6 +297,9 @@ export default class TakeImage extends React.Component {
   loadDirections(){
     console.log("DIRECTIONS LOADED");
     let instructions = videoInstructions;
+    this.demo = document.getElementById("demo-image");
+    this.demo.classList.remove("hidden");
+
     this.message.classList.add("shadow");
     this.message.classList.add("spinner");
     let i = 0;
@@ -305,6 +318,7 @@ export default class TakeImage extends React.Component {
     this.measurementInstructionInterval = setInterval(() => {
       if(i >= instructions.length){
         this.message.innerHTML = "All Done Good Job Buddy!";
+        this.message.classList.remove("spinner");
         clearInterval(this.measurementInstructionInterval);
       } else {
         switch(i) {
@@ -330,6 +344,8 @@ export default class TakeImage extends React.Component {
         repeatButton, beginButton, skipButton;
 
     let instructions = startInstructions;
+
+    let { measurements, totalHeight } = this.state;
 
     skipButton = (
       <button
@@ -397,7 +413,7 @@ export default class TakeImage extends React.Component {
     );
 
     let width = 0, height = 0;
-    height = window.innerHeight * 1/3;
+    height = window.innerHeight * 1/4;
     width = height * 4/3;
     return(
       <section>
@@ -422,7 +438,10 @@ export default class TakeImage extends React.Component {
             </section>
             <section className="video-container">
               <video id="video" width={width} height={height} autoPlay></video>
-              <canvas id="calcCanvas" width={width} height={height}></canvas>
+              <canvas id="calcCanvas" className="calc-cavas" width={width} height={height}></canvas>
+              <div id="demo-image" className="demo-container hidden" style={{height, width }} >
+                <p>Model this!</p>
+              </div>
             </section>
             { videoControls }
             <section className="modal-button-section">
@@ -464,7 +483,7 @@ export default class TakeImage extends React.Component {
             <i id="cameraIcon" className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
           </button>
         </section>
-
+        <TemplateEditor height={totalHeight} measurements={measurements}/>
       </section>
     );
   }

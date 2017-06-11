@@ -6,7 +6,14 @@ class TemplateEditor extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      inputs: { height: 70, neck: 3, chest: 14, waist: 16 },
+      inputs: {
+        height: 70,
+        neck: 3,
+        chest: 14,
+        waist: 16,
+        bust: 0,
+        stomach: 0
+      },
       inchMeasurements: {}
     };
 
@@ -26,22 +33,43 @@ class TemplateEditor extends React.Component{
   }
 
   componentWillReceiveProps(newProps){
-    if (!newProps.measurements || !newProps.measurements.arms) return;
-    let {arms, neck, chest, waist } = newProps.measurements;
-    const heightInches = 71;
-    const rawHeight = arms.wingspan * 0.98;
-    const scaleFactor = heightInches/rawHeight;
-
+    if (!newProps.measurements.stomach || !newProps.height) return;
+    let { wingspan, neck, chest, waist, bust, stomach } = newProps.measurements;
+    let height = newProps.height;
+    let rawHeight = wingspan * 0.98;
+    const scaleFactor = height/rawHeight;
     this.updateInchMeasuruements({
-      height: heightInches,
-      neck: neck.mininum * scaleFactor,
-      chest: chest.average * scaleFactor,
-      waist: waist.maximum * scaleFactor,
+      height,
+      neck: neck * scaleFactor.toFixed(3) || 0,
+      chest: chest * scaleFactor.toFixed(3) || 0,
+      waist: waist * scaleFactor.toFixed(3) || 0,
+      bust: bust * scaleFactor.toFixed(3) || 0,
+      stomach: stomach * scaleFactor.toFixed(3) || 0
     });
+    // if (!newProps.measurements || !newProps.measurements.arms) return;
+    // let {arms, neck, chest, waist } = newProps.measurements;
+    // const heightInches = 71;
+    // const rawHeight = arms.wingspan * 0.98;
+    // const scaleFactor = heightInches/rawHeight;
+    //
+    // this.updateInchMeasuruements({
+    //   height: heightInches,
+    //   neck: neck.mininum * scaleFactor,
+    //   chest: chest.average * scaleFactor,
+    //   waist: waist.maximum * scaleFactor,
+    // });
   }
 
- updateInchMeasuruements({height, neck, chest, waist}){
+ updateInchMeasuruements({height, neck, chest, waist, bust, stomach}){
    this.setState({
+     inputs: {
+      height,
+      neck,
+      chest,
+      waist,
+      bust,
+      stomach
+     },
      inchMeasurements: {
        neckWidth: neck,
        chestWidth: chest,
@@ -55,7 +83,7 @@ class TemplateEditor extends React.Component{
 
 
   render(){
-    const { height, neck, chest, waist } = this.state.inputs;
+    const { height, neck, chest, waist, bust, stomach } = this.state.inputs;
     return (
       <div className='template-editor'>
         <ul>
@@ -74,6 +102,14 @@ class TemplateEditor extends React.Component{
           <label>
             Waist:
             <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
+          </label>
+          <label>
+            Bust:
+            <input type = 'number' name='bust' value={bust} onChange={this.updateValue}></input>
+          </label>
+          <label>
+            Stomach:
+            <input type = 'number' name='stomach' value={stomach} onChange={this.updateValue}></input>
           </label>
         </ul>
         <section className='preview'>
