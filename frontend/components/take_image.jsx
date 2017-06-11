@@ -5,6 +5,7 @@ import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detectio
 
 import profiler from '../util/profiler';
 import CalcIndicator from '../widget/calc_indicators';
+import { stdDev, average, inStdDev } from '../util/math';
 import { applyCanny } from '../util/image_filter';
 import { startInstructions, videoInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
@@ -32,10 +33,11 @@ export default class TakeImage extends React.Component {
       instructionsStarted: false,
       showButtons: false,
       showVideoControls: false,
+      measurements: {},
       wingspan: [],
-      neckWidth: 0,
-      chestWidth: 0,
-      waistWidth: 0
+      neckWidth: [],
+      chestWidth: [],
+      waistWidth: []
 
     };
 
@@ -115,6 +117,7 @@ export default class TakeImage extends React.Component {
     }
     let measurements = detectOutlinePoints(cannyData, faceBox.face);
     calcCtx.fillStyle = '#0F0';
+
     if (measurements.arms.wingspan) {
       this.refineMeasurements(measurements);
       // this.setState({measurements: measurements });
@@ -129,15 +132,33 @@ export default class TakeImage extends React.Component {
   }
 
   refineMeasurements(measurements){
-    for (let part in measurements) {
-      if (part==="arms") {
-        console.log("arms", measurements[part].wingspan);
-        this.state.wingspan.push(measurements[part].wingspan);
-        if(this.state.wingspan.length === 100){
-          console.log(this.state.wingspan);
-          debugger;
-        }
+
+    let {wingspan, neckWidth, chestWidth, waistWidth } = this.state;
+
+    if(!window.armsUp){
+      console.log("arms", measurements.arms.wingspan);
+      if(wingspan.length < 20){
+        wingspan.push(measurements.arms.wingspan  || 0);
+        neckWidth.push(measurements.neck.average || 0);
+        chestWidth.push(measurements.chest.average || 0);
+        waistWidth.push(measurements.waist.average || 0);
+      } else {
+        wingspan = inStdDev(wingspan);
+        neckWidth = inStdDev(neckWidth);
+        chestWidth = inStdDev(chestWidth);
+        waistWidth = inStdDev(waistWidth);
+        this.setState({
+          measurements: {
+            arm: average(wingspan),
+            neck: average(neckWidth),
+            chest: average(chestWidth),
+            waist: average(waistWidth)
+          }
+        });
+        window.armsUp = true;
       }
+    } else if (window.armsUp){
+      console.log("hi");
     }
   }
 
@@ -166,7 +187,7 @@ export default class TakeImage extends React.Component {
   startMeasuring(){
     this.loadDirections();
     this.createVideo();
-    setInterval(()=>{
+    this.measuringInterval = setInterval(() => {
       this.snapPicture();
     },50);
 
