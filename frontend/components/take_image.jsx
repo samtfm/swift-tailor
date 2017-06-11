@@ -5,6 +5,7 @@ import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detectio
 
 import profiler from '../util/profiler';
 import CalcIndicator from '../widget/calc_indicators';
+import { stdDev, average, inStdDev } from '../util/math';
 import { applyCanny } from '../util/image_filter';
 import { startInstructions, videoInstructions } from '../util/instructions';
 import { detectOutlinePoints } from '../util/body_detection';
@@ -32,10 +33,12 @@ export default class TakeImage extends React.Component {
       instructionsStarted: false,
       showButtons: false,
       showVideoControls: false,
-      wingspan: 1,
-      neckWidth: 0,
-      chestWidth: 0,
-      waistWidth: 0
+      measurements: {},
+      wingspan: [],
+      neckWidth: [],
+      chestWidth: [],
+      waistWidth: []
+
     };
 
     this.openModal = this.openModal.bind(this);
@@ -44,6 +47,7 @@ export default class TakeImage extends React.Component {
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
     this.loadDirections = this.loadDirections.bind(this);
+    this.refineMeasurements = this.refineMeasurements.bind(this);
   }
 
   componentWillMount(){
@@ -73,38 +77,70 @@ export default class TakeImage extends React.Component {
   }
 
   snapPicture(){
-      let { options, stat } = this.state;
-      let video = document.getElementById('video');
-      //Copies the picture canvas translates to the calculation canvas
-      let calcCanvas = document.getElementById('calcCanvas');
-      let calcCtx = calcCanvas.getContext('2d');
+    let { options, stat } = this.state;
+    let video = document.getElementById('video');
+    //Copies the picture canvas translates to the calculation canvas
+    let calcCanvas = document.getElementById('calcCanvas');
+    let calcCtx = calcCanvas.getContext('2d');
 
-      calcCtx.drawImage(video, 0, 0);
+    calcCtx.drawImage(video, 0, 0);
 
-      // detectFace detects a face then returns the box region and scale;
-      // applyCanny applies canny to the canvas, duh...
-      // drawFace draws the faceBox on the canvas after canny has been applied;
-      let faceBox = detectFace(calcCtx, options);
+    // detectFace detects a face then returns the box region and scale;
+    // applyCanny applies canny to the canvas, duh...
+    // drawFace draws the faceBox on the canvas after canny has been applied;
+    let faceBox = detectFace(calcCtx, options);
 
-      // let handBox = detectHand(calcCtx, options);
-      // drawHand(calcCtx, handBox.hand, handBox.scale);
-      let cannyData = applyCanny(calcCtx, options, this.state.stat);
-      try{
-        drawFace(calcCtx, faceBox.face, faceBox.scale);
-      } catch(err){
-        console.log("couldn't find a face");
-      }
-      let measurements = detectOutlinePoints(cannyData, faceBox.face);
-      calcCtx.fillStyle = '#0F0';
-      if (measurements.arms.wingspan) {
-        this.setState({measurements: measurements });
+    // let handBox = detectHand(calcCtx, options);
+    // drawHand(calcCtx, handBox.hand, handBox.scale);
+    let cannyData = applyCanny(calcCtx, options, this.state.stat);
+    try{
+      drawFace(calcCtx, faceBox.face, faceBox.scale);
+    } catch(err){
+      console.log("couldn't find a face");
+    }
+    let measurements = detectOutlinePoints(cannyData, faceBox.face);
+    calcCtx.fillStyle = '#0F0';
+   if (measurements.arms.wingspan) {
+        this.refineMeasurements(measurements);
+        // this.setState({measurements: measurements });
       }
       for (let part in measurements) {
         if (measurements[part].points) {
           measurements[part].points.forEach(point => {
             calcCtx.fillRect(point.x,point.y, 2, 2);
           });
+        }
       }
+    }
+
+    refineMeasurements(measurements){
+
+    let {wingspan, neckWidth, chestWidth, waistWidth } = this.state;
+
+    if(!window.armsUp){
+      console.log("arms", measurements.arms.wingspan);
+      if(wingspan.length < 20){
+        wingspan.push(measurements.arms.wingspan  || 0);
+        neckWidth.push(measurements.neck.average || 0);
+        chestWidth.push(measurements.chest.average || 0);
+        waistWidth.push(measurements.waist.average || 0);
+      } else {
+        wingspan = inStdDev(wingspan);
+        neckWidth = inStdDev(neckWidth);
+        chestWidth = inStdDev(chestWidth);
+        waistWidth = inStdDev(waistWidth);
+        this.setState({
+          measurements: {
+            arm: average(wingspan),
+            neck: average(neckWidth),
+            chest: average(chestWidth),
+            waist: average(waistWidth)
+          }
+        });
+        window.armsUp = true;
+      }
+    } else if (window.armsUp){
+      console.log("hi");
     }
   }
 
@@ -276,6 +312,7 @@ export default class TakeImage extends React.Component {
         });
       }, lastMessageTime + 500);
     }
+
     let width = 0, height = 0;
     while (height < window.innerHeight){
       height += 120;
