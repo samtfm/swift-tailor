@@ -32,9 +32,9 @@ export const applyCanny = (ctx, options, stat) => {
 
   // render result back to canvas
   var data_u32 = new Uint32Array(imageData.data.buffer);
-  var alpha = (0xff << 24);
   var i = imgU8.cols*imgU8.rows, pix = 0;
   while(--i >= 0) {
+      const alpha = pix = imgU8.data[i] > 0 ? (0x99 << 24) : (0x00 << 24);
       pix = imgU8.data[i];
       data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
   }

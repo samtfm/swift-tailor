@@ -8,7 +8,7 @@ import CalcIndicator from '../widget/calc_indicators';
 import { stdDev, average, inStdDev } from '../util/math';
 import { applyCanny } from '../util/image_filter';
 import { startInstructions, videoInstructions } from '../util/instructions';
-import { detectOutlinePoints, detectSide } from '../util/body_detection';
+import { detectOutlinePoints, detectSide, measureShoulders } from '../util/body_detection';
 import Shirt from './shirt';
 
 export default class TakeImage extends React.Component {
@@ -114,23 +114,17 @@ export default class TakeImage extends React.Component {
     // let handBox = detectHand(calcCtx, options);
     // drawHand(calcCtx, handBox.hand, handBox.scale);
     let cannyData = applyCanny(calcCtx, options, this.state.stat);
-    try{
-      drawFace(calcCtx, faceBox.face, faceBox.scale);
-    } catch(err){
-      console.log("couldn't find a face");
-    }
     let measurements;
     let side;
     //BREAKS UP DEFINING POINTS INTO SECTIONS
     if(!window.armsUp){
       measurements = detectOutlinePoints(cannyData, faceBox.face);
     } else if (window.armsUp && !window.armsDown){
-
-
+      measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.arm);
       //TODO do shoulder meaturements
       //measuremsnets = somethingelse
       //Tony is skipping this part for now
-      window.armsDown = true;
+      // window.armsDown = true;
 
     } else if (window.armsUp && window.armsDown && !window.side){
       measurements = detectSide(cannyData, faceBox.face, this.state.measurements.arm);
@@ -141,14 +135,19 @@ export default class TakeImage extends React.Component {
       return;
     }
     // let sideMeasurements = detectOutlinePoints(cannyData, faceBox.face);
-    calcCtx.fillStyle = '#0F0';
     if (this.state.measurements.arm || measurements.arms.wingspan) {
       this.refineMeasurements(measurements);
     }
+    try{
+      drawFace(calcCtx, faceBox.face, faceBox.scale);
+    } catch(err){
+      console.log("couldn't find a face");
+    }
+    calcCtx.fillStyle = measurements.isValid ? '#0F0' : '#F00';
     for (let part in measurements) {
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
-          calcCtx.fillRect(point.x,point.y, 2, 2);
+          calcCtx.fillRect(point.x,point.y, 4, 4);
         });
       }
     }
@@ -400,7 +399,6 @@ export default class TakeImage extends React.Component {
     let width = 0, height = 0;
     height = window.innerHeight * 1/3;
     width = height * 4/3;
-
     return(
       <section>
 
@@ -411,6 +409,7 @@ export default class TakeImage extends React.Component {
           onAfterOpen={this.afterOpenModal}
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
+
 
 
 

@@ -60,7 +60,14 @@ $primary-color: red;
   }
 }
 #video {
-  border-radius: 10px;
+  // border-radius: 10px;
+}
+
+#video-container {
+  position: relative;
+}
+#calcCanvas {
+  position: absolute;
 }
 
 .canvas-pic{
