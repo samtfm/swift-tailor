@@ -415,22 +415,7 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
-<<<<<<< HEAD
-          <button
-            className="modal-close-button"
-            onClick={this.closeModal}>X
-          </button>
 
-          <h1 id="instructions" className="instructions"></h1>
-            <canvas id="vidCanvas" width={width} height={height}></canvas>
-            <video id="video" width={width} height={height} autoPlay>
-            </video>
-          { videoControls }
-          <section className="modal-button-section">
-            { skipButton }
-            { repeatButton }
-            { beginButton }
-=======
 
 
           <h1 id="instructions" className="instructions"></h1>
@@ -451,7 +436,6 @@ export default class TakeImage extends React.Component {
               { repeatButton }
               { beginButton }
             </section>
->>>>>>> vid-overlay-3
           </section>
 
         </Modal>
