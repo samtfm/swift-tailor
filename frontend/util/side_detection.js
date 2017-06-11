@@ -2,39 +2,33 @@ import jsfeat from 'jsfeat';
 import { faceClassifier } from './face_classifier';
 // import { handClassifier } from './upperbody';
 
-export const detectOutlinePoints = (imageData, face) => {
+export const detectSide = (imageData, face, wingspan) => {
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
 
-  const arms = measureWingspan(imageData, face);
 
-  const neck = measureWidth(imageData, {
-    x: Math.floor(face.x + face.width*.1),
-    y: Math.floor(face.y + face.width*.5+ arms.wingspan*.04),
-    width: Math.floor(face.width*.8),
-    height: Math.floor(arms.wingspan*.06)
-  });
-  const chest = measureWidth(imageData, {
+  const bust = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + arms.wingspan*.28),
+    y: Math.floor(face.y + wingspan*.28),
     width: face.width*2,
-    height: arms.wingspan*.02
+    height: wingspan*.02
   });
-  const waist = measureWidth(imageData, {
+  const stomach = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + arms.wingspan*.42),
+    y: Math.floor(face.y + wingspan*.42),
     width: face.width*2,
-    height: arms.wingspan*.02
+    height: wingspan*.02
   });
-  return { arms, neck, chest, waist };
+  return { bust, stomach };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
 const measureWidth = (imageData, box) => {
   // const height = imageData.rows;
-  const y = Math.floor(box.y);
-  const x = Math.floor(box.x);
-  const width = Math.floor(box.width);
-  const height = Math.floor(box.height);
+  const x = box.x;
+  const y = box.y;
+  const width = box.width;
+  const height =box.height;
+
   const leftPoints = traceLineDown(
     imageData,
     {
@@ -123,54 +117,6 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
     }
   }
   return points;
-};
-
-export const measureWingspan = (imageData, face) => {
-  const DROPOFF_THRESHOLD = 15;
-  const height = imageData.rows;
-  const width = imageData.cols;
-  const mid = Math.floor(face.x+face.width*.5);
-  const points = [];
-  let tolerance = 5;
-  let prevEdge = Math.floor(face.y+face.width*1.6);
-  for (let x = Math.floor(mid+face.width*2); x < width; x++ ){
-
-    let edge;
-    for (let offset = -tolerance; offset < tolerance; offset++){
-      const y = prevEdge + offset;
-      const value = parseInt(imageData.data[y*width+x]); // add offset from prev rows
-      if (value > 0) {
-        edge = y;
-        break; // return at first value
-      }
-    }
-    if (edge){
-      tolerance = 5;
-      points.push({ x, y: edge });
-      prevEdge = edge + Math.floor((edge-prevEdge)/2); //predict trend
-    } else {
-      if (tolerance < DROPOFF_THRESHOLD) {
-        // try iteration again with a higher tolerance
-        tolerance = Math.ceil(tolerance*1.5);
-        // x--;
-      } else if (x - mid > face.width*2.5) {
-        // 40px drop is
-        const last = points[points.length-1] || {};
-        return {
-          wingspan: last.x ? (last.x - mid) * 2 : null,
-          points: points
-        };
-      } else {
-        //move on to next collumn.
-        edge = Math.floor(face.y+face.width*1.6);
-        tolerance = DROPOFF_THRESHOLD;
-      }
-    }
-  }
-  return {
-    wingspan: null,
-    points: points
-  };
 };
 
 export const detectFace = (ctx, options) => {
