@@ -153,7 +153,6 @@ export default class TakeImage extends React.Component {
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
           overlayCtx.fillRect(point.x,point.y, 4, 4);
->>>>>>> vid-overlay-3
         });
       }
     }
