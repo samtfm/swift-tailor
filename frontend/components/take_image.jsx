@@ -398,8 +398,7 @@ export default class TakeImage extends React.Component {
     );
 
     let width = 0, height = 0;
-    while (height < window.innerHeight * 1/3) height += 120;
-    height -= 120;
+    height = window.innerHeight * 1/3;
     width = height * 4/3;
 
     return(
