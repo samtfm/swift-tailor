@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import { detectFace, drawFace } from '../util/body_detection';
-
+import TemplateEditor from './template_editor';
 import profiler from '../util/profiler';
 import CalcIndicator from '../widget/calc_indicators';
 import { stdDev, average, inStdDev } from '../util/math';
@@ -62,25 +62,38 @@ export default class TakeImage extends React.Component {
     Modal.setAppElement('body');
   }
   updateFeet(e){
-    let inches = parseInt(this.state.heightInches);
-    let feet = parseInt(e.currentTarget.value);
-    this.setState({
-      heightFeet: typeof feet === "number" ? feet : "",
-      totalHeight: typeof feet === "number" ? (feet * 12) + inches : inches
-    });
+    let feet = e.currentTarget.value;
+
+    if (isNaN(feet)) {
+      this.setState({
+        heightFeet: "",
+      });
+    } else {
+      feet = parseInt(feet);
+      let inches = parseInt(this.state.heightInches);
+      this.setState({
+        heightFeet: feet,
+        totalHeight: (feet * 12) + inches
+      });
+    }
   }
   updateInches(e){
     let feet = parseInt(this.state.heightFeet) || 0;
-    let inches = parseInt(e.currentTarget.value);
-    inches = typeof inches === "number" ? inches : 0;
-    let newFeet = Math.floor(inches/12);
+    let inches = e.currentTarget.value;
 
-    this.setState({
-      heightInches: inches,
-      heightFeet: feet + newFeet,
-      totalHeight: (feet * 12) + inches
-    });
-
+    if (isNaN(inches)) {
+      this.setState({
+        heightInches: "",
+      });
+    } else {
+      inches = parseInt(inches) % 12;
+      let newFeet = Math.floor(inches/12);
+      this.setState({
+        heightInches: inches,
+        heightFeet: feet + newFeet,
+        totalHeight: (feet * 12) + inches
+      });
+    }
   }
 
   createVideo(){
@@ -133,7 +146,7 @@ export default class TakeImage extends React.Component {
       window.armsDown = true;
 
     } else if (window.armsUp && window.armsDown && !window.side){
-      measurements = detectSide(cannyData, faceBox.face, this.state.measurements.arm);
+      measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
     } else {
       console.log("CLOSING SNAP");
       console.log(this.state.measurements);
@@ -142,7 +155,7 @@ export default class TakeImage extends React.Component {
     }
     // let sideMeasurements = detectOutlinePoints(cannyData, faceBox.face);
     calcCtx.fillStyle = '#0F0';
-    if (this.state.measurements.arm || measurements.arms.wingspan) {
+    if (this.state.measurements.wingspan || measurements.arms.wingspan) {
       this.refineMeasurements(measurements);
     }
     for (let part in measurements) {
@@ -182,7 +195,7 @@ export default class TakeImage extends React.Component {
         waistWidth = inStdDev(waistWidth);
         this.setState({
           measurements: {
-            arm: Math.floor(average(wingspan)),
+            wingspan: Math.floor(average(wingspan)),
             neck: Math.floor(average(neckWidth)),
             chest: Math.floor(average(chestWidth)),
             waist: Math.floor(average(waistWidth))
@@ -195,7 +208,6 @@ export default class TakeImage extends React.Component {
       console.log("IN THE ARMS DOWN AREA");
     } else if (window.armsUp && window.armsDown && !window.side) {
       console.log("IN THE SIDE AREA");
-      console.log(window.side);
       if(stomachWidth.length < 10){
         bustWidth.push(Math.floor(measurements.bust.average) || 0);
         stomachWidth.push(Math.floor(measurements.stomach.average) || 0);
@@ -332,6 +344,8 @@ export default class TakeImage extends React.Component {
 
     let instructions = startInstructions;
 
+    let { measurements, totalHeight } = this.state;
+
     skipButton = (
       <button
         className={this.state.instructionsStarted ? "modal-button" : "hidden"}
@@ -465,7 +479,7 @@ export default class TakeImage extends React.Component {
             <i id="cameraIcon" className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
           </button>
         </section>
-
+        <TemplateEditor height={totalHeight} measurements={measurements}/>
       </section>
     );
   }
