@@ -100,7 +100,7 @@ export default class TakeImage extends React.Component {
     }
     let measurements = detectOutlinePoints(cannyData, faceBox.face);
     calcCtx.fillStyle = '#0F0';
-   if (measurements.arms.wingspan) {
+    if (measurements.arms.wingspan) {
         this.refineMeasurements(measurements);
         // this.setState({measurements: measurements });
       }
