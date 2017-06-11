@@ -395,10 +395,12 @@ export default class TakeImage extends React.Component {
         />
       </section>
     );
+    // let video = document.getElementById('video');
+    // const aspectRatio = video.videoWidth/video.videoHeight;
 
     let width = 0, height = 0;
     height = window.innerHeight * 1/3;
-    width = height * 4/3;
+    width = height * 16/9;
     return(
       <section>
 
