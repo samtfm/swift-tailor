@@ -2,6 +2,15 @@ import jsfeat from 'jsfeat';
 import { faceClassifier } from './face_classifier';
 // import { handClassifier } from './upperbody';
 
+export const measureShoulders = (imageData, face, height) => {
+  return measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + height*.28),
+    width: face.width*2,
+    height: height*.02
+  });
+};
+
 export const detectOutlinePoints = (imageData, face) => {
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
 
