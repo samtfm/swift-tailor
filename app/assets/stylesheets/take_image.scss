@@ -61,14 +61,12 @@ $primary-color: red;
 }
 #video {
   border-radius: 10px;
-  position: absolute;
 }
 #video-container {
   position: relative;
 }
-#calcCanvas {
+#overlayCanvas {
   position: absolute;
-  left: 10px;
 }
 
 .canvas-pic{

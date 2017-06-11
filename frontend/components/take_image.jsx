@@ -141,14 +141,23 @@ export default class TakeImage extends React.Component {
       return;
     }
     // let sideMeasurements = detectOutlinePoints(cannyData, faceBox.face);
-    calcCtx.fillStyle = '#0F0';
     if (this.state.measurements.arm || measurements.arms.wingspan) {
       this.refineMeasurements(measurements);
     }
+
+    let overlayCanvas = document.getElementById('overlayCanvas');
+    let overlayCtx = overlayCanvas.getContext('2d');
+    overlayCtx.clearRect(0,0, overlayCanvas.width, overlayCanvas.height);
+    try{
+      drawFace(overlayCtx, faceBox.face, faceBox.scale);
+    } catch(err){
+      console.log("couldn't find a face");
+    }
+    overlayCtx.fillStyle = '#0F0';
     for (let part in measurements) {
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
-          calcCtx.fillRect(point.x,point.y, 2, 2);
+          overlayCtx.fillRect(point.x,point.y, 4, 4);
         });
       }
     }
@@ -398,10 +407,8 @@ export default class TakeImage extends React.Component {
     );
 
     let width = 0, height = 0;
-    while (height < window.innerHeight * 1/3) height += 120;
-    height -= 120;
+    height = Number(window.innerHeight) * 1/3;
     width = height * 4/3;
-
     return(
       <section>
 
@@ -424,6 +431,7 @@ export default class TakeImage extends React.Component {
             </section>
             <section className="video-container">
               <video id="video" width={width} height={height} autoPlay></video>
+              <canvas id="overlayCanvas" width={width} height={height}></canvas>
               <canvas id="calcCanvas" width={width} height={height}></canvas>
             </section>
             { videoControls }
