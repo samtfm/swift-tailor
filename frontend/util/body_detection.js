@@ -135,12 +135,12 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
 };
 
 export const measureWingspan = (imageData, face) => {
-  const DROPOFF_THRESHOLD = 15;
+  const DROPOFF_THRESHOLD = 13;
   const height = imageData.rows;
   const width = imageData.cols;
   const mid = Math.floor(face.x+face.width*.5);
   const points = [];
-  let tolerance = 5;
+  let tolerance = 4;
   let prevEdge = Math.floor(face.y+face.width*1.6);
   for (let x = Math.floor(mid+face.width*2); x < width; x++ ){
 
@@ -160,7 +160,7 @@ export const measureWingspan = (imageData, face) => {
     } else {
       if (tolerance < DROPOFF_THRESHOLD) {
         // try iteration again with a higher tolerance
-        tolerance = Math.ceil(tolerance*1.5);
+        tolerance = Math.ceil(tolerance*1.2);
         // x--;
       } else if (x - mid > width/4 && x - mid < width/2) {
         // 40px drop is
