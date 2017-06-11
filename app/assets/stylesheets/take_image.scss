@@ -59,7 +59,10 @@ $primary-color: red;
     }
   }
 }
-
+#vidCanvas{
+  position: fixed;
+  top: 100px;
+}
 .canvas-pic{
   display: none;
 }
