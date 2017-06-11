@@ -105,7 +105,7 @@ export default class TakeImage extends React.Component {
             calcCtx.fillRect(point.x,point.y, 2, 2);
           });
       }
-  }
+    }
   }
 
   openModal() {
