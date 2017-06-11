@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
+import { detectSide } from '../util/side_detection';
 import { detectFace, detectHand, drawFace, drawHand} from '../util/body_detection';
 
 import profiler from '../util/profiler';
@@ -47,6 +48,7 @@ export default class TakeImage extends React.Component {
     this.createVideo = this.createVideo.bind(this);
     this.snapPicture = this.snapPicture.bind(this);
     this.loadDirections = this.loadDirections.bind(this);
+    this.loadImageDirections = this.loadImageDirections.bind(this);
     this.refineMeasurements = this.refineMeasurements.bind(this);
   }
 
@@ -149,6 +151,7 @@ export default class TakeImage extends React.Component {
       modalIsOpen: true,
       instructionsStarted: true
     });
+    this.loadImageDirections();
   }
 
   afterOpenModal() {}
@@ -161,9 +164,12 @@ export default class TakeImage extends React.Component {
     }
     this.setState({
       modalIsOpen: false,
+      showButtons: false,
       showVideoControls: false
     });
     if (this.measuringInterval) clearInterval(this.measuringInterval);
+    if (this.instructionsInterval) clearInterval(this.instructionsInterval);
+    if (this.measurementInstructionInterval ) clearInterval(this.measurementInstructionInterval );
   }
 
   startMeasuring(){
@@ -173,39 +179,63 @@ export default class TakeImage extends React.Component {
       this.snapPicture();
     },200);
 
-    let message = document.getElementById("instructions");
-    message.innerHTML = "";
+    this.message.innerHTML = "";
     this.setState({
       showButtons: false,
       showVideoControls: true
     });
   }
+  loadImageDirections(){
+    let instructions = startInstructions;
+
+    setTimeout(() => {
+      this.message = document.getElementById("instructions");
+      this.message.innerHTML = instructions[0][0];
+      let i = 1;
+      this.instructionsInterval = setInterval(()=>{
+        if(i >= instructions.length) {
+          clearInterval(this.instructionsInterval);
+        } else{
+          this.message.innerHTML = instructions[i][0];
+          i++;
+        }
+      }, 500);
+    }, 500);
+    //start instructions end at 17000
+
+    let lastMessageTime = instructions.length * 500;
+    this.instructionsStopTimeout = setTimeout(() => {
+      this.setState({
+        instructionsStarted: false,
+        showButtons: true
+      });
+    }, lastMessageTime + 500);
+  }
 
   loadDirections(){
     console.log("DIRECTIONS LOADED");
-    let message = document.getElementById('instructions');
     let instructions = videoInstructions;
-    message.classList.add("shadow");
+    this.message.classList.add("shadow");
     let i = 0;
-    message.innerHTML = instructions[i];
+    this.message.innerHTML = instructions[i];
 
     let messageLoop = (param) => {
-      message.innerHTML = instructions[i];
+      this.message.innerHTML = instructions[i];
       setTimeout(() => {
         if(param){
-          message.innerHTML = "Great!";
+          this.message.innerHTML = "Great!";
           return i++;
         } else {
-          message.innerHTML = "Processing...";
+          this.message.innerHTML = "Processing...";
 
         }
       }, 2500);
     };
 
-    let measurementInstructionInterval = setInterval(() => {
+    this.measurementInstructionInterval = setInterval(() => {
       if(i >= instructions.length){
-        message.innerHTML = "All Done Good Job Buddy!";
-        clearInterval(measurementInstructionInterval);
+        this.message.innerHTML = "All Done Good Job Buddy!";
+        clearInterval(this.measurementInstructionInterval);
       } else {
         switch(i) {
           //check the front
@@ -226,13 +256,10 @@ export default class TakeImage extends React.Component {
   render(){
     // load initial message, modal declaraction
     // is delayed so setState can catchup
-    let modal, message, modalButtonSection, videoControls,
+    let modal, modalButtonSection, videoControls,
         repeatButton, beginButton, skipButton;
-    let instructions = startInstructions;
-    let instructionsInterval;
-    let instructionsStopTimeout;
 
-    message = document.getElementById("instructions");
+    let instructions = startInstructions;
 
     skipButton = (
       <button
@@ -242,9 +269,9 @@ export default class TakeImage extends React.Component {
             instructionsStarted: false,
             showButtons: true
           });
-          clearInterval(instructionsInterval);
-          window.clearTimeout(instructionsStopTimeout);
-          message.innerHTML = "Ready!";
+          clearInterval(this.instructionsInterval);
+          window.clearTimeout(this.instructionsStopTimeout);
+          this.message.innerHTML = "Ready!";
         }}>
         Skip
       </button>
@@ -254,8 +281,9 @@ export default class TakeImage extends React.Component {
       <button
         className={this.state.showButtons ?  "modal-button" : "hidden"}
         onClick={() => {
+          this.loadImageDirections();
           this.setState({
-            instructionsStarted: true,
+            instructionsStarted:true,
             showButtons: false
           });
         }}>
@@ -285,40 +313,11 @@ export default class TakeImage extends React.Component {
       </section>
     );
 
-
-
-    if(this.state.instructionsStarted){
-
-      setTimeout(() => {
-        message = document.getElementById("instructions");
-        message.innerHTML = instructions[0][0];
-        let i = 1;
-        instructionsInterval = setInterval(()=>{
-          if(i >= instructions.length) {
-            clearInterval(instructionsInterval);
-          } else{
-            message.innerHTML = instructions[i][0];
-            i++;
-          }
-        }, 500);
-      }, 500);
-      //start instructions end at 17000
-
-      let lastMessageTime = instructions.length * 500;
-      instructionsStopTimeout = setTimeout(() => {
-        this.setState({
-          instructionsStarted: false,
-          showButtons: true
-        });
-      }, lastMessageTime + 500);
-    }
-
     let width = 0, height = 0;
-    while (height < window.innerHeight){
-      height += 120;
-    }
+    while (height < window.innerHeight) height += 120;
     height -= 120;
     width = height * 4/3;
+
     return(
       <section>
 
