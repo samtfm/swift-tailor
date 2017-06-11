@@ -99,19 +99,22 @@ export default class TakeImage extends React.Component {
       console.log("couldn't find a face");
     }
     let measurements = detectOutlinePoints(cannyData, faceBox.face);
-    calcCtx.fillStyle = '#0F0';
+    let vidCanvas = document.getElementById('vidCanvas');
+    let vidCtx = vidCanvas.getContext('2d');
+    vidCtx.clearRect(0, 0, vidCanvas.width, vidCanvas.height);
+    vidCtx.fillStyle = '#0F0';
     if (measurements.arms.wingspan) {
         this.refineMeasurements(measurements);
         // this.setState({measurements: measurements });
-      }
-      for (let part in measurements) {
-        if (measurements[part].points) {
-          measurements[part].points.forEach(point => {
-            calcCtx.fillRect(point.x,point.y, 2, 2);
-          });
-        }
+    }
+    for (let part in measurements) {
+      if (measurements[part].points) {
+        measurements[part].points.forEach(point => {
+          vidCtx.fillRect(point.x,point.y, 2, 2);
+        });
       }
     }
+  }
 
     refineMeasurements(measurements){
 
@@ -336,9 +339,9 @@ export default class TakeImage extends React.Component {
           </button>
 
           <h1 id="instructions" className="instructions"></h1>
-
-          <video id="video" width={width} height={height} autoPlay></video>
-
+            <canvas id="vidCanvas" width={width} height={height}></canvas>
+            <video id="video" width={width} height={height} autoPlay>
+            </video>
           { videoControls }
           <section className="modal-button-section">
             { skipButton }

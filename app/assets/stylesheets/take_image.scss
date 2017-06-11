@@ -60,9 +60,13 @@ $primary-color: red;
   }
 }
 #video {
-  border-radius: 10px;
+  // border-radius: 10px;
 }
-
+#vidCanvas{
+  position: fixed;
+  top: 100px;
+}
+>>>>>>> video-overlay
 .canvas-pic{
   display: none;
 }
