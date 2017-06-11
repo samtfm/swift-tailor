@@ -57,7 +57,6 @@ export default class TakeImage extends React.Component {
   }
 
   createVideo(){
-    // Grab elements, create settings, etc.
     let video;
 
     // Get access to the camera!
