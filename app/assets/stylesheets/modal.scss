@@ -22,14 +22,9 @@ $primary-color: red;
 }
 
 .modal-close-button {
-  float: right;
-  font-size: 20px;
-  padding: 0px 10px 10px 0px;
-  background: none;
-  color: white;
-  border: none;
-  outline: none;
-  cursor: pointer;
+  height: 60px;
+  width: 60px;
+  padding: 0;
   right: 7%;
   position: fixed;
   z-index: 10;

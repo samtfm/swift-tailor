@@ -295,7 +295,7 @@ export default class TakeImage extends React.Component {
 
           <button
             className="modal-close-button"
-            onClick={this.closeModal}>x
+            onClick={this.closeModal}>X
           </button>
 
           <h1 id="instructions" className="instructions"></h1>
