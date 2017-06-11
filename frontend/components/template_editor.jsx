@@ -38,8 +38,6 @@ class TemplateEditor extends React.Component{
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
     const scaleFactor = height/rawHeight;
-    console.log(newProps);
-    debugger;
     this.updateInchMeasuruements({
       height,
       neck: neck * scaleFactor.toFixed(3) || 0,
@@ -81,7 +79,6 @@ class TemplateEditor extends React.Component{
        armHole: height * 0.1
      }
    });
-   debugger;
  }
 
 
