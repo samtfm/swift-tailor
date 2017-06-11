@@ -15,18 +15,24 @@ import Shirt from './shirt';
 export default class TakeImage extends React.Component {
   constructor(props){
     super(props);
-    this.state = { measurements: null };
+
     let options = {
       blur_radius: 2,
       low_threshold: 20,
       high_threshold: 50,
     };
 
+    let gui = new dat.GUI();
+
+    gui.add(options, 'blur_radius', 0, 4).step(1);
+    gui.add(options, 'low_threshold', 1, 127).step(1);
+    gui.add(options, 'high_threshold', 1, 127).step(1);
+
     let stat = new profiler();
     stat.add("grayscale");
     stat.add("gauss blur");
     stat.add("canny edge");
-
+    
     this.state={
       options,
       stat,
@@ -38,8 +44,10 @@ export default class TakeImage extends React.Component {
       wingspan: [],
       neckWidth: [],
       chestWidth: [],
-      waistWidth: []
-
+      waistWidth: [],
+      shoulderWidth: [],
+      bustWidth: [],
+      stomachWidth: []
     };
 
     this.openModal = this.openModal.bind(this);
@@ -64,7 +72,6 @@ export default class TakeImage extends React.Component {
 
   createVideo(){
     let video;
-
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       // Not adding `{ audio: true }` since we only want video now
@@ -126,6 +133,12 @@ export default class TakeImage extends React.Component {
         neckWidth.push(measurements.neck.average || 0);
         chestWidth.push(measurements.chest.average || 0);
         waistWidth.push(measurements.waist.average || 0);
+        this.setState({
+          wingspan,
+          neckWidth,
+          chestWidth,
+          waistWidth
+        });
       } else {
         wingspan = inStdDev(wingspan);
         neckWidth = inStdDev(neckWidth);
@@ -133,10 +146,10 @@ export default class TakeImage extends React.Component {
         waistWidth = inStdDev(waistWidth);
         this.setState({
           measurements: {
-            arm: average(wingspan),
-            neck: average(neckWidth),
-            chest: average(chestWidth),
-            waist: average(waistWidth)
+            arm: Math.floor(average(wingspan)),
+            neck: Math.floor(average(neckWidth)),
+            chest: Math.floor(average(chestWidth)),
+            waist: Math.floor(average(waistWidth))
           }
         });
         window.armsUp = true;
@@ -174,13 +187,12 @@ export default class TakeImage extends React.Component {
   }
 
   startMeasuring(){
-    this.loadDirections();
     this.createVideo();
+    this.loadDirections();
     this.measuringInterval = setInterval(()=>{
       this.snapPicture();
-    },200);
+    },30);
 
-    this.message.innerHTML = "";
     this.setState({
       showButtons: false,
       showVideoControls: true
@@ -202,7 +214,6 @@ export default class TakeImage extends React.Component {
         }
       }, 500);
     }, 500);
-    //start instructions end at 17000
 
     let lastMessageTime = instructions.length * 500;
     this.instructionsStopTimeout = setTimeout(() => {
@@ -218,7 +229,6 @@ export default class TakeImage extends React.Component {
     let instructions = videoInstructions;
     this.message.classList.add("shadow");
     let i = 0;
-    this.message.innerHTML = instructions[i];
 
     let messageLoop = (param) => {
       this.message.innerHTML = instructions[i];
@@ -233,6 +243,7 @@ export default class TakeImage extends React.Component {
       }, 2500);
     };
 
+    this.message.innerHTML = instructions[i];
     this.measurementInstructionInterval = setInterval(() => {
       if(i >= instructions.length){
         this.message.innerHTML = "All Done Good Job Buddy!";
@@ -303,12 +314,25 @@ export default class TakeImage extends React.Component {
     videoControls = (
       <section className={this.state.showVideoControls ? "video-controls" : "hidden"}>
         <CalcIndicator
-          side={"front"}
+          side={"Arms Up"}
           measurements = {[
             this.state.wingspan,
             this.state.neckWidth,
             this.state.chestWidth,
             this.state.waistWidth
+          ]}
+        />
+        <CalcIndicator
+          side={"Arms Down"}
+          measurements = {[
+            this.state.shoulderWidth
+          ]}
+        />
+        <CalcIndicator
+          side={"Side"}
+          measurements = {[
+            this.state.bustWidth,
+            this.state.stomachWidth
           ]}
         />
       </section>
@@ -374,7 +398,7 @@ export default class TakeImage extends React.Component {
         </section>
         <section className="calc-section">
           <h1>SECTION FOR CALCULATIONS</h1>
-          <canvas id="calcCanvas" width="480" height="360"></canvas>
+          <canvas id="calcCanvas" width={width} height={height}></canvas>
         </section>
       </section>
     );
