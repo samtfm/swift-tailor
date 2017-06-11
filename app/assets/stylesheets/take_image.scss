@@ -62,11 +62,14 @@ $primary-color: red;
 #video {
   // border-radius: 10px;
 }
-#vidCanvas{
-  position: fixed;
-  top: 100px;
+
+#video-container {
+  position: relative;
 }
->>>>>>> video-overlay
+#overlayCanvas {
+  position: absolute;
+}
+
 .canvas-pic{
   display: none;
 }
