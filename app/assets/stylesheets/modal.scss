@@ -15,19 +15,29 @@ $primary-color: red;
   height: 80%;
   align-items: center;
   outline: none;
+
+  section{
+    width: 100%;
+  }
 }
 .modal-button-section{
-  position: relative;
-  bottom: 0%;
+  display: flex;
+  justify-content: center;
 }
 
-.modal-close-button {
-  height: 60px;
-  width: 60px;
-  padding: 0;
-  right: 7%;
-  position: fixed;
-  z-index: 10;
+.modal-close {
+  display: flex;
+  flex-direction: row-reverse;
+  button {
+    font-size: 17px;
+    height: 40px;
+    width: 40px;
+    right: 7%;
+    z-index: 10;
+    margin: 0px 0px 5px 0px;
+    padding: 0px;
+    box-shadow: none;
+  }
 }
 
 .overlay {
@@ -89,8 +99,11 @@ $primary-color: red;
   text-shadow: 0 0 20px #000;
 
 }
-
+.video-container {
+  display: flex;
+}
 .video-controls {
-  position: relative;
-  top: -84px;
+  box-shadow: 0 0 20px #000;
+  background-color: rgba(0, 0, 0, 0.7);
+  margin-left: 25px;
 }

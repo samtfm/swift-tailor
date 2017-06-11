@@ -10,17 +10,17 @@ export default class CalcIndicator extends React.Component {
     if(measurements.length <= 1){
       measurements = [measurements];
     }
-    
+
     return(
       <section className='indicator-container'>
         <h3>{side}</h3>
         <section>
         {measurements.map((measurement, i) =>
-          <section
+          <p
             key={i}
-            className={ measurement > 0 ? 'green' : 'indicator-box'}>
-            {i+1}
-          </section>
+            className={ measurement.length > 0 ? 'green' : 'indicator-box'}>
+            { measurement.toString() }
+          </p>
         )}
         </section>
       </section>

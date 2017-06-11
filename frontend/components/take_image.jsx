@@ -115,13 +115,13 @@ export default class TakeImage extends React.Component {
       }
     }
 
-    refineMeasurements(measurements){
+  refineMeasurements(measurements){
 
-    let {wingspan, neckWidth, chestWidth, waistWidth } = this.state;
+    let { wingspan, neckWidth, chestWidth, waistWidth } = this.state;
 
     if(!window.armsUp){
       console.log("arms", measurements.arms.wingspan);
-      if(wingspan.length < 20){
+      if(wingspan.length < 10){
         wingspan.push(measurements.arms.wingspan  || 0);
         neckWidth.push(measurements.neck.average || 0);
         chestWidth.push(measurements.chest.average || 0);
@@ -140,6 +140,7 @@ export default class TakeImage extends React.Component {
           }
         });
         window.armsUp = true;
+        // if (this.measuringInterval) clearInterval(this.measuringInterval);
       }
     } else if (window.armsUp){
       console.log("hi");
@@ -314,7 +315,7 @@ export default class TakeImage extends React.Component {
     );
 
     let width = 0, height = 0;
-    while (height < window.innerHeight) height += 120;
+    while (height < window.innerHeight * 2/3) height += 120;
     height -= 120;
     width = height * 4/3;
 
@@ -329,21 +330,26 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
-          <button
-            className="modal-close-button"
-            onClick={this.closeModal}>X
-          </button>
+
 
           <h1 id="instructions" className="instructions"></h1>
-
-          <video id="video" width={width} height={height} autoPlay></video>
-
-          { videoControls }
-          <section className="modal-button-section">
-            { skipButton }
-            { repeatButton }
-            { beginButton }
+          <section>
+            <section className="modal-close">
+              <button
+                onClick={this.closeModal}>X
+              </button>
+            </section>
+            <section className="video-container">
+              <video id="video" width={width} height={height} autoPlay></video>
+              { videoControls }
+            </section>
+            <section className="modal-button-section">
+              { skipButton }
+              { repeatButton }
+              { beginButton }
+            </section>
           </section>
+
         </Modal>
 
         <section className="enter-height-section">
