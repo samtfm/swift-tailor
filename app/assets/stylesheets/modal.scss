@@ -23,6 +23,8 @@ $primary-color: red;
 .modal-button-section{
   display: flex;
   justify-content: center;
+  position: relative;
+  top: 150px;
 }
 
 .modal-close {
@@ -98,10 +100,11 @@ $primary-color: red;
   // box-shadow: 0px 0px 22px 20px rgba(0, 0, 0, 0.8);
   text-shadow: 0 0 20px #000;
   font-size: 60px;
-  top: 45%;
+  top: 50%;
 }
 .video-container {
   display: flex;
+  justify-content: space-around;
 }
 .video-controls {
   // box-shadow: 0 0 20px #000;
@@ -121,14 +124,30 @@ $primary-color: red;
   content: '';
   box-sizing: border-box;
   position: absolute;
-  top: 50%;
+  bottom: -100px;
   left: 50%;
-  width: 20px;
-  height: 20px;
+  width: 60px;
+  height: 60px;
   margin-top: -10px;
   margin-left: -10px;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  border: 5px solid #ccc;
   border-top-color: #333;
-  animation: spinner .6s linear infinite;
+  animation: spinner 1s linear infinite;
+}
+
+.demo-container{
+  background-image: url(demo1.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  background-color: black;
+  p{
+    color: white;
+    position: relative;
+    bottom: 50%;
+    font-size: 29px;
+  }
 }
