@@ -2,6 +2,23 @@ import jsfeat from 'jsfeat';
 import { faceClassifier } from './face_classifier';
 // import { handClassifier } from './upperbody';
 
+export const measureShoulders = (imageData, face, height) => {
+  const shoulders = measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + height*.18),
+    width: face.width*2,
+    height: height*.05
+  });
+  const checkRaisedArms = measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + height*.18),
+    width: face.width*2,
+    height: height*.15
+  });
+  const isValid = checkRaisedArms.maximum < face.width*4;
+  return { shoulders, isValid };
+};
+
 export const detectOutlinePoints = (imageData, face) => {
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
 
@@ -25,7 +42,8 @@ export const detectOutlinePoints = (imageData, face) => {
     width: face.width*2,
     height: arms.wingspan*.02
   });
-  return { arms, neck, chest, waist };
+  const isValid = Boolean(arms.wingspan);
+  return { arms, neck, chest, waist, isValid };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
@@ -145,12 +163,12 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
 };
 
 export const measureWingspan = (imageData, face) => {
-  const DROPOFF_THRESHOLD = 15;
+  const DROPOFF_THRESHOLD = 13;
   const height = imageData.rows;
   const width = imageData.cols;
   const mid = Math.floor(face.x+face.width*.5);
   const points = [];
-  let tolerance = 5;
+  let tolerance = 4;
   let prevEdge = Math.floor(face.y+face.width*1.6);
   for (let x = Math.floor(mid+face.width*2); x < width; x++ ){
 
@@ -170,9 +188,9 @@ export const measureWingspan = (imageData, face) => {
     } else {
       if (tolerance < DROPOFF_THRESHOLD) {
         // try iteration again with a higher tolerance
-        tolerance = Math.ceil(tolerance*1.5);
+        tolerance = Math.ceil(tolerance*1.2);
         // x--;
-      } else if (x - mid > face.width*2.5) {
+      } else if (x - mid > width/4 && x - mid < width/2) {
         // 40px drop is
         const last = points[points.length-1] || {};
         return {
