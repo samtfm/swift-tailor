@@ -5,11 +5,17 @@ import { faceClassifier } from './face_classifier';
 export const measureShoulders = (imageData, face, height) => {
   const shoulders = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + height*.28),
+    y: Math.floor(face.y + height*.18),
     width: face.width*2,
-    height: height*.02
+    height: height*.05
   });
-  const isValid = shoulders.width;
+  const checkRaisedArms = measureWidth(imageData, {
+    x: Math.floor(face.x - face.width*.5),
+    y: Math.floor(face.y + height*.18),
+    width: face.width*2,
+    height: height*.15
+  });
+  const isValid = checkRaisedArms.maximum < face.width*4;
   return { shoulders, isValid };
 };
 

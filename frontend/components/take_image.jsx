@@ -8,7 +8,7 @@ import CalcIndicator from '../widget/calc_indicators';
 import { stdDev, average, inStdDev } from '../util/math';
 import { applyCanny } from '../util/image_filter';
 import { startInstructions, videoInstructions } from '../util/instructions';
-import { detectOutlinePoints, detectSide } from '../util/body_detection';
+import { detectOutlinePoints, detectSide, measureShoulders } from '../util/body_detection';
 import Shirt from './shirt';
 
 export default class TakeImage extends React.Component {
@@ -120,12 +120,11 @@ export default class TakeImage extends React.Component {
     if(!window.armsUp){
       measurements = detectOutlinePoints(cannyData, faceBox.face);
     } else if (window.armsUp && !window.armsDown){
-
-
+      measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.arm);
       //TODO do shoulder meaturements
       //measuremsnets = somethingelse
       //Tony is skipping this part for now
-      window.armsDown = true;
+      // window.armsDown = true;
 
     } else if (window.armsUp && window.armsDown && !window.side){
       measurements = detectSide(cannyData, faceBox.face, this.state.measurements.arm);
@@ -139,20 +138,16 @@ export default class TakeImage extends React.Component {
     if (this.state.measurements.arm || measurements.arms.wingspan) {
       this.refineMeasurements(measurements);
     }
-
-    let overlayCanvas = document.getElementById('overlayCanvas');
-    let overlayCtx = overlayCanvas.getContext('2d');
-    overlayCtx.clearRect(0,0, overlayCanvas.width, overlayCanvas.height);
     try{
-      drawFace(overlayCtx, faceBox.face, faceBox.scale);
+      drawFace(calcCtx, faceBox.face, faceBox.scale);
     } catch(err){
       console.log("couldn't find a face");
     }
-    overlayCtx.fillStyle = '#0F0';
+    calcCtx.fillStyle = measurements.isValid ? '#0F0' : '#F00';
     for (let part in measurements) {
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
-          overlayCtx.fillRect(point.x,point.y, 4, 4);
+          calcCtx.fillRect(point.x,point.y, 4, 4);
         });
       }
     }
@@ -427,7 +422,6 @@ export default class TakeImage extends React.Component {
             </section>
             <section className="video-container">
               <video id="video" width={width} height={height} autoPlay></video>
-              <canvas id="overlayCanvas" width={width} height={height}></canvas>
               <canvas id="calcCanvas" width={width} height={height}></canvas>
             </section>
             { videoControls }
