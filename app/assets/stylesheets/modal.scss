@@ -23,8 +23,7 @@ $primary-color: red;
 .modal-button-section{
   display: flex;
   justify-content: center;
-  position: relative;
-  top: 150px;
+  margin: 10px;
 }
 
 .modal-close {
@@ -85,11 +84,12 @@ $primary-color: red;
 .instructions{
   color: white;
   // font-size: 8vw;
-  font-size: 10vh;
+  font-size: 4vh;
   width: 80%;
-  top: 22%;
   text-align: center;
   transition: 0.5s;
+  margin: 15px;
+  width: 100%;
   // line-height: 113px;
 }
 

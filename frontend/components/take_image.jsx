@@ -460,10 +460,6 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
-
-
-
-          <h1 id="instructions" className="instructions"></h1>
           <section>
             <section className="modal-close">
               <button
@@ -476,8 +472,9 @@ export default class TakeImage extends React.Component {
               <div id="demo-image" className="demo-container hidden" style={{height, width }} >
                 <p>Model this!</p>
               </div>
+              { videoControls }
             </section>
-            { videoControls }
+            <h1 id="instructions" className="instructions"></h1>
             <section className="modal-button-section">
               { skipButton }
               { repeatButton }
