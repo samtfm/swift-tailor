@@ -14,11 +14,11 @@ import Shirt from './shirt';
 export default class TakeImage extends React.Component {
   constructor(props){
     super(props);
-
+    //play with these numbers for better results;
     let options = {
-      blur_radius: 2,
+      blur_radius: 4,
       low_threshold: 20,
-      high_threshold: 50,
+      high_threshold: 90,
     };
 
     let stat = new profiler();
@@ -140,7 +140,6 @@ export default class TakeImage extends React.Component {
     } else if (window.armsUp && window.armsDown && !window.side){
       measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
     } else {
-      console.log("CLOSING SNAP");
       clearInterval(this.measuringIntervalInstance);
       return;
     }
@@ -152,7 +151,7 @@ export default class TakeImage extends React.Component {
     try{
       drawFace(calcCtx, faceBox.face, faceBox.scale);
     } catch(err){
-      console.log("couldn't find a face");
+      // console.log("couldn't find a face");
     }
     calcCtx.fillStyle = measurements.isValid ? '#0F0' : '#F00';
     for (let part in measurements) {
@@ -204,7 +203,6 @@ export default class TakeImage extends React.Component {
         this.measuringInterval();
       }
     } else if (window.armsUp && !window.armsDown){
-      console.log("IN THE ARMS DOWN AREA");
       if(Math.min(shoulderWidth.length) < 20  && measurements.isValid){
         if(measurements.shoulders.average) shoulderWidth.push(Math.floor(measurements.shoulders.average) || 0);
         this.setState({ shoulderWidth });
@@ -221,7 +219,6 @@ export default class TakeImage extends React.Component {
         this.measuringInterval();
       }
     } else if (window.armsUp && window.armsDown && !window.side) {
-      // console.log("IN THE SIDE AREA");
 
       if(Math.min(bustWidth.length, stomachWidth.length) < 40){
         if(measurements.bustWidth.average) bustWidth.push(Math.floor(measurements.bustWidth.average) || 0);
@@ -319,20 +316,23 @@ export default class TakeImage extends React.Component {
 
   loadDirections(){
     //instructions to change positions
-    console.log("DIRECTIONS LOADED");
     let instructions = videoInstructions;
     this.demo = document.getElementById("demo-image");
     this.demo.classList.remove("hidden");
+    this.demo.classList.add("inst1");
 
     this.message.classList.add("shadow");
     this.message.classList.add("spinner");
     let i = 0;
 
     let messageLoop = (param) => {
-      console.log(param, i);
+      let curr = 'inst' + (i+1);
+      let next = 'inst' + (i+2);
       this.message.innerHTML = instructions[i];
       if(param){
         this.message.innerHTML = "Great!";
+        this.demo.classList.remove(curr);
+        this.demo.classList.add(next);
         return i++;
       }
     };
@@ -340,11 +340,15 @@ export default class TakeImage extends React.Component {
     this.message.innerHTML = instructions[i];
     this.measurementInstructionInterval = setInterval(() => {
       if(i >= instructions.length){
-        this.message.innerHTML = "All Done Good Job Buddy!";
+        this.message.innerHTML = "All Done Good Job!";
+        debugger;
         this.message.classList.remove("spinner");
         clearInterval(this.measurementInstructionInterval);
-        setInterval(()=>{
+        let temp = setInterval(()=>{
           this.closeModal();
+          window.scrollTo(0,document.body.scrollHeight);
+          clearInterval(temp);
+
         }, 5000);
       } else {
         switch(i) {
@@ -485,13 +489,13 @@ export default class TakeImage extends React.Component {
           <h2>(Step 1)   Enter your height</h2>
           <section>
             <input
-              type="number"
+              type="text"
               value={this.state.heightFeet}
               onChange={this.updateFeet}>
             </input>
             <label>Ft </label>
             <input
-              type="number"
+              type="text"
               value={this.state.heightInches}
               onChange={this.updateInches}>
             </input>

@@ -13,8 +13,6 @@ export default class CalcIndicator extends React.Component {
 
     return(
       <section className='indicator-container'>
-        <h3>{side}</h3>
-        <section>
         {measurements.map((measurement, i) =>
           <p
             key={i}
@@ -22,7 +20,6 @@ export default class CalcIndicator extends React.Component {
             { measurement.toString() }
           </p>
         )}
-        </section>
       </section>
     );
   }
