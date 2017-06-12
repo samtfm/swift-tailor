@@ -189,7 +189,6 @@ export default class TakeImage extends React.Component {
         neckWidth = inStdDev(neckWidth);
         chestWidth = inStdDev(chestWidth);
         waistWidth = inStdDev(waistWidth);
-        console.log('HEYYYYYY');
         this.setState({
           measurements: {
             wingspan: average(wingspan),
@@ -522,12 +521,3 @@ export default class TakeImage extends React.Component {
     );
   }
 }
-
-// <button
-//   id="snap"
-//   onClick={this.snapPicture(0)}>Snap Photo
-// </button>
-// <button
-//   id="snap"
-//   onClick={this.snapPicture(2000)}>Snap Delay Photo
-// </button>

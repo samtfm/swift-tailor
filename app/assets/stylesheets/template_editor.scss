@@ -27,6 +27,7 @@
   padding: 0;
   margin: 0;
   ul {
+    font-size: 18px;
     background: #f9b2b2;
     width: 260px;
     display: flex;
@@ -42,7 +43,8 @@
       justify-content: space-between;
     }
     input {
-      width: 50px;
+      font-size: 18px;
+      width: 60px;
     }
     display: flex;
     flex-direction: column;
