@@ -16,9 +16,9 @@ $primary-color: red;
   align-items: center;
   outline: none;
 
-  section{
-    width: 100%;
-  }
+  // section{
+  //   width: 100%;
+  // }
 }
 .modal-button-section{
   display: flex;
@@ -109,7 +109,7 @@ $primary-color: red;
   // box-shadow: 0 0 20px #000;
   // background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   position: absolute;
   left: 0px;
   bottom: 0px;
@@ -134,16 +134,23 @@ $primary-color: red;
   border-top-color: #333;
   animation: spinner 1s linear infinite;
 }
+.inst1{
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_up_bg7nxb.png);
+}
+.inst2{
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_down_zui9fw.png);
+}
+.inst3{
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/side_tbbvtn.png);
+}
 
 .demo-container{
-  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_up_bg7nxb.png);
-  // background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_down_zui9fw.png);
-  // background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/side_tbbvtn.png);
   background-size: contain;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
+  z-index: 5;
   // background-color: black;
   p{
     color: white;
