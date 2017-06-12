@@ -138,7 +138,7 @@ class TemplateEditor extends React.Component{
           onClick={this.converter}>Download as image</button>
         <canvas
           id="convertCanvas"
-          width="500px"
+          width="600px"
           height="500px"
           className="hidden"
         >

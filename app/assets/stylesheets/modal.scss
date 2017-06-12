@@ -24,11 +24,15 @@ $primary-color: red;
   display: flex;
   justify-content: center;
   margin: 10px;
+  position: relative;
+  bottom: 41px;
 }
 
 .modal-close {
   display: flex;
   flex-direction: row-reverse;
+  float: right;
+
   button {
     font-size: 17px;
     height: 40px;
@@ -111,8 +115,10 @@ $primary-color: red;
   display: flex;
   flex-direction: row;
   position: absolute;
-  left: 0px;
   bottom: 0px;
+  border: 1px solid;
+  max-width: 750px;
+
 }
 
 @keyframes spinner {
