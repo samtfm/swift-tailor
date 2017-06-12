@@ -30,8 +30,8 @@ export default class TakeImage extends React.Component {
       options,
       stat,
       modalIsOpen: false,
-      instructionsStarted: false,
-      showButtons: false,
+      instructionsStarted: true,
+      showButtons: true,
       showVideoControls: false,
       measurements: {},
       heightFeet: 5,
@@ -158,7 +158,7 @@ export default class TakeImage extends React.Component {
     for (let part in measurements) {
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
-          calcCtx.fillRect(point.x,point.y, 4, 4);
+          calcCtx.fillRect(point.x-1,point.y-1, 2, 2);
         });
       }
     }
@@ -266,10 +266,10 @@ export default class TakeImage extends React.Component {
     }
     this.setState({
       modalIsOpen: false,
-      showButtons: false,
+      showButtons: true,
       showVideoControls: false
     });
-    
+
     //Allow user to edit measurements!
     //this stops measured stuff from being passed again on new renders
     this.setState({ measurements: {} });
@@ -303,25 +303,25 @@ export default class TakeImage extends React.Component {
 
     setTimeout(() => {
       this.message = document.getElementById("instructions");
-      this.message.innerHTML = instructions[0][0];
+      this.message.innerHTML = "Stand in front of your webcam with enough space to see your full upper body with arms outstreched. <br> For best results, avoid loose fitting clothing and messy backgrounds."// instructions[0][0];
       let i = 1;
-      this.instructionsInterval = setInterval(()=>{
-        if(i >= instructions.length) {
-          clearInterval(this.instructionsInterval);
-        } else{
-          this.message.innerHTML = instructions[i][0];
-          i++;
-        }
-      }, 3000);
-    }, 500);
+      // this.instructionsInterval = setInterval(()=>{
+      //   if(i >= instructions.length) {
+      //     clearInterval(this.instructionsInterval);
+      //   } else{
+      //     this.message.innerHTML = instructions[i][0];
+      //     i++;
+      //   }
+      // }, 3000);
+    }, 200);
 
     let lastMessageTime = instructions.length * 3000;
-    this.instructionsStopTimeout = setTimeout(() => {
-      this.setState({
-        instructionsStarted: false,
-        showButtons: true
-      });
-    }, lastMessageTime + 500);
+    // this.instructionsStopTimeout = setTimeout(() => {
+    //   this.setState({
+    //     instructionsStarted: false,
+    //     showButtons: true
+    //   });
+    // }, lastMessageTime + 500);
   }
 
   loadDirections(){
@@ -460,10 +460,6 @@ export default class TakeImage extends React.Component {
           onRequestClose={this.closeModal}
           contentLabel="CameraModal">
 
-
-
-
-          <h1 id="instructions" className="instructions"></h1>
           <section>
             <section className="modal-close">
               <button
@@ -476,11 +472,10 @@ export default class TakeImage extends React.Component {
               <div id="demo-image" className="demo-container hidden" style={{height, width }} >
                 <p>Model this!</p>
               </div>
+              { videoControls }
             </section>
-            { videoControls }
+            <h1 id="instructions" className="instructions"></h1>
             <section className="modal-button-section">
-              { skipButton }
-              { repeatButton }
               { beginButton }
             </section>
           </section>
