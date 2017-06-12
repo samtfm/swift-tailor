@@ -8,12 +8,12 @@ class Shirt extends React.Component{
     this.state = {inchMeasurements: {}, pixelMeasurements: {}};
   }
   componentDidMount(){
-    this.draw = SVG(this.drawing).size(500,500);
+    this.draw = SVG(this.drawing).size(600,500);
   }
   componentWillReceiveProps(newProps){
     if (newProps.inchMeasurements){
       const pixelMeasurements = {};
-      const shirtScale = 100/12;
+      const shirtScale = 100/8;
       for (var key in newProps.inchMeasurements) {
         pixelMeasurements[key] = newProps.inchMeasurements[key] * shirtScale;
       }
@@ -27,8 +27,8 @@ class Shirt extends React.Component{
       "M",
       [-neck/2, -5],
       "c",
-      [neck*.2, neck*.35],
-      [neck*.8, neck*.35],
+      [neck*.2, neck*.55],
+      [neck*.8, neck*.55],
       [neck, 0],
     ];
     lines.push(neckline);
@@ -79,8 +79,8 @@ class Shirt extends React.Component{
 
       [0, 2*armHole]
     ];
-    lines.push(this.transformLine(sleeve, chest/4+40, 0));
-    lines.push(this.transformLine(sleeveCurveFull, chest/4+40, 0));
+    lines.push(this.transformLine(sleeve, chest/4+80, 0));
+    lines.push(this.transformLine(sleeveCurveFull, chest/4+80, 0));
     const box = [
       [chest/4, armHole],
       [(waist/4), length],

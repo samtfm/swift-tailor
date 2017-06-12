@@ -28,7 +28,7 @@ export const detectOutlinePoints = (imageData, face) => {
     x: Math.floor(face.x + face.width*.1),
     y: Math.floor(face.y + face.width*.5+ arms.wingspan*.04),
     width: Math.floor(face.width*.8),
-    height: Math.floor(arms.wingspan*.06)
+    height: Math.floor(arms.wingspan*.03)
   });
   const chest = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
@@ -38,7 +38,7 @@ export const detectOutlinePoints = (imageData, face) => {
   });
   const waist = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + arms.wingspan*.42),
+    y: Math.floor(face.y + arms.wingspan*.45),
     width: face.width*2,
     height: arms.wingspan*.02
   });
@@ -52,17 +52,18 @@ export const detectSide = (imageData, face, wingspan) => {
 
   const bustWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + wingspan*.28),
-    width: face.width*2,
+    y: Math.floor(face.y + wingspan*.2),
+    width: face.width*1.5,
     height: wingspan*.02
   });
   const stomachWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + wingspan*.42),
-    width: face.width*2,
+    y: Math.floor(face.y + wingspan*.45),
+    width: face.width*1.7,
     height: wingspan*.02
   });
-  return { bustWidth, stomachWidth };
+  const isValid = bustWidth.mininum > face.width && stomachWidth.mininum > face.width
+  return { bustWidth, stomachWidth, isValid };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 

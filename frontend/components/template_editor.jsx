@@ -7,7 +7,7 @@ class TemplateEditor extends React.Component{
     super(props);
     this.state = {
       inputs: {
-        height: 70,
+        length: 28,
         neck: 3,
         chest: 32,
         waist: 34,
@@ -31,43 +31,51 @@ class TemplateEditor extends React.Component{
   }
 
   componentWillReceiveProps(newProps){
-
-    if (!newProps.measurements.stomachWidth || !newProps.height) return;
-    let { wingspan, neck, chestWidth, waistWidth, bustWidth, stomachWidth } = newProps.measurements;
+    if (!newProps.measurements.wingspan || !newProps.height) return;
+    let { wingspan, neckWidth, chestWidth, waistWidth, bustWidth, stomachWidth, shoulders } = newProps.measurements;
+    bustWidth = bustWidth || chestWidth*0.5;
+    stomachWidth = stomachWidth || waistWidth*0.5;
+    shoulders = shoulders || chestWidth *.9;
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
     const scaleFactor = height/rawHeight;
+
+    // Approximation of elipse based on two diameters
+    let chest = 6*Math.pow(chestWidth*chestWidth/8 + bustWidth*bustWidth/8, 0.5);
+    let waist = 6*Math.pow(waistWidth*waistWidth/8 + stomachWidth*stomachWidth/8, 0.5);
+
     this.updateInchMeasuruements({
-      height,
-      neck: neck * scaleFactor,
-      chest: chestWidth * scaleFactor,
-      waist: waistWidth * scaleFactor,
-      bust: bustWidth * scaleFactor,
-      stomach: stomachWidth * scaleFactor,
+      length: height * 0.4,
+      neck: neckWidth * scaleFactor,
+      chest: chest * scaleFactor,
+      waist: waist * scaleFactor,
+      shoulders: shoulders * scaleFactor
+
     });
   }
 
-  updateInchMeasuruements({height, neck, chest, waist, bust, stomach, shoulders}){
-    this.setState({
-      inputs: {
-        height,
-        neck,
-        chest,
-        waist,
-        bust,
-        stomach,
-        shoulders
-      },
-      inchMeasurements: {
-        neckWidth: neck,
-        chestWidth: chest,
-        waistWidth: waist,
-        shirtLength: height * 0.4,
-        shoulderWidth: chest * 0.9,
-        armHole: chest * .9 * 0.14 + height * 0.4 * .12
-      }
-    });
-  }
+ updateInchMeasuruements({length, neck, chest, waist, bust, stomach, shoulders}){
+   this.setState({
+     inputs: {
+      length,
+      neck,
+      chest,
+      waist,
+      bust,
+      stomach,
+      shoulders
+     },
+     inchMeasurements: {
+       neckWidth: neck,
+       chestWidth: chest,
+       waistWidth: waist,
+       shirtLength: length,
+       shoulderWidth: chest * 0.9,
+       armHole: chest * .9 * 0.14 + length * .12
+     }
+   });
+ }
+
 
   converter(e){
     let png;
@@ -94,22 +102,22 @@ class TemplateEditor extends React.Component{
   }
 
   render(){
-    const { height, neck, chest, waist, bust, stomach, shoulders } = this.state.inputs;
+    const { length, neck, chest, waist, shoulders } = this.state.inputs;
     return (
       <div className="template-container">
         <h2>(Step 3)   Make any desired adjustments</h2>
         <section className='template-editor'>
           <ul>
             <label>
-              Height:
-              <input type = 'number' name='height' value={height} onChange={this.updateValue}></input>
+              Length:
+              <input type = 'number' name='length' value={length} onChange={this.updateValue}></input>
             </label>
             <label>
               Neck:
               <input type = 'number' name='neck' value={neck} onChange={this.updateValue}></input>
             </label>
             <label>
-              Shoulders:
+              Shoulder Width:
               <input type = 'number' name='shoulders' value={shoulders} onChange={this.updateValue}></input>
             </label>
             <label>
