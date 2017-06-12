@@ -15,12 +15,11 @@ class TemplateEditor extends React.Component{
       },
       inchMeasurements: {}
     };
-
+    this.converter = this.converter.bind(this);
     this.updateValue = this.updateValue.bind(this);
   }
   componentDidMount(){
     this.updateInchMeasuruements(this.state.inputs);
-
   }
 
   updateValue(e){
@@ -46,73 +45,99 @@ class TemplateEditor extends React.Component{
       bust: bustWidth * scaleFactor,
       stomach: stomachWidth * scaleFactor,
     });
-    // if (!newProps.measurements || !newProps.measurements.arms) return;
-    // let {arms, neck, chest, waist } = newProps.measurements;
-    // const heightInches = 71;
-    // const rawHeight = arms.wingspan * 0.98;
-    // const scaleFactor = heightInches/rawHeight;
-    //
-    // this.updateInchMeasuruements({
-    //   height: heightInches,
-    //   neck: neck.mininum * scaleFactor,
-    //   chest: chest.average * scaleFactor,
-    //   waist: waist.maximum * scaleFactor,
-    // });
   }
 
- updateInchMeasuruements({height, neck, chest, waist, bust, stomach, shoulders}){
-   this.setState({
-     inputs: {
-      height,
-      neck,
-      chest,
-      waist,
-      bust,
-      stomach,
-      shoulders
-     },
-     inchMeasurements: {
-       neckWidth: neck,
-       chestWidth: chest,
-       waistWidth: waist,
-       shirtLength: height * 0.4,
-       shoulderWidth: chest * 0.9,
-       armHole: chest * .9 * 0.14 + height * 0.4 * .12
-     }
-   });
- }
+  updateInchMeasuruements({height, neck, chest, waist, bust, stomach, shoulders}){
+    this.setState({
+      inputs: {
+        height,
+        neck,
+        chest,
+        waist,
+        bust,
+        stomach,
+        shoulders
+      },
+      inchMeasurements: {
+        neckWidth: neck,
+        chestWidth: chest,
+        waistWidth: waist,
+        shirtLength: height * 0.4,
+        shoulderWidth: chest * 0.9,
+        armHole: chest * .9 * 0.14 + height * 0.4 * .12
+      }
+    });
+  }
 
+  converter(e){
+    let png;
+    var svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
+    var canvas = document.getElementById("convertCanvas");
+    var ctx = canvas.getContext("2d");
+    var DOMURL = self.URL || self.webkitURL || self;
+    var img = new Image();
+    var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+    var url = DOMURL.createObjectURL(svg);
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0);
+      png = canvas.toDataURL("image/png");
+      document.querySelector('#png-container').innerHTML = '<img src="'+png+'"/>';
+      DOMURL.revokeObjectURL(png);
+      var anchor = document.createElement('a');
+      anchor.href = png;
+      anchor.target = '_blank';
+      anchor.download = 'shirt.png';
+      anchor.click();
+    };
+    img.src = url;
+
+  }
 
   render(){
     const { height, neck, chest, waist, bust, stomach, shoulders } = this.state.inputs;
     return (
-      <div className='template-editor'>
-        <ul>
-          <label>
-            Height:
-            <input type = 'number' name='height' value={height} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Neck:
-            <input type = 'number' name='neck' value={neck} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Shoulders:
-            <input type = 'number' name='shoulders' value={shoulders} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Chest:
-            <input type = 'number' name='chest' value={chest} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Waist:
-            <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
-          </label>
-        </ul>
-        <section className='preview'>
-          <Shirt
-            inchMeasurements={this.state.inchMeasurements} />
+      <div className="template-container">
+        <h2>(Step 3)   Make any desired adjustments</h2>
+        <section className='template-editor'>
+          <ul>
+            <label>
+              Height:
+              <input type = 'number' name='height' value={height} onChange={this.updateValue}></input>
+            </label>
+            <label>
+              Neck:
+              <input type = 'number' name='neck' value={neck} onChange={this.updateValue}></input>
+            </label>
+            <label>
+              Shoulders:
+              <input type = 'number' name='shoulders' value={shoulders} onChange={this.updateValue}></input>
+            </label>
+            <label>
+              Chest:
+              <input type = 'number' name='chest' value={chest} onChange={this.updateValue}></input>
+            </label>
+            <label>
+              Waist:
+              <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
+            </label>
+          </ul>
+          <section className='preview'>
+            <Shirt
+              inchMeasurements={this.state.inchMeasurements} />
+          </section>
         </section>
+        <button id="download"
+          onClick={this.converter}>Download as image</button>
+        <canvas
+          id="convertCanvas"
+          width="500px"
+          height="500px"
+          className="hidden"
+        >
+        </canvas>
+        <div
+          id="png-container"
+          className="hidden"></div>
       </div>
     );
   }
