@@ -158,7 +158,7 @@ export default class TakeImage extends React.Component {
     for (let part in measurements) {
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
-          calcCtx.fillRect(point.x,point.y, 4, 4);
+          calcCtx.fillRect(point.x-1,point.y-1, 2, 2);
         });
       }
     }
@@ -269,7 +269,7 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: false
     });
-    
+
     //Allow user to edit measurements!
     //this stops measured stuff from being passed again on new renders
     this.setState({ measurements: {} });

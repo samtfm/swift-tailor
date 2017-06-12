@@ -6,6 +6,7 @@ class Shirt extends React.Component{
   constructor(props){
     super(props);
     this.state = {inchMeasurements: {}, pixelMeasurements: {}};
+    this.shirtScale = 100/8;
   }
   componentDidMount(){
     this.draw = SVG(this.drawing).size(600,500);
@@ -13,9 +14,8 @@ class Shirt extends React.Component{
   componentWillReceiveProps(newProps){
     if (newProps.inchMeasurements){
       const pixelMeasurements = {};
-      const shirtScale = 100/8;
       for (var key in newProps.inchMeasurements) {
-        pixelMeasurements[key] = newProps.inchMeasurements[key] * shirtScale;
+        pixelMeasurements[key] = newProps.inchMeasurements[key] * this.shirtScale;
       }
       this.setState({ pixelMeasurements });
     }
@@ -149,6 +149,16 @@ class Shirt extends React.Component{
 
       }
     });
+
+    const lengthText = this.draw.text(`${this.props.inchMeasurements.shirtLength}'`);
+    lengthText.transform({ x: 6, y: shirtLength/2});
+    group.add(lengthText);
+
+    const widthText = this.draw.text(`${this.props.inchMeasurements.waistWidth/2}'`);
+    widthText.transform({ x: 0, y: shirtLength});
+    group.add(widthText);
+
+
     group.transform({x: 250, y: 50});
     return group;
   }

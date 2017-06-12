@@ -48,8 +48,8 @@ class TemplateEditor extends React.Component{
     this.updateInchMeasuruements({
       length: height * 0.4,
       neck: neckWidth * scaleFactor,
-      chest: chest * scaleFactor,
-      waist: waist * scaleFactor,
+      chest: chest * scaleFactor - 3,
+      waist: waist * scaleFactor - 3,
       shoulders: shoulders * scaleFactor
 
     });
