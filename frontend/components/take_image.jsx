@@ -269,6 +269,11 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: false
     });
+    
+    //Allow user to edit measurements!
+    //this stops measured stuff from being passed again on new renders
+    this.setState({ measurements: {} });
+
     if (this.measuringInterval) clearInterval(this.measuringInterval);
     if (this.instructionsInterval) clearInterval(this.instructionsInterval);
     if (this.measurementInstructionInterval ) clearInterval(this.measurementInstructionInterval );
@@ -443,6 +448,7 @@ export default class TakeImage extends React.Component {
     let width = 0, height = 0;
     height = 157.5 // window.innerHeight * 1/8;
     width = 210 // height * 4/3;
+    console.log("RENDER");
     return(
       <section>
 
