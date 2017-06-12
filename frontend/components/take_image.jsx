@@ -56,6 +56,7 @@ export default class TakeImage extends React.Component {
     this.loadDirections = this.loadDirections.bind(this);
     this.loadImageDirections = this.loadImageDirections.bind(this);
     this.refineMeasurements = this.refineMeasurements.bind(this);
+    this.measuringInterval = this.measuringInterval.bind(this);
   }
 
   componentWillMount(){
@@ -140,15 +141,13 @@ export default class TakeImage extends React.Component {
       measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
     } else {
       console.log("CLOSING SNAP");
-      clearInterval(this.measuringInterval);
+      clearInterval(this.measuringIntervalInstance);
       return;
     }
     // let sideMeasurements = detectOutlinePoints(cannyData, faceBox.face);
     calcCtx.fillStyle = '#0F0';
     if (this.state.measurements.wingspan || measurements.arms.wingspan) {
-      setTimeout(() => {
-        this.refineMeasurements(measurements);
-      }, 5000);
+      this.refineMeasurements(measurements);
     }
     try{
       drawFace(calcCtx, faceBox.face, faceBox.scale);
@@ -174,8 +173,8 @@ export default class TakeImage extends React.Component {
       bustWidth, stomachWidth,
     } = this.state;
 
-    if(!window.armsUp){
-      if(Math.min(wingspan.length, neckWidth.length, chestWidth.length, waistWidth.length) < 40) {
+    if(!window.armsUp && measurements.isValid){
+      if(Math.min(wingspan.length, neckWidth.length, chestWidth.length, waistWidth.length) < 20) {
         wingspan.push(Math.floor(measurements.arms.wingspan)  || 0);
         neckWidth.push(Math.floor(measurements.neck.average) || 0);
         chestWidth.push(Math.floor(measurements.chest.average) || 0);
@@ -200,10 +199,27 @@ export default class TakeImage extends React.Component {
           }
         });
         window.armsUp = true;
-        // if (this.measuringInterval) clearInterval(this.measuringInterval);
+        //pause for
+        clearInterval(this.measuringIntervalInstance);
+        this.measuringInterval();
       }
     } else if (window.armsUp && !window.armsDown){
       console.log("IN THE ARMS DOWN AREA");
+      if(Math.min(shoulderWidth.length) < 20  && measurements.isValid){
+        if(measurements.shoulders.average) shoulderWidth.push(Math.floor(measurements.shoulders.average) || 0);
+        this.setState({ shoulderWidth });
+      } else {
+        shoulderWidth = inStdDev(shoulderWidth);
+        measurements = Object.assign(
+          this.state.measurements,
+          { shoulders: Math.floor(average(shoulderWidth)) }
+        );
+        window.armsDown = true;
+        this.setState({ measurements });
+
+        clearInterval(this.measuringIntervalInstance);
+        this.measuringInterval();
+      }
     } else if (window.armsUp && window.armsDown && !window.side) {
       // console.log("IN THE SIDE AREA");
 
@@ -259,15 +275,22 @@ export default class TakeImage extends React.Component {
   startMeasuring(){
     this.createVideo();
     this.loadDirections();
-    this.measuringInterval = setInterval(()=>{
-      this.snapPicture();
-    },30);
+    this.measuringInterval();
 
     this.setState({
       showButtons: false,
       showVideoControls: true
     });
   }
+
+  measuringInterval(){
+    setTimeout(() => {
+      this.measuringIntervalInstance = setInterval(()=>{
+        this.snapPicture();
+      },100);
+    }, 4000);
+  }
+
   loadImageDirections(){
     let instructions = startInstructions;
 
@@ -282,10 +305,10 @@ export default class TakeImage extends React.Component {
           this.message.innerHTML = instructions[i][0];
           i++;
         }
-      }, 500);
+      }, 3000);
     }, 500);
 
-    let lastMessageTime = instructions.length * 500;
+    let lastMessageTime = instructions.length * 3000;
     this.instructionsStopTimeout = setTimeout(() => {
       this.setState({
         instructionsStarted: false,
@@ -295,6 +318,7 @@ export default class TakeImage extends React.Component {
   }
 
   loadDirections(){
+    //instructions to change positions
     console.log("DIRECTIONS LOADED");
     let instructions = videoInstructions;
     this.demo = document.getElementById("demo-image");
@@ -305,13 +329,12 @@ export default class TakeImage extends React.Component {
     let i = 0;
 
     let messageLoop = (param) => {
+      console.log(param, i);
       this.message.innerHTML = instructions[i];
-      setTimeout(() => {
-        if(param){
-          this.message.innerHTML = "Great!";
-          return i++;
-        }
-      }, 500);
+      if(param){
+        this.message.innerHTML = "Great!";
+        return i++;
+      }
     };
 
     this.message.innerHTML = instructions[i];
@@ -320,6 +343,9 @@ export default class TakeImage extends React.Component {
         this.message.innerHTML = "All Done Good Job Buddy!";
         this.message.classList.remove("spinner");
         clearInterval(this.measurementInstructionInterval);
+        setInterval(()=>{
+          this.closeModal();
+        }, 5000);
       } else {
         switch(i) {
           //check the front
