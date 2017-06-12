@@ -23,7 +23,8 @@ export let average = (arr) => {
 export let inStdDev = (arr) => {
   let avg = average(arr);
   let std = stdDev(arr);
+  console.log(std);
   return arr.filter((el) => {
-    return Math.abs(avg - el) < std;
+    return Math.abs(avg - el) <= std;
   });
 };
