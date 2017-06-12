@@ -5,6 +5,11 @@
   h3{
     padding: 10px;
   }
+  section{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .indicator-box{
@@ -15,7 +20,9 @@
 }
 
 .green{
+  display: block;
   background-color: green;
+  font-size: 4px;
   float: left;
   padding: 5px;
   border: 1px solid black;
