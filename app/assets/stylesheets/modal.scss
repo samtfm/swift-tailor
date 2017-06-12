@@ -87,7 +87,6 @@ $primary-color: red;
   // font-size: 8vw;
   font-size: 10vh;
   width: 80%;
-  position: fixed;
   top: 22%;
   text-align: center;
   transition: 0.5s;
@@ -137,13 +136,15 @@ $primary-color: red;
 }
 
 .demo-container{
-  background-image: url(demo1.jpg);
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_up_bg7nxb.png);
+  // background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_down_zui9fw.png);
+  // background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/side_tbbvtn.png);
   background-size: contain;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  background-color: black;
+  // background-color: black;
   p{
     color: white;
     position: relative;

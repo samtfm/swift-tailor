@@ -34,8 +34,8 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: false,
       measurements: {},
-      heightFeet: "",
-      heightInches: "",
+      heightFeet: 0,
+      heightInches: 0,
       totalHeight: null,
       wingspan: [],
       neckWidth: [],
@@ -130,7 +130,7 @@ export default class TakeImage extends React.Component {
     if(!window.armsUp){
       measurements = detectOutlinePoints(cannyData, faceBox.face);
     } else if (window.armsUp && !window.armsDown){
-      measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.arm);
+      measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.wingspan);
       //TODO do shoulder meaturements
       //measuremsnets = somethingelse
       //Tony is skipping this part for now
@@ -415,8 +415,8 @@ export default class TakeImage extends React.Component {
     // const aspectRatio = video.videoWidth/video.videoHeight;
 
     let width = 0, height = 0;
-    height = window.innerHeight * 1/4;
-    width = height * 4/3;
+    height = 157.5 // window.innerHeight * 1/8;
+    width = 210 // height * 4/3;
     return(
       <section>
 
@@ -459,13 +459,13 @@ export default class TakeImage extends React.Component {
           <h2>(Step 1)   Enter your height</h2>
           <section>
             <input
-              type="text"
+              type="number"
               value={this.state.heightFeet}
               onChange={this.updateFeet}>
             </input>
             <label>Ft </label>
             <input
-              type="text"
+              type="number"
               value={this.state.heightInches}
               onChange={this.updateInches}>
             </input>
