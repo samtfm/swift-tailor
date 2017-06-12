@@ -489,7 +489,7 @@ export default class TakeImage extends React.Component {
               value={this.state.heightFeet}
               onChange={this.updateFeet}>
             </input>
-            <label>Ft </label>
+            <label>feet </label>
             <input
               type="number"
               value={this.state.heightInches}
@@ -503,11 +503,11 @@ export default class TakeImage extends React.Component {
         </section>
 
         <section className="take-image-section">
-          <h2>(Step 2)   Lets take some pitures.</h2>
+          <h2>(Step 2)   Lets take some measurements.</h2>
           <button
             className='nav-button'
             onClick={this.openModal}
-            >Take a Picture &nbsp;
+            >Open Camera &nbsp;
             <i id="cameraIcon" className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
           </button>
         </section>
