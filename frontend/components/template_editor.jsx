@@ -11,9 +11,7 @@ class TemplateEditor extends React.Component{
         neck: 3,
         chest: 32,
         waist: 34,
-        bust: 0,
-        stomach: 0,
-        waist: 16
+        shoulders: 40
       },
       inchMeasurements: {}
     };
@@ -39,7 +37,7 @@ class TemplateEditor extends React.Component{
     let { wingspan, neck, chestWidth, waistWidth, bustWidth, stomachWidth } = newProps.measurements;
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
-    const scaleFactor = (height/rawHeight).toFixed(3) || 0,;
+    const scaleFactor = height/rawHeight;
     this.updateInchMeasuruements({
       height,
       neck: neck * scaleFactor,
@@ -99,12 +97,12 @@ class TemplateEditor extends React.Component{
             <input type = 'number' name='neck' value={neck} onChange={this.updateValue}></input>
           </label>
           <label>
-            Chest:
-            <input type = 'number' name='chest' value={chest} onChange={this.updateValue}></input>
+            Shoulders:
+            <input type = 'number' name='shoulders' value={shoulders} onChange={this.updateValue}></input>
           </label>
           <label>
-            Shoulder:
-            <input type = 'number' name='shoulder' value={shoulders} onChange={this.updateValue}></input>
+            Chest:
+            <input type = 'number' name='chest' value={chest} onChange={this.updateValue}></input>
           </label>
           <label>
             Waist:
