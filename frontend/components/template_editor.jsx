@@ -9,8 +9,8 @@ class TemplateEditor extends React.Component{
       inputs: {
         height: 70,
         neck: 3,
-        chest: 14,
-        waist: 16,
+        chest: 32,
+        waist: 34,
         bust: 0,
         stomach: 0
       },
@@ -76,7 +76,7 @@ class TemplateEditor extends React.Component{
        waistWidth: waist,
        shirtLength: height * 0.4,
        shoulderWidth: chest * 0.9,
-       armHole: chest * .9 * 0.4
+       armHole: chest * .9 * 0.14 + height * 0.4 * .12
      }
    });
  }
@@ -102,14 +102,6 @@ class TemplateEditor extends React.Component{
           <label>
             Waist:
             <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Bust:
-            <input type = 'number' name='bust' value={bust} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Stomach:
-            <input type = 'number' name='stomach' value={stomach} onChange={this.updateValue}></input>
           </label>
         </ul>
         <section className='preview'>

@@ -44,18 +44,18 @@ class Shirt extends React.Component{
 
     const shoulderLine = [
       [neck/2, -5],
-      [shoulders/2, 0]
+      [shoulders/4, 0]
     ];
     lines.push(shoulderLine);
     lines.push(this.scaleLine(shoulderLine, -1, 1));
 
     const sleeveCurve = [
       "M",
-      [shoulders/2, 0],
+      [shoulders/4, 0],
       "C",
-      [shoulders/2-armHole*.02, armHole*.2],
-      [shoulders/2-armHole*.05, armHole*.7],
-      [chest/2, armHole],
+      [shoulders/4-armHole*.02, armHole*.2],
+      [shoulders/4-armHole*.05, armHole*.7],
+      [chest/4, armHole],
     ];
     lines.push(sleeveCurve);
     lines.push(this.scaleLine(sleeveCurve, -1, 1));
@@ -79,13 +79,13 @@ class Shirt extends React.Component{
 
       [0, 2*armHole]
     ];
-    lines.push(this.transformLine(sleeve, chest/2+40, 0));
-    lines.push(this.transformLine(sleeveCurveFull, chest/2+40, 0));
+    lines.push(this.transformLine(sleeve, chest/4+40, 0));
+    lines.push(this.transformLine(sleeveCurveFull, chest/4+40, 0));
     const box = [
-      [chest / 2, armHole],
-      [(waist/2), length],
-      [-(waist/2), length],
-      [-chest / 2, armHole]
+      [chest/4, armHole],
+      [(waist/4), length],
+      [-(waist/4), length],
+      [-chest/4, armHole]
     ];
     lines.push(box);
     // lines.push(this.expandOutLine(box, 5,5));
