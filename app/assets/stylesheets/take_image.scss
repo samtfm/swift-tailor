@@ -72,7 +72,8 @@ $primary-color: red;
   margin: 0 auto;
   width: 800px;
   height: 600px;
-  // border-radius: 10px;
+  border: 4px dashed white;
+  border-radius: 30px;
 }
 
 .video-container {
@@ -88,6 +89,8 @@ $primary-color: red;
   left: 0;
   right: 0;
   margin: 0 auto;
+  border: 4px dashed white;
+  border-radius: 30px;
 }
 
 .canvas-pic{
