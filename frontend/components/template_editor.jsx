@@ -7,7 +7,7 @@ class TemplateEditor extends React.Component{
     super(props);
     this.state = {
       inputs: {
-        height: 70,
+        length: 28,
         neck: 3,
         chest: 32,
         waist: 34,
@@ -46,7 +46,7 @@ class TemplateEditor extends React.Component{
     let waist = 6*Math.pow(waistWidth*waistWidth/8 + stomachWidth*stomachWidth/8, 0.5);
 
     this.updateInchMeasuruements({
-      height,
+      length: height * 0.4,
       neck: neckWidth * scaleFactor,
       chest: chest * scaleFactor,
       waist: waist * scaleFactor,
@@ -67,10 +67,10 @@ class TemplateEditor extends React.Component{
     // });
   }
 
- updateInchMeasuruements({height, neck, chest, waist, bust, stomach, shoulders}){
+ updateInchMeasuruements({length, neck, chest, waist, bust, stomach, shoulders}){
    this.setState({
      inputs: {
-      height,
+      length,
       neck,
       chest,
       waist,
@@ -82,22 +82,22 @@ class TemplateEditor extends React.Component{
        neckWidth: neck,
        chestWidth: chest,
        waistWidth: waist,
-       shirtLength: height * 0.4,
+       shirtLength: length,
        shoulderWidth: chest * 0.9,
-       armHole: chest * .9 * 0.14 + height * 0.4 * .12
+       armHole: chest * .9 * 0.14 + length * .12
      }
    });
  }
 
 
   render(){
-    const { height, neck, chest, waist, shoulders } = this.state.inputs;
+    const { length, neck, chest, waist, shoulders } = this.state.inputs;
     return (
       <div className='template-editor'>
         <ul>
           <label>
-            Height:
-            <input type = 'number' name='height' value={height} onChange={this.updateValue}></input>
+            Length:
+            <input type = 'number' name='length' value={length} onChange={this.updateValue}></input>
           </label>
           <label>
             Neck:
