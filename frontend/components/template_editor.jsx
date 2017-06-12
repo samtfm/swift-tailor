@@ -76,7 +76,7 @@ class TemplateEditor extends React.Component{
        waistWidth: waist,
        shirtLength: height * 0.4,
        shoulderWidth: chest * 0.9,
-       armHole: chest * .9 * 0.25
+       armHole: chest * .9 * 0.4
      }
    });
  }
