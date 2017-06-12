@@ -10,9 +10,10 @@ class TemplateEditor extends React.Component{
         height: 70,
         neck: 3,
         chest: 14,
-        waist: 16,
+        shoulders: 0,
         bust: 0,
-        stomach: 0
+        stomach: 0,
+        waist: 16
       },
       inchMeasurements: {}
     };
@@ -34,7 +35,7 @@ class TemplateEditor extends React.Component{
 
   componentWillReceiveProps(newProps){
     if (!newProps.measurements.stomach || !newProps.height) return;
-    let { wingspan, neck, chest, waist, bust, stomach } = newProps.measurements;
+    let { wingspan, neck, chest, waist, bust, stomach, shoulders } = newProps.measurements;
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
     const scaleFactor = height/rawHeight;
@@ -44,7 +45,9 @@ class TemplateEditor extends React.Component{
       chest: chest * scaleFactor.toFixed(3) || 0,
       waist: waist * scaleFactor.toFixed(3) || 0,
       bust: bust * scaleFactor.toFixed(3) || 0,
-      stomach: stomach * scaleFactor.toFixed(3) || 0
+      stomach: stomach * scaleFactor.toFixed(3) || 0,
+      shoulders: shoulders * scaleFactor.toFixed(3) || 0
+
     });
     // if (!newProps.measurements || !newProps.measurements.arms) return;
     // let {arms, neck, chest, waist } = newProps.measurements;
@@ -60,7 +63,7 @@ class TemplateEditor extends React.Component{
     // });
   }
 
- updateInchMeasuruements({height, neck, chest, waist, bust, stomach}){
+ updateInchMeasuruements({height, neck, chest, waist, bust, stomach, shoulders}){
    this.setState({
      inputs: {
       height,
@@ -68,7 +71,8 @@ class TemplateEditor extends React.Component{
       chest,
       waist,
       bust,
-      stomach
+      stomach,
+      shoulders
      },
      inchMeasurements: {
        neckWidth: neck,
@@ -83,7 +87,7 @@ class TemplateEditor extends React.Component{
 
 
   render(){
-    const { height, neck, chest, waist, bust, stomach } = this.state.inputs;
+    const { height, neck, chest, waist, bust, stomach, shoulders } = this.state.inputs;
     return (
       <div className='template-editor'>
         <ul>
@@ -98,6 +102,10 @@ class TemplateEditor extends React.Component{
           <label>
             Chest:
             <input type = 'number' name='chest' value={chest} onChange={this.updateValue}></input>
+          </label>
+          <label>
+            Shoulder:
+            <input type = 'number' name='shoulder' value={shoulders} onChange={this.updateValue}></input>
           </label>
           <label>
             Waist:
