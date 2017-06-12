@@ -50,19 +50,19 @@ export const detectOutlinePoints = (imageData, face) => {
 export const detectSide = (imageData, face, wingspan) => {
   face = face || {x: Math.floor(imageData.cols/2), y: 0, width: 100 };
 
-  const bust = measureWidth(imageData, {
+  const bustWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + wingspan*.28),
     width: face.width*2,
     height: wingspan*.02
   });
-  const stomach = measureWidth(imageData, {
+  const stomachWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + wingspan*.42),
     width: face.width*2,
     height: wingspan*.02
   });
-  return { bust, stomach };
+  return { bustWidth, stomachWidth };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
