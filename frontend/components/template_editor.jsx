@@ -47,7 +47,7 @@ class TemplateEditor extends React.Component{
     this.updateInchMeasuruements({
       length: Math.floor(height * 0.4 * 10)/10,
       neck: Math.floor(neckWidth * scaleFactor * 10)/10,
-      chest: Math.floor((chest * scaleFactor) - 3 * 10)/10,
+      chest: Math.floor((chest * scaleFactor - 3) * 10)/10,
       waist: Math.floor((waist * scaleFactor - 3) * 10)/10,
       shoulders: Math.floor(shoulders * scaleFactor * 10)/10
 
