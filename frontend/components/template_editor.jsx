@@ -33,18 +33,18 @@ class TemplateEditor extends React.Component{
   }
 
   componentWillReceiveProps(newProps){
-    if (!newProps.measurements.stomach || !newProps.height) return;
-    let { wingspan, neck, chest, waist, bust, stomach } = newProps.measurements;
+    if (!newProps.measurements.stomachWidth || !newProps.height) return;
+    let { wingspan, neck, chestWidth, waistWidth, bustWidth, stomachWidth } = newProps.measurements;
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
     const scaleFactor = height/rawHeight;
     this.updateInchMeasuruements({
       height,
-      neck: neck * scaleFactor.toFixed(3) || 0,
-      chest: chest * scaleFactor.toFixed(3) || 0,
-      waist: waist * scaleFactor.toFixed(3) || 0,
-      bust: bust * scaleFactor.toFixed(3) || 0,
-      stomach: stomach * scaleFactor.toFixed(3) || 0
+      neck: neck * scaleFactor,
+      chest: chestWidth * scaleFactor,
+      waist: waistWidth * scaleFactor,
+      bust: bustWidth * scaleFactor.toFixed(3) || 0,
+      stomach: stomachWidth * scaleFactor.toFixed(3) || 0
     });
     // if (!newProps.measurements || !newProps.measurements.arms) return;
     // let {arms, neck, chest, waist } = newProps.measurements;

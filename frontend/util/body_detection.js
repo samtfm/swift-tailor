@@ -192,7 +192,7 @@ export const measureWingspan = (imageData, face) => {
         tolerance = Math.ceil(tolerance*2);
         if (tolerance > DROPOFF_THRESHOLD) tolerance = DROPOFF_THRESHOLD;
         // x--;
-      } else if (x - mid > width*.25 && x - mid < width*.45) {
+      } else if (x - mid > width*.25 && x - mid < width*.49) {
         // 40px drop is
         const last = points[points.length-1] || {};
         return {

@@ -171,7 +171,7 @@ export default class TakeImage extends React.Component {
       wingspan, neckWidth,
       chestWidth, waistWidth,
       shoulderWidth,
-      bustWidth, stomachWidth
+      bustWidth, stomachWidth,
     } = this.state;
 
     if(!window.armsUp){
@@ -194,9 +194,9 @@ export default class TakeImage extends React.Component {
         this.setState({
           measurements: {
             wingspan: Math.floor(average(wingspan)),
-            neck: Math.floor(average(neckWidth)),
-            chest: Math.floor(average(chestWidth)),
-            waist: Math.floor(average(waistWidth))
+            neckWidth: Math.floor(average(neckWidth)),
+            chestWidth: Math.floor(average(chestWidth)),
+            waistWidth: Math.floor(average(waistWidth))
           }
         });
         window.armsUp = true;
@@ -208,8 +208,8 @@ export default class TakeImage extends React.Component {
       // console.log("IN THE SIDE AREA");
 
       if(Math.min(bustWidth.length, stomachWidth.length) < 40){
-        if(measurements.bust.average) bustWidth.push(Math.floor(measurements.bust.average) || 0);
-        if(measurements.stomach.average) stomachWidth.push(Math.floor(measurements.stomach.average) || 0);
+        if(measurements.bustWidth.average) bustWidth.push(Math.floor(measurements.bustWidth.average) || 0);
+        if(measurements.stomachWidth.average) stomachWidth.push(Math.floor(measurements.stomachWidth.average) || 0);
         this.setState({
           bustWidth,
           stomachWidth
@@ -219,8 +219,8 @@ export default class TakeImage extends React.Component {
         stomachWidth = inStdDev(stomachWidth);
         measurements = Object.assign(
           this.state.measurements,
-          { bust: Math.floor(average(bustWidth)) },
-          { stomach: Math.floor(average(stomachWidth)) }
+          { bustWidth: Math.floor(average(bustWidth)) },
+          { stomachWidth: Math.floor(average(stomachWidth)) }
         );
         this.setState({ measurements });
 
