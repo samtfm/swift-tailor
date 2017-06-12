@@ -52,7 +52,7 @@ export const detectSide = (imageData, face, wingspan) => {
 
   const bustWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + wingspan*.28),
+    y: Math.floor(face.y + wingspan*.2),
     width: face.width*1.5,
     height: wingspan*.02
   });
@@ -62,7 +62,8 @@ export const detectSide = (imageData, face, wingspan) => {
     width: face.width*1.7,
     height: wingspan*.02
   });
-  return { bustWidth, stomachWidth };
+  const isValid = bustWidth.mininum > face.width && stomachWidth.mininum > face.width
+  return { bustWidth, stomachWidth, isValid };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
 
