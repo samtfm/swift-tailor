@@ -9,8 +9,8 @@ class TemplateEditor extends React.Component{
       inputs: {
         height: 70,
         neck: 3,
-        chest: 14,
-        shoulders: 0,
+        chest: 32,
+        waist: 34,
         bust: 0,
         stomach: 0,
         waist: 16
@@ -34,20 +34,19 @@ class TemplateEditor extends React.Component{
   }
 
   componentWillReceiveProps(newProps){
-    if (!newProps.measurements.stomach || !newProps.height) return;
-    let { wingspan, neck, chest, waist, bust, stomach, shoulders } = newProps.measurements;
+
+    if (!newProps.measurements.stomachWidth || !newProps.height) return;
+    let { wingspan, neck, chestWidth, waistWidth, bustWidth, stomachWidth } = newProps.measurements;
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
-    const scaleFactor = height/rawHeight;
+    const scaleFactor = (height/rawHeight).toFixed(3) || 0,;
     this.updateInchMeasuruements({
       height,
-      neck: neck * scaleFactor.toFixed(3) || 0,
-      chest: chest * scaleFactor.toFixed(3) || 0,
-      waist: waist * scaleFactor.toFixed(3) || 0,
-      bust: bust * scaleFactor.toFixed(3) || 0,
-      stomach: stomach * scaleFactor.toFixed(3) || 0,
-      shoulders: shoulders * scaleFactor.toFixed(3) || 0
-
+      neck: neck * scaleFactor,
+      chest: chestWidth * scaleFactor,
+      waist: waistWidth * scaleFactor,
+      bust: bustWidth * scaleFactor,
+      stomach: stomachWidth * scaleFactor,
     });
     // if (!newProps.measurements || !newProps.measurements.arms) return;
     // let {arms, neck, chest, waist } = newProps.measurements;
@@ -80,7 +79,7 @@ class TemplateEditor extends React.Component{
        waistWidth: waist,
        shirtLength: height * 0.4,
        shoulderWidth: chest * 0.9,
-       armHole: height * 0.1
+       armHole: chest * .9 * 0.14 + height * 0.4 * .12
      }
    });
  }
@@ -110,14 +109,6 @@ class TemplateEditor extends React.Component{
           <label>
             Waist:
             <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Bust:
-            <input type = 'number' name='bust' value={bust} onChange={this.updateValue}></input>
-          </label>
-          <label>
-            Stomach:
-            <input type = 'number' name='stomach' value={stomach} onChange={this.updateValue}></input>
           </label>
         </ul>
         <section className='preview'>

@@ -34,8 +34,8 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: false,
       measurements: {},
-      heightFeet: "",
-      heightInches: "",
+      heightFeet: 0,
+      heightInches: 0,
       totalHeight: null,
       wingspan: [],
       neckWidth: [],
@@ -132,6 +132,10 @@ export default class TakeImage extends React.Component {
       measurements = detectOutlinePoints(cannyData, faceBox.face);
     } else if (window.armsUp && !window.armsDown){
       measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.wingspan);
+      //TODO do shoulder meaturements
+      //measuremsnets = somethingelse
+      //Tony is skipping this part for now
+      // window.armsDown = true;
 
     } else if (window.armsUp && window.armsDown && !window.side){
       measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
@@ -166,7 +170,7 @@ export default class TakeImage extends React.Component {
       wingspan, neckWidth,
       chestWidth, waistWidth,
       shoulderWidth,
-      bustWidth, stomachWidth
+      bustWidth, stomachWidth,
     } = this.state;
 
     if(!window.armsUp && measurements.isValid){
@@ -189,9 +193,9 @@ export default class TakeImage extends React.Component {
         this.setState({
           measurements: {
             wingspan: Math.floor(average(wingspan)),
-            neck: Math.floor(average(neckWidth)),
-            chest: Math.floor(average(chestWidth)),
-            waist: Math.floor(average(waistWidth))
+            neckWidth: Math.floor(average(neckWidth)),
+            chestWidth: Math.floor(average(chestWidth)),
+            waistWidth: Math.floor(average(waistWidth))
           }
         });
         window.armsUp = true;
@@ -220,8 +224,8 @@ export default class TakeImage extends React.Component {
       // console.log("IN THE SIDE AREA");
 
       if(Math.min(bustWidth.length, stomachWidth.length) < 40){
-        if(measurements.bust.average) bustWidth.push(Math.floor(measurements.bust.average) || 0);
-        if(measurements.stomach.average) stomachWidth.push(Math.floor(measurements.stomach.average) || 0);
+        if(measurements.bustWidth.average) bustWidth.push(Math.floor(measurements.bustWidth.average) || 0);
+        if(measurements.stomachWidth.average) stomachWidth.push(Math.floor(measurements.stomachWidth.average) || 0);
         this.setState({
           bustWidth,
           stomachWidth
@@ -231,8 +235,8 @@ export default class TakeImage extends React.Component {
         stomachWidth = inStdDev(stomachWidth);
         measurements = Object.assign(
           this.state.measurements,
-          { bust: Math.floor(average(bustWidth)) },
-          { stomach: Math.floor(average(stomachWidth)) }
+          { bustWidth: Math.floor(average(bustWidth)) },
+          { stomachWidth: Math.floor(average(stomachWidth)) }
         );
         this.setState({ measurements });
 
@@ -433,10 +437,12 @@ export default class TakeImage extends React.Component {
         />
       </section>
     );
+    // let video = document.getElementById('video');
+    // const aspectRatio = video.videoWidth/video.videoHeight;
 
     let width = 0, height = 0;
-    height = window.innerHeight * 1/4;
-    width = height * 4/3;
+    height = 157.5 // window.innerHeight * 1/8;
+    width = 210 // height * 4/3;
     return(
       <section>
 
@@ -479,13 +485,13 @@ export default class TakeImage extends React.Component {
           <h2>(Step 1)   Enter your height</h2>
           <section>
             <input
-              type="text"
+              type="number"
               value={this.state.heightFeet}
               onChange={this.updateFeet}>
             </input>
             <label>Ft </label>
             <input
-              type="text"
+              type="number"
               value={this.state.heightInches}
               onChange={this.updateInches}>
             </input>

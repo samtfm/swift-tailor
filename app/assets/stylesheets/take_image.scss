@@ -64,16 +64,24 @@ $primary-color: red;
   position: absolute;
   left: 0;
   right: 0;
+  margin: 0 auto;
+  width: 800px;
+  height: 600px;
   // border-radius: 10px;
 }
 
 #video-container {
   position: relative;
+  width: 800px;
+  height: 600px;
 }
 #calcCanvas {
   position: absolute;
+  width: 800px;
+  height: 600px;
   left: 0;
   right: 0;
+  margin: 0 auto;
 }
 
 .canvas-pic{

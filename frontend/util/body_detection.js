@@ -127,7 +127,7 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
   const height = imageData.rows;
   const width = imageData.cols;
   const points = [];
-  let tolerance = 5;
+  let tolerance = 3;
 
   let prevEdge = startPos.x;
   for (let y = startPos.y; y < endPos.y; y++) {
@@ -145,17 +145,18 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
     }
     if (edge){
       points.push({x: edge, y});
-      tolerance = 5;
+      tolerance = 3;
       prevEdge = edge + Math.floor((edge-prevEdge)/2);
     } else {
-      if (tolerance < 50) {
+      if (tolerance < 10) {
         // try iteration again with a higher tolerance
         tolerance = Math.ceil(tolerance*1.5);
+        if (tolerance > 10) tolerance = 10;
         y--;
       } else {
         //move on to next row.
         edge = startPos.x;
-        tolerance = 50;
+        tolerance = 10;
       }
     }
   }
@@ -163,12 +164,12 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
 };
 
 export const measureWingspan = (imageData, face) => {
-  const DROPOFF_THRESHOLD = 13;
+  const DROPOFF_THRESHOLD = 6;
   const height = imageData.rows;
   const width = imageData.cols;
   const mid = Math.floor(face.x+face.width*.5);
   const points = [];
-  let tolerance = 4;
+  let tolerance = 2;
   let prevEdge = Math.floor(face.y+face.width*1.6);
   for (let x = Math.floor(mid+face.width*2); x < width; x++ ){
 
@@ -182,15 +183,16 @@ export const measureWingspan = (imageData, face) => {
       }
     }
     if (edge){
-      tolerance = 5;
+      tolerance = 2;
       points.push({ x, y: edge });
       prevEdge = edge + Math.floor((edge-prevEdge)/2); //predict trend
     } else {
       if (tolerance < DROPOFF_THRESHOLD) {
         // try iteration again with a higher tolerance
-        tolerance = Math.ceil(tolerance*1.2);
+        tolerance = Math.ceil(tolerance*2);
+        if (tolerance > DROPOFF_THRESHOLD) tolerance = DROPOFF_THRESHOLD;
         // x--;
-      } else if (x - mid > width/4 && x - mid < width/2) {
+      } else if (x - mid > width*.25 && x - mid < width*.49) {
         // 40px drop is
         const last = points[points.length-1] || {};
         return {
