@@ -34,8 +34,8 @@ export default class TakeImage extends React.Component {
       showButtons: false,
       showVideoControls: false,
       measurements: {},
-      heightFeet: 0,
-      heightInches: 0,
+      heightFeet: 5,
+      heightInches: 8,
       totalHeight: null,
       wingspan: [],
       neckWidth: [],
@@ -190,12 +190,14 @@ export default class TakeImage extends React.Component {
         neckWidth = inStdDev(neckWidth);
         chestWidth = inStdDev(chestWidth);
         waistWidth = inStdDev(waistWidth);
+        console.log('HEYYYYYY');
         this.setState({
           measurements: {
-            wingspan: Math.floor(average(wingspan)),
-            neckWidth: Math.floor(average(neckWidth)),
-            chestWidth: Math.floor(average(chestWidth)),
-            waistWidth: Math.floor(average(waistWidth))
+            wingspan: average(wingspan),
+            height: average(wingspan)*.98,
+            neckWidth: average(neckWidth),
+            chestWidth: average(chestWidth),
+            waistWidth: average(waistWidth)
           }
         });
         window.armsUp = true;
@@ -329,7 +331,6 @@ export default class TakeImage extends React.Component {
     let i = 0;
 
     let messageLoop = (param) => {
-      console.log(param, i);
       this.message.innerHTML = instructions[i];
       if(param){
         this.message.innerHTML = "Great!";
@@ -370,7 +371,6 @@ export default class TakeImage extends React.Component {
         repeatButton, beginButton, skipButton;
 
     let instructions = startInstructions;
-
     let { measurements, totalHeight } = this.state;
 
     skipButton = (
@@ -511,7 +511,7 @@ export default class TakeImage extends React.Component {
             <i id="cameraIcon" className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
           </button>
         </section>
-        <TemplateEditor height={totalHeight} measurements={measurements}/>
+        <TemplateEditor height={this.state.heightInches+this.state.heightFeet*12} measurements={measurements}/>
       </section>
     );
   }
