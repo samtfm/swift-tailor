@@ -97,7 +97,7 @@ class TemplateEditor extends React.Component{
     const { height, neck, chest, waist, bust, stomach, shoulders } = this.state.inputs;
     return (
       <div className="template-container">
-        <h2>(Step 1)   Enter your height</h2>
+        <h2>(Step 3)   Make any desired adjustments</h2>
         <section className='template-editor'>
           <ul>
             <label>

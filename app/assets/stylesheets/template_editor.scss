@@ -1,5 +1,19 @@
 .template-container{
-  background-color: red;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url(http://res.cloudinary.com/dkw3fxfzr/image/upload/v1497249320/lab3-min_x9c1jn.jpg);
+  background-size: cover;
+  padding-top: 62px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-bottom: 3px dashed white;
+  h2{
+    font-size: 35px;
+    color: white;
+    position: relative;
+  }
 }
 
 .template-editor{
@@ -13,9 +27,15 @@
   padding: 0;
   margin: 0;
   ul {
-    width: 150px;
+    background: #f9b2b2;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    padding: 11px;
+    margin: 15px;
+    border: 3px dashed darkred;
     label {
-      width: 100%;
       margin: 10px;
       display: flex;
       justify-content: space-between;
@@ -26,9 +46,13 @@
     display: flex;
     flex-direction: column;
   }
-  h2{
-    font-size: 35px;
-    color: white;
-    position: relative;
-  }
+
+}
+
+.shirt {
+  background: white;
+  margin: 13px;
+  border-radius: 22px;
+  border: 3px dashed darkred;
+  opacity: 0.9;
 }
