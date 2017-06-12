@@ -33,13 +33,13 @@ export const detectOutlinePoints = (imageData, face) => {
   const chest = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + arms.wingspan*.28),
-    width: face.width*2,
+    width: face.width*2.5,
     height: arms.wingspan*.02
   });
   const waist = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + arms.wingspan*.45),
-    width: face.width*2,
+    width: face.width*2.5,
     height: arms.wingspan*.02
   });
   const isValid = Boolean(arms.wingspan);
@@ -149,15 +149,15 @@ const traceLineDown = (imageData, {startPos, endPos, direction}) => {
       tolerance = 3;
       prevEdge = edge + Math.floor((edge-prevEdge)/2);
     } else {
-      if (tolerance < 10) {
+      if (tolerance < 15) {
         // try iteration again with a higher tolerance
         tolerance = Math.ceil(tolerance*1.5);
-        if (tolerance > 10) tolerance = 10;
+        if (tolerance > 15) tolerance = 15;
         y--;
       } else {
         //move on to next row.
         edge = startPos.x;
-        tolerance = 10;
+        tolerance = 15;
       }
     }
   }
