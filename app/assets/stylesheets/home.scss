@@ -9,7 +9,7 @@ body{
 }
 .intro{
   width: 100%;
-  height: 300px;
+  height: 400px;
   background-color: $primary-color;
   display: flex;
   flex-direction: column;
@@ -47,6 +47,7 @@ body{
     width: 80%;
     padding: 30px;
     font-style: italic;
+    color: slategray;
   }
 }
 
@@ -70,9 +71,10 @@ body{
 
   ol{
     font-size: 25px;
-    width: 41%;
+    width: 50%;
     color: white;
     padding-bottom: 30px;
+    line-height: 37px;
   }
 }
 
