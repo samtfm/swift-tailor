@@ -301,10 +301,10 @@ export default class TakeImage extends React.Component {
           this.message.innerHTML = instructions[i][0];
           i++;
         }
-      }, 500);
+      }, 3000);
     }, 500);
 
-    let lastMessageTime = instructions.length * 500;
+    let lastMessageTime = instructions.length * 3000;
     this.instructionsStopTimeout = setTimeout(() => {
       this.setState({
         instructionsStarted: false,
@@ -339,6 +339,9 @@ export default class TakeImage extends React.Component {
         this.message.innerHTML = "All Done Good Job Buddy!";
         this.message.classList.remove("spinner");
         clearInterval(this.measurementInstructionInterval);
+        setInterval(()=>{
+          this.closeModal();
+        }, 5000);
       } else {
         switch(i) {
           //check the front
