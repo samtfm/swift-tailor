@@ -349,7 +349,6 @@ export default class TakeImage extends React.Component {
     this.measurementInstructionInterval = setInterval(() => {
       if(i >= instructions.length){
         this.message.innerHTML = "All Done Good Job!";
-        debugger;
         this.message.classList.remove("spinner");
         clearInterval(this.measurementInstructionInterval);
         let temp = setInterval(()=>{

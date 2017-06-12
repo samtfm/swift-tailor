@@ -145,6 +145,9 @@ $primary-color: red;
 }
 
 .demo-container{
+  position: absolute;
+  left: 10px;
+  bottom: 30px;
   background-size: contain;
   background-repeat: no-repeat;
   display: flex;
