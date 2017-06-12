@@ -25,7 +25,7 @@ export default class Home extends React.Component {
           <h2>The process is simple</h2>
           <ol>
             <li>Enter your height</li>
-            <li>Take a few images so we can calulate your dimensions</li>
+            <li>Use your webcam to calulate your dimensions</li>
             <li>Select a pattern </li>
           </ol>
         </section>
