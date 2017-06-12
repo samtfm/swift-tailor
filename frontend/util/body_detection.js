@@ -53,13 +53,13 @@ export const detectSide = (imageData, face, wingspan) => {
   const bustWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + wingspan*.28),
-    width: face.width*1.2,
+    width: face.width*1.5,
     height: wingspan*.02
   });
   const stomachWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
     y: Math.floor(face.y + wingspan*.45),
-    width: face.width*1.3,
+    width: face.width*1.7,
     height: wingspan*.02
   });
   return { bustWidth, stomachWidth };
