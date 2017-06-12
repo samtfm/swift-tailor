@@ -12,7 +12,7 @@ $primary-color: red;
   flex-direction: column;
   padding: 10px;
   width: 85%;
-  height: 80%;
+  height: 90%;
   align-items: center;
   outline: none;
 
@@ -84,12 +84,12 @@ $primary-color: red;
 .instructions{
   color: white;
   // font-size: 8vw;
-  font-size: 4vh;
+  font-size: 3vh;
   width: 80%;
   text-align: center;
   transition: 0.5s;
-  margin: 15px;
-  width: 100%;
+  margin: 15px auto;
+  width: 90%;
   // line-height: 113px;
 }
 

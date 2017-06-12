@@ -45,11 +45,11 @@ class TemplateEditor extends React.Component{
     let waist = 6*Math.pow(waistWidth*waistWidth/8 + stomachWidth*stomachWidth/8, 0.5);
 
     this.updateInchMeasuruements({
-      length: height * 0.4,
-      neck: neckWidth * scaleFactor,
-      chest: chest * scaleFactor - 3,
-      waist: waist * scaleFactor - 3,
-      shoulders: shoulders * scaleFactor
+      length: Math.floor(height * 0.4 * 10)/10,
+      neck: Math.floor(neckWidth * scaleFactor * 10)/10,
+      chest: Math.floor((chest * scaleFactor) - 3 * 10)/10,
+      waist: Math.floor((waist * scaleFactor - 3) * 10)/10,
+      shoulders: Math.floor(shoulders * scaleFactor * 10)/10
 
     });
   }
