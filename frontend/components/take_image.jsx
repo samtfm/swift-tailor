@@ -339,6 +339,9 @@ export default class TakeImage extends React.Component {
         this.message.innerHTML = "All Done Good Job Buddy!";
         this.message.classList.remove("spinner");
         clearInterval(this.measurementInstructionInterval);
+        setInterval(()=>{
+          this.closeModal();
+        }, 5000);
       } else {
         switch(i) {
           //check the front
