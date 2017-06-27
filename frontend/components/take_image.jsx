@@ -164,7 +164,7 @@ export default class TakeImage extends React.Component {
   }
 
   refineMeasurements(measurements){
-
+    if (!measurements.isValid) return;
     let {
       wingspan, neckWidth,
       chestWidth, waistWidth,
@@ -172,7 +172,7 @@ export default class TakeImage extends React.Component {
       bustWidth, stomachWidth,
     } = this.state;
 
-    if(!window.armsUp && measurements.isValid){
+    if(!window.armsUp){
       if(Math.min(wingspan.length, neckWidth.length, chestWidth.length, waistWidth.length) < 20) {
         wingspan.push(Math.floor(measurements.arms.wingspan)  || 0);
         neckWidth.push(Math.floor(measurements.neck.average) || 0);
