@@ -15,7 +15,8 @@ export const measureShoulders = (imageData, face, height) => {
     width: face.width*2,
     height: height*.15
   });
-  const isValid = checkRaisedArms.maximum < face.width*4;
+  const isValid = checkRaisedArms.maximum < face.width*4 &&
+                  Math.abs(shoulders.center - (face.x + face.width*.5)) < 5;
   return { shoulders, isValid };
 };
 
@@ -42,7 +43,10 @@ export const detectOutlinePoints = (imageData, face) => {
     width: face.width*2.5,
     height: arms.wingspan*.02
   });
-  const isValid = Boolean(arms.wingspan);
+  const isValid = Boolean(arms.wingspan) &&
+                  Math.abs(neck.center - (face.x + face.width*.5)) < 5 &&
+                  Math.abs(chest.center - (face.x + face.width*.5)) < 5 &&
+                  Math.abs(waist.center - (face.x + face.width*.5)) < 5;
   return { arms, neck, chest, waist, isValid };
   // return chest.points.concat(arms.points).concat(neck.points);
 };
@@ -116,6 +120,7 @@ const measureWidth = (imageData, box) => {
   });
   const rightAvg = rightSum/rightPoints.length;
   return {
+    center: leftAvg + (rightAvg - leftAvg)*.5,
     points: leftPoints.concat(rightPoints),
     average: rightAvg - leftAvg,
     mininum: rightMin - leftMax,

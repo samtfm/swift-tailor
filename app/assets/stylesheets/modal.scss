@@ -2,6 +2,7 @@ $primary-color: red;
 
 .modal {
   margin: 20px auto;
+  position: relative;
   min-height: 300px;
   min-width: 500px;
   // max-width: 600px;
@@ -84,16 +85,22 @@ $primary-color: red;
   right: 0;
   bottom: 0;
 }
-
+.float-instructions{
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 80%;
+}
 .instructions{
   color: white;
   // font-size: 8vw;
   font-size: 3vh;
-  width: 80%;
   text-align: center;
   transition: 0.5s;
   margin: 15px auto;
-  width: 90%;
+  // width: 90%;
   // line-height: 113px;
 }
 
@@ -141,18 +148,22 @@ $primary-color: red;
   animation: spinner 1s linear infinite;
 }
 .inst1{
-  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_up_bg7nxb.png);
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_up2_lyb8ka.png);
 }
 .inst2{
-  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_down_zui9fw.png);
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/arms_down2_ompfvd.png);
 }
 .inst3{
-  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/side_tbbvtn.png);
+  background-image: url(http://res.cloudinary.com/samtfm/image/upload/v1497233169/side2_boqlim.png);
 }
 
 .demo-container{
   position: absolute;
-  left: 10px;
+  margin: 0 auto;
+  left: 0;
+  width: 500px;
+  height: 400px;
+  right: 0;
   bottom: 30px;
   background-size: contain;
   background-repeat: no-repeat;

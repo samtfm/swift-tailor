@@ -155,6 +155,9 @@ export default class TakeImage extends React.Component {
     }
     calcCtx.fillStyle = measurements.isValid ? '#0F0' : '#F00';
     for (let part in measurements) {
+      if (measurements[part].center){
+        calcCtx.fillRect(measurements[part].center -1 ,0, 2, 200);
+      }
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
           calcCtx.fillRect(point.x-1,point.y-1, 2, 2);
@@ -473,15 +476,17 @@ export default class TakeImage extends React.Component {
             <section className="video-container">
               <video id="video" width={width} height={height} autoPlay></video>
               <canvas id="calcCanvas" className="calc-cavas" width={width} height={height}></canvas>
-              <div id="demo-image" className="demo-container hidden" style={{height, width }} >
-                <p>Model this!</p>
-              </div>
               { videoControls }
             </section>
-            <h1 id="instructions" className="instructions"></h1>
-            <section className="modal-button-section">
-              { beginButton }
-            </section>
+            <div id="demo-image" className="demo-container hidden" >
+              <p>Model this!</p>
+            </div>
+            <div className='float-instructions'>
+              <h1 id="instructions" className="instructions"></h1>
+              <section className="modal-button-section">
+                { beginButton }
+              </section>
+            </div>
           </section>
 
         </Modal>
