@@ -36,6 +36,7 @@ class TemplateEditor extends React.Component{
     bustWidth = bustWidth || chestWidth*0.5;
     stomachWidth = stomachWidth || waistWidth*0.5;
     shoulders = shoulders || chestWidth *.9;
+    stomachWidth = stomachWidth*.8;
     let height = newProps.height;
     let rawHeight = wingspan * 0.98;
     const scaleFactor = height/rawHeight;

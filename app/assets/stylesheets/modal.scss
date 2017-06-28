@@ -22,6 +22,8 @@ $primary-color: red;
   // }
 }
 .modal-button-section{
+  z-index: 10;
+  position: relative;
   display: flex;
   justify-content: center;
   margin: 10px;
@@ -85,15 +87,10 @@ $primary-color: red;
   right: 0;
   bottom: 0;
 }
-.float-instructions{
-  position: absolute;
-  z-index: 10;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 80%;
-}
+
 .instructions{
+  z-index: 10;
+  position: relative;
   color: white;
   // font-size: 8vw;
   font-size: 3vh;
@@ -159,18 +156,18 @@ $primary-color: red;
 
 .demo-container{
   position: absolute;
-  margin: 0 auto;
   left: 0;
   width: 500px;
   height: 400px;
   right: 0;
-  bottom: 30px;
+  bottom: 0;
+  margin: 0 auto;
   background-size: contain;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  z-index: 5;
+  // z-index: 5;
   // background-color: black;
   p{
     color: white;

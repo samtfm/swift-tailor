@@ -481,12 +481,10 @@ export default class TakeImage extends React.Component {
             <div id="demo-image" className="demo-container hidden" >
               <p>Model this!</p>
             </div>
-            <div className='float-instructions'>
-              <h1 id="instructions" className="instructions"></h1>
-              <section className="modal-button-section">
-                { beginButton }
-              </section>
-            </div>
+            <h1 id="instructions" className="instructions"></h1>
+            <section className="modal-button-section">
+              { beginButton }
+            </section>
           </section>
 
         </Modal>

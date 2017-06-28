@@ -39,7 +39,7 @@ export const detectOutlinePoints = (imageData, face) => {
   });
   const waist = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + arms.wingspan*.45),
+    y: Math.floor(face.y + arms.wingspan*.41),
     width: face.width*2.5,
     height: arms.wingspan*.02
   });
@@ -62,7 +62,7 @@ export const detectSide = (imageData, face, wingspan) => {
   });
   const stomachWidth = measureWidth(imageData, {
     x: Math.floor(face.x - face.width*.5),
-    y: Math.floor(face.y + wingspan*.41),
+    y: Math.floor(face.y + wingspan*.39),
     width: face.width*1.7,
     height: wingspan*.02
   });
