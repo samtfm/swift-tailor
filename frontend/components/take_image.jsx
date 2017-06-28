@@ -155,9 +155,9 @@ export default class TakeImage extends React.Component {
     }
     calcCtx.fillStyle = measurements.isValid ? '#0F0' : '#F00';
     for (let part in measurements) {
-      if (measurements[part].center){
-        calcCtx.fillRect(measurements[part].center -1 ,0, 2, 200);
-      }
+      // if (measurements[part].center){
+      //   calcCtx.fillRect(measurements[part].center -1 ,0, 2, 200);
+      // }
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
           calcCtx.fillRect(point.x-1,point.y-1, 2, 2);
