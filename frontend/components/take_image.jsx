@@ -121,9 +121,6 @@ export default class TakeImage extends React.Component {
     // applyCanny applies canny to the canvas, duh...
     // drawFace draws the faceBox on the canvas after canny has been applied;
     let faceBox = detectFace(calcCtx, options);
-
-    // let handBox = detectHand(calcCtx, options);
-    // drawHand(calcCtx, handBox.hand, handBox.scale);
     let cannyData = applyCanny(calcCtx, options, this.state.stat);
     let measurements;
     let side;
@@ -132,10 +129,6 @@ export default class TakeImage extends React.Component {
       measurements = detectOutlinePoints(cannyData, faceBox.face);
     } else if (window.armsUp && !window.armsDown){
       measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.wingspan);
-      //TODO do shoulder meaturements
-      //measuremsnets = somethingelse
-      //Tony is skipping this part for now
-      // window.armsDown = true;
 
     } else if (window.armsUp && window.armsDown && !window.side){
       measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
@@ -271,7 +264,19 @@ export default class TakeImage extends React.Component {
 
     //Allow user to edit measurements!
     //this stops measured stuff from being passed again on new renders
-    this.setState({ measurements: {} });
+    this.setState({
+      measurements: {},
+      wingspan: [],
+      neckWidth: [],
+      chestWidth: [],
+      waistWidth: [],
+      shoulderWidth: [],
+      bustWidth: [],
+      stomachWidth: []
+    });
+    window.armsUp = false;
+    window.armsDown = false;
+    window.side = false;
 
     if (this.measuringInterval) clearInterval(this.measuringInterval);
     if (this.instructionsInterval) clearInterval(this.instructionsInterval);
@@ -302,8 +307,9 @@ export default class TakeImage extends React.Component {
 
     setTimeout(() => {
       this.message = document.getElementById("instructions");
-      this.message.innerHTML = "Stand in front of your webcam with enough space to see your full upper body with arms outstreched. <br> For best results, avoid loose fitting clothing and messy backgrounds."// instructions[0][0];
-      let i = 1;
+      // instructions[0][0];
+      this.message.innerHTML = "Stand in front of your webcam with enough space to see your full upper body with arms outstreched. <br> For best results, avoid loose fitting clothing and messy backgrounds."
+      // let i = 1;
       // this.instructionsInterval = setInterval(()=>{
       //   if(i >= instructions.length) {
       //     clearInterval(this.instructionsInterval);
@@ -453,8 +459,8 @@ export default class TakeImage extends React.Component {
     // const aspectRatio = video.videoWidth/video.videoHeight;
 
     let width = 0, height = 0;
-    height = 157.5 // window.innerHeight * 1/8;
-    width = 210 // height * 4/3;
+    height = 157.5; // window.innerHeight * 1/8;
+    width = 210; // height * 4/3;
     console.log("RENDER");
     return(
       <section>
@@ -478,9 +484,7 @@ export default class TakeImage extends React.Component {
               <canvas id="calcCanvas" className="calc-cavas" width={width} height={height}></canvas>
               { videoControls }
             </section>
-            <div id="demo-image" className="demo-container hidden" >
-              <p>Model this!</p>
-            </div>
+            <div id="demo-image" className="demo-container hidden" ></div>
             <h1 id="instructions" className="instructions"></h1>
             <section className="modal-button-section">
               { beginButton }
