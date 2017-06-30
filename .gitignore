@@ -21,6 +21,7 @@ bundle.js
 bundle.js.map
 stony.pem
 ssl/
+app/tmp/*
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
