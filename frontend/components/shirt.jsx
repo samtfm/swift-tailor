@@ -1,12 +1,15 @@
 import React from 'react';
 import SVG from 'svg.js';
-import { calcShirtLines, parseLines } from '../util/clothing';
+import { calcShirtLines, calcSleeveLines, parseLines } from '../util/clothing';
 
 class Shirt extends React.Component{
 
   constructor(props){
     super(props);
-    this.state = {inchMeasurements: {}, pixelMeasurements: {}};
+    this.state = {
+      inchMeasurements: {},
+      pixelMeasurements: {}
+    };
     this.shirtScale = 100/8;
   }
   componentDidMount(){
@@ -24,6 +27,7 @@ class Shirt extends React.Component{
 
   drawShirt(){
     const group = this.draw.group();
+    const fill = this.props.pattern;
     const { pixelHeight,
       chestWidth,
       waistWidth,
@@ -33,13 +37,17 @@ class Shirt extends React.Component{
       armHole
     } = this.state.pixelMeasurements;
     if (!(chestWidth && neckWidth && shirtLength)) return group;
-    const lines = calcShirtLines(
+    const torsoLines = calcShirtLines(
       chestWidth, shirtLength,
       armHole, shoulderWidth,
       neckWidth, waistWidth
     );
-    let wholeShirt = parseLines(lines).join(" ");
-    console.log(wholeShirt);
+    let wholeShirt = parseLines(torsoLines).join(" ");
+
+    const sleeveLines = calcSleeveLines(armHole, shirtLength);
+    let sleeves = parseLines(sleeveLines).join(" ");
+
+    // console.log(wholeShirt);
     // var pattern = this.draw.pattern(20, 20, function(add) {
     //   add.rect(20,20).fill('#f06');
     //   add.rect(10,10).fill('#0f9');
@@ -48,9 +56,14 @@ class Shirt extends React.Component{
 
     group.add(this.draw
       .path(wholeShirt)
-      .fill('https://images.blogthings.com/thecolorfulpatterntest/pattern-1.png')
+      .fill(fill)
       .stroke({ width: 1 })
     );
+    let temp = this.draw
+      .path(sleeves)
+      .rotate(90);
+    temp.fill(fill).stroke({ width: 1 });
+    group.add(temp);
     // lines.push(["L", [0,0], [0,length]]);
     const lengthText = this.draw.text(`${this.props.inchMeasurements.shirtLength}'`);
     lengthText.transform({ x: -140, y: shirtLength/2});

@@ -97,6 +97,33 @@ export const calcShirtLines = (chest, length, armHole, shoulders, neck, waist) =
   // lines.push(this.expandOutLine(box, 5,5));
   return lines;
 };
+
+export const calcSleeveLines = (armHole, length) => {
+  const lines = [];
+
+  const sleeve = [
+    "M",
+    [0, 0],
+    [length*.2, armHole * 2 * .12],
+    [length*.2, armHole * 2 * .88],
+    [0, 2*armHole],
+  ];
+
+  const sleeveCurveFull = [
+    "L",
+    [0, 2*armHole],
+    "C",
+    [-armHole*.11, armHole*1.8],
+    [-armHole*.25, armHole*1.3],
+    [-armHole*.25, armHole],
+    "C",
+    [-armHole*.25, armHole*.7],
+    [-armHole*.11, armHole*.2],
+    [0, 0]
+  ];
+  lines.push(transformLine(sleeve), transformLine(sleeveCurveFull));
+  return lines;
+};
 // mirrors the points over the y axis
 // scaleLine is depreciated now that points are joined together
 // some points needed to be reversed to create shape
