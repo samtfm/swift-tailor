@@ -84,3 +84,18 @@
     margin: 2px;
   }
 }
+
+#download{
+  margin: 30px;
+  font-size: 30px;
+  font-family: 'Pacifico', cursive;
+  border: 2px dashed white;
+  padding: 15px;
+  color: white;
+  background-color: red;
+  box-shadow: 0 0 0 4px red;
+  border-radius: 10px;
+  transition: 0.3s;
+  cursor: pointer;
+  outline: none;
+}

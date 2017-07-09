@@ -104,23 +104,42 @@ export const calcSleeveLines = (armHole, length) => {
   const sleeve = [
     "M",
     [0, 0],
-    [length*.2, armHole * 2 * .12],
-    [length*.2, armHole * 2 * .88],
-    [0, 2*armHole],
+    [armHole*2*.12, armHole*.75],
+    [armHole*2*.88, armHole*.75],
+    [2*armHole, 0]
   ];
 
   const sleeveCurveFull = [
     "L",
-    [0, 2*armHole],
+    [2*armHole,0],
     "C",
-    [-armHole*.11, armHole*1.8],
-    [-armHole*.25, armHole*1.3],
-    [-armHole*.25, armHole],
-    "C",
-    [-armHole*.25, armHole*.7],
-    [-armHole*.11, armHole*.2],
+    [armHole*2*.75, -armHole*.2],
+    [armHole*2*.25, -armHole*.2],
     [0, 0]
   ];
+
+  // replaced so sleeves can be cut in the same pattern as the shirt
+  // const sleeveCurveFull = [
+  //   "L",
+  //   [0, 2*armHole],
+  //   "C",
+  //   [-armHole*.11, armHole*1.8],
+  //   [-armHole*.25, armHole*1.3],
+  //   [-armHole*.25, armHole],
+  //   "C",
+  //   [-armHole*.25, armHole*.7],
+  //   [-armHole*.11, armHole*.2],
+  //   [0, 0]
+  // ];
+  // const sleeve = [
+  //   "M",
+  //   [0, 0],
+  //   [length*.2, armHole * 2 * .12],
+  //   [length*.2, armHole * 2 * .88],
+  //   [0, 2*armHole],
+  // ];
+  //
+
   lines.push(transformLine(sleeve), transformLine(sleeveCurveFull));
   return lines;
 };

@@ -15,7 +15,7 @@ class TemplateEditor extends React.Component{
       },
       inchMeasurements: {},
       radio: 1,
-      pattern: 'https://images.blogthings.com/thecolorfulpatterntest/pattern-1.png'
+      pattern:'../assets/pattern-1.png'
     };
     this.converter = this.converter.bind(this);
     this.updateValue = this.updateValue.bind(this);
@@ -34,10 +34,7 @@ class TemplateEditor extends React.Component{
   }
 
   changeRadio(val, pattern){
-    this.setState({
-      radio: val,
-      pattern
-    });
+    this.setState({ radio: val, pattern });
   }
 
   componentWillReceiveProps(newProps){
@@ -89,36 +86,41 @@ class TemplateEditor extends React.Component{
 
 
   converter(e){
-    let png;
-    var svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
-    var canvas = document.getElementById("convertCanvas");
-    var ctx = canvas.getContext("2d");
-    var DOMURL = self.URL || self.webkitURL || self;
-    var img = new Image();
-    var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
-    var url = DOMURL.createObjectURL(svg);
-    img.onload = function() {
-      ctx.drawImage(img, 0, 0);
-      png = canvas.toDataURL("image/png");
-      document.querySelector('#png-container').innerHTML = '<img src="'+png+'"/>';
-      DOMURL.revokeObjectURL(png);
-      var anchor = document.createElement('a');
-      anchor.href = png;
-      anchor.target = '_blank';
-      anchor.download = 'shirt.png';
-      anchor.click();
-    };
-    img.src = url;
+    var link = e.currentTarget;
+    var canvas =  document.getElementById("canvas");
+    link.href = canvas.toDataURL();
+    link.download = 'shirt.png';
 
+    // let png;
+    // var svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
+    // var canvas = document.getElementById("convertCanvas");
+    // var ctx = canvas.getContext("2d");
+    // var DOMURL = self.URL || self.webkitURL || self;
+    // var img = new Image();
+    // var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+    // var url = DOMURL.createObjectURL(svg);
+    // img.onload = function() {
+    //   ctx.drawImage(img, 0, 0);
+    //   png = canvas.toDataURL("image/png");
+    //   document.querySelector('#png-container').innerHTML = '<img src="'+png+'"/>';
+    //   DOMURL.revokeObjectURL(png);
+    //   var anchor = document.createElement('a');
+    //   anchor.href = png;
+    //   anchor.target = '_blank';
+    //   anchor.download = 'shirt.png';
+    //   debugger
+    //   anchor.click();
+    // };
+    // img.src = url;
   }
 
   render(){
     const { length, neck, chest, waist, shoulders } = this.state.inputs;
     var patterns = [
-      'https://images.blogthings.com/thecolorfulpatterntest/pattern-1.png',
-      'https://s-media-cache-ak0.pinimg.com/736x/c0/40/c5/c040c5d4fbdf16556d3ca09f44093977--hexagon-pattern-pattern-art.jpg',
-      'http://vectorpatterns.co.uk/wp-content/uploads/2014/01/heart-ouline-pattern-620x400.png'
-    ]
+      '../assets/pattern-1.png',
+      '../assets/pattern-2.jpg',
+      '../assets/pattern-3.png'
+    ];
     return (
       <div className="template-container">
         <h2>(Step 3)   Make any desired adjustments</h2>
@@ -146,6 +148,7 @@ class TemplateEditor extends React.Component{
                 <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
               </label>
             </ul>
+            <p>Choice a pattern</p><br/>
             <div className='radio'>
               <img src={patterns[0]}
                 onClick={() => this.changeRadio(1, patterns[0])}
@@ -168,18 +171,18 @@ class TemplateEditor extends React.Component{
               pattern={this.state.pattern} />
           </section>
         </section>
-        <button id="download"
-          onClick={this.converter}>Download as image</button>
+        <a id="download"
+          onClick={this.converter}>Download as image</a>
         <canvas
           id="convertCanvas"
           width="600px"
           height="500px"
-          className="hidden"
+          className=""
         >
         </canvas>
         <div
           id="png-container"
-          className="hidden"></div>
+          className=""></div>
       </div>
     );
   }
