@@ -149,7 +149,8 @@ class TemplateEditor extends React.Component{
                 <input type = 'number' name='waist' value={waist} onChange={this.updateValue}></input>
               </label>
             </ul>
-            <p>Choice a pattern</p><br/>
+            <br></br>
+            <p>Choose a pattern</p><br/>
             <div className='radio'>
               <img src={patterns[0]}
                 onClick={() => this.changeRadio(1, patterns[0])}
