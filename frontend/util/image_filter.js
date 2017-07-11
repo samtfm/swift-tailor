@@ -38,7 +38,6 @@ export const applyCanny = (ctx, options, stat) => {
       pix = imgU8.data[i];
       data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
   }
-
   ctx.putImageData(imageData, 0, 0);
   return imgU8;
 };

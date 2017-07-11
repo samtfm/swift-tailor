@@ -1,15 +1,25 @@
 import React from 'react';
 import SVG from 'svg.js';
+import {
+  calcShirtLines,
+  calcSleeveLines,
+  neckline,
+  parseLines
+} from '../util/clothing';
 
 class Shirt extends React.Component{
 
   constructor(props){
     super(props);
-    this.state = {inchMeasurements: {}, pixelMeasurements: {}};
     this.shirtScale = 100/8;
+    this.shirtDrawn = false;
+    this.state = {
+      inchMeasurements: {},
+      pixelMeasurements: {}
+    };
   }
   componentDidMount(){
-    this.draw = SVG(this.drawing).size(600,500);
+    // this.draw = SVG(this.drawing).size(600,500);
   }
   componentWillReceiveProps(newProps){
     if (newProps.inchMeasurements){
@@ -20,163 +30,129 @@ class Shirt extends React.Component{
       this.setState({ pixelMeasurements });
     }
   }
-  calcShirtLines(chest, length, armHole, shoulders, neck, waist){
-    const lines = [];
-    neck = neck*2;
-    const neckline = [
-      "M",
-      [-neck/2, -5],
-      "c",
-      [neck*.2, neck*.55],
-      [neck*.8, neck*.55],
-      [neck, 0],
-    ];
-    lines.push(neckline);
-    const backNeckline = [
-      "M",
-      [-neck/2, -5],
-      "c",
-      [neck*.15, neck*.15],
-      [neck*.85, neck*.15],
-      [neck, 0],
-    ];
-    lines.push(backNeckline);
-
-    const shoulderLine = [
-      [neck/2, -5],
-      [shoulders/4, 0]
-    ];
-    lines.push(shoulderLine);
-    lines.push(this.scaleLine(shoulderLine, -1, 1));
-
-    const sleeveCurve = [
-      "M",
-      [shoulders/4, 0],
-      "C",
-      [shoulders/4-armHole*.02, armHole*.2],
-      [shoulders/4-armHole*.05, armHole*.7],
-      [chest/4, armHole],
-    ];
-    lines.push(sleeveCurve);
-    lines.push(this.scaleLine(sleeveCurve, -1, 1));
-    const sleeve = [
-      [0, 0],
-      [length*.2, 2*armHole*.12],
-      [length*.2, 2*armHole*.88],
-      [0, 2*armHole],
-    ];
-    const sleeveCurveFull = [
-      "M",
-      [0, 0],
-      "C",
-      [-armHole*.11, armHole*.2],
-      [-armHole*.25, armHole*.7],
-
-      [-armHole*.25, armHole],
-      "C",
-      [-armHole*.25, armHole*1.3],
-      [-armHole*.11, armHole*1.8],
-
-      [0, 2*armHole]
-    ];
-    lines.push(this.transformLine(sleeve, chest/4+80, 0));
-    lines.push(this.transformLine(sleeveCurveFull, chest/4+80, 0));
-    const box = [
-      [chest/4, armHole],
-      [(waist/4), length],
-      [-(waist/4), length],
-      [-chest/4, armHole]
-    ];
-    lines.push(box);
-    // lines.push(this.expandOutLine(box, 5,5));
-
-    //center line
-    lines.push([
-      [0,0],
-      [0,length]
-    ]);
-    return lines;
-  }
-
-  scaleLine(line, x, y){
-    return line.map(val => {
-      if (typeof val === 'string'){
-        return val;
-      }
-      return [x*val[0], y*val[1]];
-    });
-  }
-  transformLine(line, x, y){
-    return line.map(val => {
-      if (typeof val === 'string'){
-        return val;
-      }
-      return [x + val[0], y + val[1]];
-    });
-  }
-  expandOutLine(line, x, y){
-    return line.map(val => {
-      if (typeof val === 'string'){
-        return val;
-      }
-      return [val[0] + x * Math.sign(val[0]),
-              val[1] + y * Math.sign(val[1])];
-    });
-  }
 
   drawShirt(){
-    const group = this.draw.group();
+    // const group = this.draw.group();
+    const fill = this.props.pattern;
+    const sc = this.shirtScale;
     const { pixelHeight,
-      chestWidth,
-      waistWidth,
-      shirtLength,
-      shoulderWidth,
-      neckWidth,
-      armHole
+      chestWidth, waistWidth,
+      shirtLength, shoulderWidth,
+      neckWidth, armHole
     } = this.state.pixelMeasurements;
-    if (!(chestWidth && neckWidth && shirtLength)) return group;
-    const lines = this.calcShirtLines(chestWidth, shirtLength, armHole, shoulderWidth, neckWidth, waistWidth);
-    lines.forEach(line => {
-      const pointString = line.map(pair => (
-        typeof pair === "string" ? pair :
-          `${pair[0].toString()}, ${pair[1].toString()}`
-        )).join(' ');
-      // draw line from points
-      if (pointString[0].toLowerCase() === 'm'){
-        group.add(this.draw.path(pointString).fill('none').stroke({ width: 1 }));
-      } else {
-        group.add(this.draw.polyline(pointString).fill('none').stroke({ width: 1 }));
 
+    if (!(chestWidth && neckWidth && shirtLength)) return;
+    let torsoLines = calcShirtLines(
+      chestWidth, shirtLength,
+      armHole, shoulderWidth,
+      neckWidth, waistWidth);
+      let wholeShirt = parseLines(torsoLines).join(" ");
+    let sleeveLines = calcSleeveLines(armHole, shirtLength);
+    let sleeves = parseLines(sleeveLines).join(" ");
+    let neckLine = neckline(neckWidth);
+    // console.log(wholeShirt);
+    // var pattern = this.draw.pattern(20, 20, function(add) {
+    //   add.rect(20,20).fill('#f06');
+    //   add.rect(10,10).fill('#0f9');
+    //   add.rect(10,10).move(10,10).fill('#fff');
+    // });
+
+    // group.add(this.draw
+    //   .path(wholeShirt)
+    //   .fill(fill)
+    //   .stroke({ width: 1 })
+    // );
+    // let temp = this.draw
+    //   .path(sleeves)
+    //   .rotate(90);
+    // temp.fill(fill).stroke({ width: 1 });
+    // group.add(temp);
+    // // lines.push(["L", [0,0], [0,length]]);
+    // const lengthText = this.draw.text(`${this.props.inchMeasurements.shirtLength}'`);
+    // lengthText.transform({ x: -140, y: shirtLength/2});
+    // group.add(lengthText);
+    //
+    // const widthText = this.draw.text(`${this.props.inchMeasurements.waistWidth/2}'`);
+    // widthText.transform({ x: 0, y: shirtLength});
+    // group.add(widthText);
+    //
+    // group.transform({x: 250, y: 50});
+
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+    let shirtStroke = new Path2D(wholeShirt);
+    let sleeveStroke = new Path2D(sleeves);
+    let neckStroke = new Path2D(neckLine);
+    console.log(neckLine);
+    console.log(neckStroke);
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    // load pattern
+    var patImage = new Image();
+    patImage.src = fill;
+
+    patImage.onload = function(){
+      // clear the previous canvas
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // make background white
+      ctx.rect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.fill();
+      // shift center location
+      ctx.translate(180,40);
+      // draw shirt and sleeves
+      let pat = ctx.createPattern(patImage, "repeat");
+      ctx.fillStyle = pat;
+      ctx.fill(shirtStroke);
+      ctx.fill(sleeveStroke);
+      // reset canvas location
+      ctx.translate(-180,-40);
+      drawGrid();
+      ctx.translate(180,40);
+      ctx.strokeStyle = 'black';
+      ctx.stroke(shirtStroke);
+      ctx.stroke(neckStroke);
+      ctx.stroke(sleeveStroke);
+    };
+
+    const drawGrid = () => {
+      var w = canvas.width;
+      var h = canvas.height;
+      var p = 5; // padding;
+
+      for (var i = 0; i < w ; i += sc) {
+        ctx.moveTo(0.5+i+p, p);
+        ctx.lineTo(0.5+i+p, h + p);
       }
-    });
-
-    const lengthText = this.draw.text(`${this.props.inchMeasurements.shirtLength}'`);
-    lengthText.transform({ x: 6, y: shirtLength/2});
-    group.add(lengthText);
-
-    const widthText = this.draw.text(`${this.props.inchMeasurements.waistWidth/2}'`);
-    widthText.transform({ x: 0, y: shirtLength});
-    group.add(widthText);
-
-
-    group.transform({x: 250, y: 50});
-    return group;
+      for (var j = 0; j < h ; j += sc) {
+        ctx.moveTo(p, 0.5+p + j);
+        ctx.lineTo(w+p, 0.5+j + p);
+      }
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'lightgray';
+      ctx.stroke();
+    };
+    // return group;
   }
 
   render(){
-    if (this.drawing){
-      this.last = this.last ?
-        this.last.replace(this.drawShirt()) :
-        this.drawShirt();
-    }
-
+    // if (this.drawing){
+    //   this.shirt = this.shirt ? this.shirt.replace(this.drawShirt()) : this.drawShirt();
+    // }
     const {height, neck, chest, waist} = this.state.pixelMeasurements;
+    if(this.props.recording === false) this.drawShirt();
+
     return(
       <div className='shirt'>
-        <div ref={(component) => { this.drawing = component;}}></div>
+        <canvas id="canvas" width='550' height='500'></canvas>
       </div>
     );
   }
 }
 
 export default Shirt;
+//   <div ref={(component) => { this.drawing = component; }}></div>

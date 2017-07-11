@@ -20,12 +20,14 @@
   display: flex;
   justify-content: space-around;
   flex-direction: row-reverse;
+  padding: 0;
+  margin: 0;
+
   .preview{
     display: inline-block;
   }
-  padding: 0;
-  margin: 0;
-  ul {
+
+  .options{
     font-size: 18px;
     background: #f9b2b2;
     width: 260px;
@@ -36,6 +38,8 @@
     margin: 15px;
     border: 3px dashed darkred;
     opacity: .90;
+  }
+  ul {
     label {
       margin: 10px;
       display: flex;
@@ -57,4 +61,41 @@
   border-radius: 22px;
   border: 3px dashed darkred;
   opacity: 0.9;
+}
+
+.radio {
+
+  .selected {
+    border: 2px solid white;
+  }
+  input{
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    visibility: hidden;
+    position: absolute;
+  }
+
+  img{
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    border:2px solid transparent;
+    margin: 2px;
+  }
+}
+
+#download{
+  margin: 30px;
+  font-size: 30px;
+  font-family: 'Pacifico', cursive;
+  border: 2px dashed white;
+  padding: 15px;
+  color: white;
+  background-color: red;
+  box-shadow: 0 0 0 4px red;
+  border-radius: 10px;
+  transition: 0.3s;
+  cursor: pointer;
+  outline: none;
 }
