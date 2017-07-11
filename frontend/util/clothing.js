@@ -155,7 +155,7 @@ export const calcSleeveLines = (armHole, length) => {
 
 // this just shifts the target right by an offset
 function transformLine(line){
-  let xOffset = 180;
+  let xOffset = 130;
   let yOffset = 0;
   return line.map(val => {
     if (typeof val === 'string') return val;

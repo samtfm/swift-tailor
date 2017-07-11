@@ -168,21 +168,12 @@ class TemplateEditor extends React.Component{
           <section className='preview'>
             <Shirt
               inchMeasurements={this.state.inchMeasurements}
-              pattern={this.state.pattern} />
+              pattern={this.state.pattern}
+              recording={this.props.recording} />
           </section>
         </section>
         <a id="download"
           onClick={this.converter}>Download as image</a>
-        <canvas
-          id="convertCanvas"
-          width="600px"
-          height="500px"
-          className=""
-        >
-        </canvas>
-        <div
-          id="png-container"
-          className=""></div>
       </div>
     );
   }
@@ -190,3 +181,15 @@ class TemplateEditor extends React.Component{
 }
 
 export default TemplateEditor;
+
+// un-needed conversion elements now that we switched to pure canvas
+// <canvas
+//   id="convertCanvas"
+//   width="600px"
+//   height="500px"
+//   className=""
+// >
+// </canvas>
+// <div
+//   id="png-container"
+//   className=""></div>

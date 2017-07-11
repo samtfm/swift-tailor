@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import { detectFace, drawFace } from '../util/body_detection';
-import TemplateEditor from './template_editor';
+import Shirt from './shirt';
 import profiler from '../util/profiler';
+import TemplateEditor from './template_editor';
 import CalcIndicator from '../widget/calc_indicators';
-import { stdDev, average, inStdDev } from '../util/math';
+
 import { applyCanny } from '../util/image_filter';
+import { detectFace, drawFace } from '../util/body_detection';
+import { stdDev, average, inStdDev } from '../util/math';
 import { startInstructions, videoInstructions } from '../util/instructions';
 import { detectOutlinePoints, detectSide, measureShoulders } from '../util/body_detection';
-import Shirt from './shirt';
 
 export default class TakeImage extends React.Component {
   constructor(props){
@@ -66,9 +67,7 @@ export default class TakeImage extends React.Component {
     let feet = e.currentTarget.value;
 
     if (isNaN(feet) || feet === "") {
-      this.setState({
-        heightFeet: "",
-      });
+      this.setState({ heightFeet: "" });
     } else {
       feet = parseInt(feet);
       let inches = parseInt(this.state.heightInches);
@@ -122,16 +121,24 @@ export default class TakeImage extends React.Component {
     // drawFace draws the faceBox on the canvas after canny has been applied;
     let faceBox = detectFace(calcCtx, options);
     let cannyData = applyCanny(calcCtx, options, this.state.stat);
-    let measurements;
-    let side;
+    let measurements, side;
+
     //BREAKS UP DEFINING POINTS INTO SECTIONS
     if(!window.armsUp){
       measurements = detectOutlinePoints(cannyData, faceBox.face);
     } else if (window.armsUp && !window.armsDown){
-      measurements = measureShoulders(cannyData, faceBox.face, this.state.measurements.wingspan);
+      measurements = measureShoulders(
+        cannyData,
+        faceBox.face,
+        this.state.measurements.wingspan
+      );
 
     } else if (window.armsUp && window.armsDown && !window.side){
-      measurements = detectSide(cannyData, faceBox.face, this.state.measurements.wingspan);
+      measurements = detectSide(
+        cannyData,
+        faceBox.face,
+        this.state.measurements.wingspan
+      );
     } else {
       clearInterval(this.measuringIntervalInstance);
       return;
@@ -153,7 +160,11 @@ export default class TakeImage extends React.Component {
       // }
       if (measurements[part].points) {
         measurements[part].points.forEach(point => {
-          calcCtx.fillRect(point.x-1,point.y-1, 2, 2);
+          calcCtx.fillRect(
+            point.x-1,
+            point.y-1,
+            2, 2
+          );
         });
       }
     }
@@ -169,17 +180,22 @@ export default class TakeImage extends React.Component {
     } = this.state;
 
     if(!window.armsUp){
+      // keep pushing values in until everything measurement has at least 20
       if(Math.min(wingspan.length, neckWidth.length, chestWidth.length, waistWidth.length) < 20) {
         wingspan.push(Math.floor(measurements.arms.wingspan)  || 0);
         neckWidth.push(Math.floor(measurements.neck.average) || 0);
         chestWidth.push(Math.floor(measurements.chest.average) || 0);
         waistWidth.push(Math.floor(measurements.waist.average) || 0);
-        this.setState({
-          wingspan,
-          neckWidth,
-          chestWidth,
-          waistWidth
-        });
+
+        //we're adding the new values to state we should change this
+        // this.setState({
+        //   wingspan,
+        //   neckWidth,
+        //   chestWidth,
+        //   waistWidth
+        // });
+      // once 20 measurements of each body part is reached filter out only
+      // values within 1 standard deviation and take the average
       } else {
         wingspan = inStdDev(wingspan);
         neckWidth = inStdDev(neckWidth);
@@ -195,35 +211,41 @@ export default class TakeImage extends React.Component {
           }
         });
         window.armsUp = true;
-        //pause for
+        //stop the measurements and restart for the next phase
         clearInterval(this.measuringIntervalInstance);
         this.measuringInterval();
       }
     } else if (window.armsUp && !window.armsDown){
       if(Math.min(shoulderWidth.length) < 20  && measurements.isValid){
-        if(measurements.shoulders.average) shoulderWidth.push(Math.floor(measurements.shoulders.average) || 0);
-        this.setState({ shoulderWidth });
+        if(measurements.shoulders.average) {
+          shoulderWidth.push(Math.floor(measurements.shoulders.average) || 0);
+        }
+        // this.setState({ shoulderWidth });
       } else {
         shoulderWidth = inStdDev(shoulderWidth);
         measurements = Object.assign(
           this.state.measurements,
           { shoulders: Math.floor(average(shoulderWidth)) }
         );
-        window.armsDown = true;
         this.setState({ measurements });
 
         clearInterval(this.measuringIntervalInstance);
         this.measuringInterval();
+        window.armsDown = true;
       }
     } else if (window.armsUp && window.armsDown && !window.side) {
 
       if(Math.min(bustWidth.length, stomachWidth.length) < 40){
-        if(measurements.bustWidth.average) bustWidth.push(Math.floor(measurements.bustWidth.average) || 0);
-        if(measurements.stomachWidth.average) stomachWidth.push(Math.floor(measurements.stomachWidth.average) || 0);
-        this.setState({
-          bustWidth,
-          stomachWidth
-        });
+        if(measurements.bustWidth.average){
+          bustWidth.push(Math.floor(measurements.bustWidth.average) || 0);
+        }
+        if(measurements.stomachWidth.average){
+          stomachWidth.push(Math.floor(measurements.stomachWidth.average) || 0);
+        }
+        // this.setState({
+        //   bustWidth,
+        //   stomachWidth
+        // });
       } else {
         bustWidth = inStdDev(bustWidth);
         stomachWidth = inStdDev(stomachWidth);
@@ -233,10 +255,8 @@ export default class TakeImage extends React.Component {
           { stomachWidth: Math.floor(average(stomachWidth)) }
         );
         this.setState({ measurements });
-
         window.side = true;
-    }
-        // if (this.measuringInterval) clearInterval(this.measuringInterval);
+      }
     }
   }
 
@@ -278,8 +298,8 @@ export default class TakeImage extends React.Component {
     window.armsDown = false;
     window.side = false;
 
-    if (this.measuringInterval) clearInterval(this.measuringInterval);
     if (this.instructionsInterval) clearInterval(this.instructionsInterval);
+    if (this.measuringIntervalInstance) clearInterval(this.measuringIntervalInstance);
     if (this.measurementInstructionInterval ) clearInterval(this.measurementInstructionInterval );
   }
 
@@ -334,21 +354,21 @@ export default class TakeImage extends React.Component {
     let instructions = videoInstructions;
     this.demo = document.getElementById("demo-image");
     this.demo.classList.remove("hidden");
-    this.demo.classList.add("inst1");
+    // this.demo.classList.add("inst1");
 
     this.message.classList.add("shadow");
     this.message.classList.add("spinner");
     let i = 0;
 
     let messageLoop = (param) => {
-      let curr = 'inst' + (i+1);
-      let next = 'inst' + (i+2);
+      // let curr = 'inst' + (i+1);
+      // let next = 'inst' + (i+2);
 
       this.message.innerHTML = instructions[i];
       if(param){
         this.message.innerHTML = "Great!";
-        this.demo.classList.remove(curr);
-        this.demo.classList.add(next);
+        // this.demo.classList.remove(curr);
+        // this.demo.classList.add(next);
         return i++;
       }
     };
@@ -363,7 +383,6 @@ export default class TakeImage extends React.Component {
           this.closeModal();
           window.scrollTo(0,document.body.scrollHeight);
           clearInterval(temp);
-
         }, 5000);
       } else {
         switch(i) {
@@ -523,7 +542,11 @@ export default class TakeImage extends React.Component {
             <i id="cameraIcon" className="fa fa-camera-retro fa-5" aria-hidden="true"></i>
           </button>
         </section>
-        <TemplateEditor height={this.state.heightInches+this.state.heightFeet*12} measurements={measurements}/>
+        <TemplateEditor
+          height={this.state.heightInches+this.state.heightFeet*12}
+          measurements={measurements}
+          recording={this.state.modalIsOpen}
+        />
       </section>
     );
   }
