@@ -15,7 +15,7 @@ class TemplateEditor extends React.Component{
       },
       inchMeasurements: {},
       radio: 1,
-      pattern:'../assets/pattern-1.png'
+      pattern:'../assets/pattern-0.png'
     };
     this.converter = this.converter.bind(this);
     this.updateValue = this.updateValue.bind(this);
@@ -117,6 +117,7 @@ class TemplateEditor extends React.Component{
   render(){
     const { length, neck, chest, waist, shoulders } = this.state.inputs;
     var patterns = [
+      '../assets/pattern-0.png',
       '../assets/pattern-1.png',
       '../assets/pattern-2.jpg',
       '../assets/pattern-3.png'
@@ -161,6 +162,10 @@ class TemplateEditor extends React.Component{
               <img src={patterns[2]}
                 onClick={() => this.changeRadio(3, patterns[2])}
                 className={this.state.radio === 3 ? 'selected' : 'unselected'}
+              />
+            <img src={patterns[3]}
+                onClick={() => this.changeRadio(4, patterns[3])}
+                className={this.state.radio === 4 ? 'selected' : 'unselected'}
               />
             </div>
           </div>

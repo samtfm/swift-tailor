@@ -98,7 +98,6 @@ class Shirt extends React.Component{
       // shift center location
       ctx.translate(180,40);
       // draw shirt and sleeves
-      ctx.stroke(shirtStroke, sleeveStroke);
       let pat = ctx.createPattern(patImage, "repeat");
       ctx.fillStyle = pat;
       ctx.fill(shirtStroke);
@@ -106,6 +105,10 @@ class Shirt extends React.Component{
       // reset canvas location
       ctx.translate(-180,-40);
       drawGrid();
+      ctx.translate(180,40);
+      ctx.strokeStyle = 'black';
+      ctx.stroke(shirtStroke);
+      ctx.stroke(sleeveStroke);
     };
 
     const drawGrid = () => {
