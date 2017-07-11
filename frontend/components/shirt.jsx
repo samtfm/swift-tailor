@@ -1,6 +1,11 @@
 import React from 'react';
 import SVG from 'svg.js';
-import { calcShirtLines, calcSleeveLines, parseLines } from '../util/clothing';
+import {
+  calcShirtLines,
+  calcSleeveLines,
+  neckline,
+  parseLines
+} from '../util/clothing';
 
 class Shirt extends React.Component{
 
@@ -44,7 +49,7 @@ class Shirt extends React.Component{
       let wholeShirt = parseLines(torsoLines).join(" ");
     let sleeveLines = calcSleeveLines(armHole, shirtLength);
     let sleeves = parseLines(sleeveLines).join(" ");
-
+    let neckLine = neckline(neckWidth);
     // console.log(wholeShirt);
     // var pattern = this.draw.pattern(20, 20, function(add) {
     //   add.rect(20,20).fill('#f06');
@@ -77,7 +82,9 @@ class Shirt extends React.Component{
     let ctx = canvas.getContext('2d');
     let shirtStroke = new Path2D(wholeShirt);
     let sleeveStroke = new Path2D(sleeves);
-
+    let neckStroke = new Path2D(neckLine);
+    console.log(neckLine);
+    console.log(neckStroke);
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -108,6 +115,7 @@ class Shirt extends React.Component{
       ctx.translate(180,40);
       ctx.strokeStyle = 'black';
       ctx.stroke(shirtStroke);
+      ctx.stroke(neckStroke);
       ctx.stroke(sleeveStroke);
     };
 

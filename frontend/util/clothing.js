@@ -5,7 +5,7 @@ export const calcShirtLines = (chest, length, armHole, shoulders, neck, waist) =
   neck = neck * 2;
 
   const neckline = [
-    "M",
+    "L",
     [-neck/2, -5],
     "c",
     [neck*.2, neck*.55],
@@ -14,7 +14,7 @@ export const calcShirtLines = (chest, length, armHole, shoulders, neck, waist) =
   ];
 
   const backNeckline = [
-    "L",
+    "M",
     [-neck/2, -5],
     "c",
     [neck*.15, neck*.15],
@@ -80,7 +80,7 @@ export const calcShirtLines = (chest, length, armHole, shoulders, neck, waist) =
     [-chest/4, armHole]
   ];
   lines.push(
-    neckline, shoulderLine, sleeveCurve,
+    backNeckline, shoulderLine, sleeveCurve,
     box, leftSleeveCurve, leftShoulderLine
   );
   // lines.push(neckline);
@@ -171,14 +171,14 @@ function transformLine(line){
 // }
 
 export const parseLines = (lines) =>{
-  let wholeShirt = [];
+  let allLines = [];
   lines.forEach(line => {
     const pointString = line.map(pair => (
       typeof pair === "string" ? pair :
         `${pair[0].toString()} ${pair[1].toString()}`
       )).join(' ');
       // console.log(pointString);
-      wholeShirt.push(pointString);
+      allLines.push(pointString);
     // draw line from points
     // if (pointString[0].toLowerCase() === 'm'){
     //   group.add(this.draw.path(pointString).fill('none').stroke({ width: 1 }));
@@ -186,5 +186,18 @@ export const parseLines = (lines) =>{
     //   group.add(this.draw.polyline(pointString).fill('none').stroke({ width: 1 }));
     // }
   });
-  return wholeShirt;
+  return allLines;
+};
+
+export const neckline = (neck) => {
+  neck = neck * 2;
+  let nl = [
+    "M",
+    [-neck/2, -5],
+    "c",
+    [neck*.2, neck*.55],
+    [neck*.8, neck*.55],
+    [neck, 0],
+  ];
+  return nl.join(" ");
 };
