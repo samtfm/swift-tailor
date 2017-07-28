@@ -6,6 +6,8 @@
 
 Fitting clothes is hard. Measuring yourself is awkward. Tailor Tailor aims to change that! Using image processing software, this web-app will generate basic clothing measurements from live webcam input. It will then display a scaled sewing pattern using these measurements. As a proof of concept, we will create a shirt model, using the measurements of the neck, chest, and waist, using wingspan as a scale reference.
 
+![Tailor Swift](http://res.cloudinary.com/dkw3fxfzr/image/upload/v1501214459/gif3_qawca6.gif)
+
 Applications of this tool include DIY fashion as well as integration with a clothing manufacturer for custom fitted clothes.
 
 ## Technologies
