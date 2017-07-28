@@ -117,10 +117,10 @@ class TemplateEditor extends React.Component{
   render(){
     const { length, neck, chest, waist, shoulders } = this.state.inputs;
     var patterns = [
-      'pattern-0.png',
-      'pattern-1.png',
-      'pattern-2.jpg',
-      'pattern-3.png'
+      '../assets/pattern-0.png',
+      '../assets/pattern-1.png',
+      '../assets/pattern-2.jpg',
+      '../assets/pattern-3.png'
     ];
     return (
       <div className="template-container">
